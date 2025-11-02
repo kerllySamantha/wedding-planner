@@ -1,0 +1,34 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
+class Poblacion extends Model
+{
+    /**
+     * Create a new class instance.
+     */
+    public function __construct()
+    {
+        //
+    }
+
+    protected $table = 'poblaciones';
+
+    public function provincia() {
+        return $this->belongsTo(Provincia::class, 'id_provincia');
+    }
+
+    public function centros()
+    {
+        return $this->hasMany(Centro::class, 'poblacion_id', 'id');
+    }
+
+    public function empresas()
+    {
+        return $this->hasMany(Empresa::class, 'poblacion_id', 'id');
+
+    }
+}
