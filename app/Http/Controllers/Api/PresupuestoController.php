@@ -1,7 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
+use App\Http\Requests\PresupuestoRequest;
+use App\Http\Resources\PresupuestoCollection;
+use App\Models\Boda;
 use App\Models\Presupuesto;
 use Illuminate\Http\Request;
 
@@ -12,23 +16,31 @@ class PresupuestoController extends Controller
      */
     public function index()
     {
-        //
+        $presupuestos = Presupuesto::all();
+        return response()->json($presupuestos, 200);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(PresupuestoRequest $request)
     {
-        //
+        $validated = $request->validated();
+        $presupuesto = Presupuesto::create([
+            'boda_id' => $validated['boda_id'],
+            'tipo_producto_id' =>  $validated['tipo_producto_id'],
+            // 'nombre' => $validated['nombre'],
+            // 'descripcion' => $validated['descripcion'] ?? null,
+            'monto_total' => $validated['monto_total'],
+            'estado' => $validated['estado'] ?? false,
+            'fecha_creacion' => $validated['fecha_creacion']
+        ]);
+
+        return response()->json($presupuesto, 200);
     }
 
     /**
@@ -42,10 +54,7 @@ class PresupuestoController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Presupuesto $presupuesto)
-    {
-        //
-    }
+
 
     /**
      * Update the specified resource in storage.
@@ -61,5 +70,48 @@ class PresupuestoController extends Controller
     public function destroy(Presupuesto $presupuesto)
     {
         //
+    }
+
+    public function getPresupuestoByBoda($bodaId)
+    {
+        $boda = Boda::with([
+            'presupuesto.tipoProducto',
+            'presupuesto.itemsPresupuesto' // 👈 importante
+        ])->find($bodaId);
+
+        if (!$boda) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No se encontró la boda'
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Presupuestos encontrados correctamente',
+            'data' => $boda->presupuesto->map(function ($p) {
+                return [
+                    'id' => $p->id,
+                    'monto_total' => $p->monto_total,
+                    'estado' => $p->estado,
+                    'fecha_creacion' => $p->fecha_creacion,
+                    'tipo_producto' => [
+                        'id' => $p->tipoProducto->id,
+                        'nombre' => $p->tipoProducto->nombre,
+                    ],
+                    'items_presupuesto' => $p->itemsPresupuesto->map(function ($item) {
+                        return [
+                            'id' => $item->id,
+                            'nombre_tipo_personalizado' => $item->nombre_tipo_personalizado,
+                            'precio_unitario' => $item->precio_unitario,
+                            'cantidad' => $item->cantidad,
+                            'total_item' => $item->total_item,
+                            'es_personalizado' => $item->es_personalizado,
+                            'notas' => $item->notas,
+                        ];
+                    }),
+                ];
+            }),
+        ]);
     }
 }

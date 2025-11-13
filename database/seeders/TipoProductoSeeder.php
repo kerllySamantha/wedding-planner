@@ -16,25 +16,25 @@ class TipoProductoSeeder extends Seeder
     public function run(): void
     {
         $tipos = [
-            1 => [
+            6 => [
                 'Fotografía tradicional',
                 'Fotografía con drones',
                 'Video cinematográfico',
                 'Fotomatón',
                 'Cobertura completa de boda',
             ],
-            2 => [
+            3 => [
                 'Banquete completo',
                 'Catering informal',
                 'Buffet libre',
                 'Servicio de meseros',
             ],
-            3 => [
+            14 => [
                 'Pasteles de boda',
                 'Cupcakes personalizados',
                 'Mesa de postres',
             ],
-            4 => [
+           12  => [
                 'DJ profesional',
                 'Banda en vivo',
                 'Grupo musical',
@@ -47,60 +47,60 @@ class TipoProductoSeeder extends Seeder
                 'Centros de mesa',
                 'Arco de ceremonia',
             ],
-            6 => [
+            11 => [
                 'Vestidos de novia',
                 'Trajes de novio',
                 'Zapatos de novia',
                 'Accesorios y velos',
             ],
-            7 => [
+            1 => [
                 'Maquillaje profesional',
                 'Peluquería y peinado',
                 'Tratamientos faciales',
                 'Spa y bienestar',
             ],
-            8 => [
+            7 => [
                 'Invitaciones físicas',
                 'Invitaciones digitales',
                 'Papelería personalizada',
             ],
-            9 => [
+            16 => [
                 'Recuerdos personalizados',
                 'Regalos para invitados',
                 'Detalles eco-friendly',
             ],
-            10 => [
+            8 => [
                 'Anillos de boda',
                 'Collares y pulseras',
                 'Joyería artesanal',
             ],
-            11 => [
+            13 => [
                 'Wedding planner',
                 'Coordinador de evento',
                 'Asesoría integral de boda',
             ],
-           12 => [
+           18 => [
                 'Autos clásicos',
                 'Limosinas',
                 'Transporte de invitados',
             ],
-            13 => [
+            9 => [
                 'Salón de eventos',
                 'Jardín o hacienda',
                 'Playa o destino turístico',
                 'Iglesia o capilla',
             ],
-           14 => [
+           19 => [
                 'Agencia de viajes',
                 'Bodas destino',
                 'Paquetes todo incluido',
             ],
-            15 => [
+            2 => [
                 'Barra libre',
                 'Coctelería profesional',
                 'Catas de vino o licores',
             ],
-            16 => [
+            10 => [
                 'Renta de mobiliario',
                 'Iluminación y sonido',
                 'Carpas y toldos',

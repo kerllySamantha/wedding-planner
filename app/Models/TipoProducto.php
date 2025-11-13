@@ -18,4 +18,9 @@ class TipoProducto extends Model
     public function productos(){
         return $this->hasMany(Producto::class);
     }
+
+    public function presupuestos()
+    {
+        return $this->hasMany(Presupuesto::class);
+    }
 }

@@ -34,13 +34,14 @@ class DatabaseSeeder extends Seeder
             EmpresaSeeder::class,
             TipoProductoSeeder::class,
             ProductoSeeder::class,
-           
+
             BodaSeeder::class,
             ReservaSeeder::class,
+            PresupuestoSeeder::class,
             ReseniaSeeder::class,
             InvitadoSeeder::class,
             MensajeSeeder::class,
-          
+
 
 
         ]);

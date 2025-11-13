@@ -28,7 +28,7 @@ class BodaResource extends JsonResource
                 'url' => asset('storage/' . $foto),
             ];
         });
-        
+
         return [
             'id' => $this->id,
             'nombre_pareja' => $this->nombre_pareja,
@@ -43,11 +43,24 @@ class BodaResource extends JsonResource
                 'id' =>  $this->poblacion ? $this->poblacion->provincia->id : "",
             ],
             'usuario' => new UserResource($this->usuario),
-            'presupuesto_total' => $this->presupuesto_total,
+            // 'presupuesto_total' => $this->presupuesto_total,
             'notas' => $this->notas,
+            'presupuestos' => $this->presupuesto->map(
+                fn($tipo) => [
+                    'id' => $tipo->id,
+                    'tipo' => [
+                        'id' => $tipo->tipoProducto->id,
+                        'nombre' => $tipo->tipoProducto->nombre,
+                    ],
+                    // 'nombre' => $tipo->nombre,
+                    // 'descripcion' => $tipo->descripcion,
+                    'monto_total' => $tipo->monto_total,
+                    'estado' => $tipo->estado,
+                    'fecha_creacion' => $tipo->fecha_creacion
+                ]
+            ),
+
             'fotos' => $fotos
         ];
-
-
     }
 }

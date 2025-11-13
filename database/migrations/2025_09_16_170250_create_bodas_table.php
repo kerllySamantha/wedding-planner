@@ -19,7 +19,7 @@ return new class extends Migration
             $table->date('fecha_boda'); 
             $table->string('ubicacion');
             $table->json('fotos')->nullable();
-            $table->decimal('presupuesto_total', 10, 2)->nullable(); 
+            // $table->decimal('presupuesto_total', 10, 2)->nullable(); 
             $table->text('notas')->nullable(); 
             $table->timestamps();
         });

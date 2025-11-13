@@ -7,12 +7,29 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Presupuesto extends Model
 {
-    public function boda()
-    {
-      return $this->belongsTo(Boda::class);
-    }
+  protected $table = 'presupuestos';
 
-    public function itemsPresupuesto(){
-        return $this->hasMany(ItemPresupuesto::class);
-    }
+  protected $fillable = [
+    'boda_id',
+    'tipo_producto_id',
+    'monto_total',
+    'estado',
+    'fecha_creacion'
+  ];
+
+
+  public function boda()
+  {
+    return $this->belongsTo(Boda::class);
+  }
+
+  public function itemsPresupuesto()
+  {
+    return $this->hasMany(ItemPresupuesto::class, 'presupuesto_id');
+  }
+
+  public function tipoProducto()
+  {
+    return $this->belongsTo(TipoProducto::class);
+  }
 }
