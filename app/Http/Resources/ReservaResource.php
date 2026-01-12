@@ -15,22 +15,40 @@ class ReservaResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'usuario' => [
+            'id' => $this->id,
+
+            'fecha_inicio' => $this->fecha_inicio,
+            'fecha_fin' => $this->fecha_fin,
+            'estado' => $this->estado,
+            'origen' => $this->origen,
+            'notas' => $this->notas,
+
+            'usuario' => $this->usuario ? [
                 'id' => $this->usuario->id,
                 'nombre' => $this->usuario->name
-            ],
-            'fecha' => $this->fecha,
-            'estado' => $this->estado,
-            'boda' => [
-                'id' => $this->boda->id,
-                'fecha' => $this->boda->fecha,
-                'nombre_pareja' => $this->boda->nombre_pareja,
-                'ubicacion' => $this->boda->ubicacion,
-            ],
+            ] : null,
+
             'empresa' => [
                 'id' => $this->empresa->id,
-                'nombre_empresa' =>  $this->empresa->id
-            ]
+                'nombre' => $this->empresa->nombre_empresa
+            ],
+
+            'boda' => $this->boda ? [
+                'id' => $this->boda->id,
+                'nombre_pareja' => $this->boda->nombre_pareja,
+                'fecha' => $this->boda->fecha,
+                'ubicacion' => $this->boda->ubicacion,
+            ] : null,
+
+            'servicio' => $this->servicio ? [
+                'id' => $this->servicio->id,
+                'nombre' => $this->servicio->nombre
+            ] : null,
+
+            'producto' => $this->producto ? [
+                'id' => $this->producto->id,
+                'nombre' => $this->producto->nombre
+            ] : null,
         ];
     }
 }

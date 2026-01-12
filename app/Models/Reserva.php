@@ -6,8 +6,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class Reserva extends Model
 {
-    protected $fillable = ['user_id', 'empresa_id', 'fecha', 'estado'];
+    protected $fillable = [
+        'user_id',
+        'empresa_id',
+        'boda_id',
+        'fecha_inicio',
+        'fecha_fin',
+        'estado',
+        'origen',
+        'notas',
+        // 'servicio_id',
+        // 'producto_id'
+    ];
 
+    protected $table = 'reservas';
 
     public function usuario()
     {

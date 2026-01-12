@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('reservas', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->references('id')->on('users');
+            $table->foreignId('user_id')->nullable()->references('id')->on('users');
             $table->foreignId('empresa_id')->references('id')->on('empresas');
-            $table->foreignId('boda_id')->references('id')->on('bodas');
-            $table->date('fecha');
+            $table->foreignId('boda_id')->nullable()->references('id')->on('bodas');
+            // $table->date('fecha');
             $table->enum('estado', ['pendiente', 'confirmada', 'cancelada']);
             $table->timestamps();
         }); 

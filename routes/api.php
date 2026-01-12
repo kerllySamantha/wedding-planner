@@ -26,11 +26,25 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+
+Route::get('/bodas/usuario/{id}', [BodaController::class, 'getBodaByUserId']);
+Route::get('/perfiles/usuario/{id}', [PerfilUsuarioController::class, 'getPerfilByUserId']);
+Route::get('provincias/poblacion/{id}', [ProvinciaController::class, 'getByProvincia']);
+Route::get('categorias/tipo/{id}', [CategoriaController::class, 'getByCategoria']);
+Route::get('/detalles/presupuesto/{id}', [ItemPresupuestoController::class, 'getByPresupuesto']);
+Route::get('/presupuestos/boda/{id}', [PresupuestoController::class, 'getPresupuestoByBoda']);
+Route::prefix('reservas')->group(function () {
+    Route::get('calendario/empresa/{id}', [ReservaController::class, 'getCalendario']);
+    Route::get('empresa/{id}', [ReservaController::class, 'getReservaEmpresa']);
+    Route::get('empresa/{id}/estado/{estado}', [ReservaController::class, 'getRersevaPorConfirmar']);
+});
+
+
+
 Route::apiResource('bodas', BodaController::class);
 Route::apiResource('empresas', EmpresaController::class);
 Route::apiResource('categorias', CategoriaController::class);
 Route::apiResource('invitados', InvitadoController::class);
-Route::apiResource('reservas', ReservaController::class);
 Route::apiResource('resenias', ReseniaController::class);
 Route::apiResource('perfiles', PerfilUsuarioController::class);
 Route::apiResource('usuarios', UserController::class);
@@ -41,16 +55,20 @@ Route::apiResource('tipos', TipoProductoController::class);
 Route::apiResource('productos', ProductoController::class);
 Route::apiResource('presupuestos', PresupuestoController::class);
 Route::apiResource('detalles', ItemPresupuestoController::class);
+Route::apiResource('reservas', ReservaController::class);
+
 
 Route::post('imagenes', [SubirImagenController::class, 'store']);
 Route::post('login', [LoginController::class, 'login']);
 Route::post('logout', [LoginController::class, 'logout']);
+Route::post('/reservas/{id}/cancelar', [ReservaController::class, 'cancelar']);
 
-Route::get('/bodas/usuario/{id}', [BodaController::class, 'getBodaByUserId']);
-Route::get('/perfiles/usuario/{id}', [PerfilUsuarioController::class, 'getPerfilByUserId']);
-Route::get('provincias/poblacion/{id}',[ ProvinciaController::class, 'getByProvincia']);
-Route::get('categorias/tipo/{id}', [CategoriaController::class, 'getByCategoria']);
-Route::get('/detalles/presupuesto/{id}', [ItemPresupuestoController::class, 'getByPresupuesto']);
-Route::get('/presupuestos/boda/{id}', [PresupuestoController::class, 'getPresupuestoByBoda']);
+
+
+Route::get('/test-reverb', function () {
+    broadcast(new \App\Events\TestEvent("Hola Angular"));
+    return "OK";
+});
+
 
 // Route::apiResource('servicios', ServicioController::class)->only('index');

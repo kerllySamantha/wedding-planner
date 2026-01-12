@@ -17,4 +17,16 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::get('/test-reverb', function () {
+    broadcast(new \App\Events\TestEvent("Hola Angular"));
+    return "OK";
+});
+
+use App\Helpers\Helper;
+
+Route::get('/test-helper', function () {
+    return Helper::colorPorEstado('pendiente');
+});
+
+
 require __DIR__.'/auth.php';
