@@ -19,7 +19,7 @@ class BodaController extends Controller
      */
     public function index()
     {
-        $bodas = Boda::with('usuario')->paginate(10); 
+        $bodas = Boda::with('usuario')->paginate(10);
         return new BodaCollection($bodas);
     }
 
@@ -28,17 +28,18 @@ class BodaController extends Controller
      */
     public function store(BodaRequest $request)
     {
-
-        $boda = new Boda();
+        $data = $request->validated();
+        $data['user_id'] = $data['user_id'] ?? auth()->id();
+        $boda = Boda::create($data);
         // $boda->user_id = Auth::id() ?? 1;
-        $boda->nombre_pareja = $request->nombre_pareja;
-        $boda->fecha_boda = $request->fecha_boda;
-        $boda->ubicacion = $request->ubicacion;
-        $boda->user_id = $request->user_id;
-        $boda->presupuesto = $request->presupuesto;
-        $boda->notas = $request->notas;
-        $boda->fotos = $request->validated()['fotos'];
-        $boda->save();
+        // $boda->nombre_pareja = $request->nombre_pareja;
+        // $boda->fecha_boda = $request->fecha_boda;
+        // $boda->ubicacion = $request->ubicacion;
+        // $boda->user_id = $request->user_id;
+        // $boda->presupuesto = $request->presupuesto;
+        // $boda->notas = $request->notas;
+        // $boda->fotos = $request->validated()['fotos'];
+        // $boda->save();
         return response()->json([
             'status' => 'success',
             'message' => 'Boda creada correctamente',
@@ -50,9 +51,8 @@ class BodaController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Boda $boda)
     {
-        $boda = Boda::find($id);
 
         if (!$boda) {
             return response()->json([
@@ -111,9 +111,10 @@ class BodaController extends Controller
             'status' => 'success',
             'message' => 'Boda encontrada correctamente',
             'data' => new BodaResource($boda)
-        ]);;
+        ]);
+        ;
     }
-    
 
-   
+
+
 }

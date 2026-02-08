@@ -19,7 +19,7 @@ class BodaSeeder extends Seeder
 
         $bodas = [
             [
-                'nombre_pareja' => 'María & Javier',
+                'nombre_pareja' => 'Maria & Tomas',
                 'fecha_boda' => '2030-6-20',
                 'ubicacion' => 'Sevilla, España',
                 // // 'presupuesto_total' => 12000.50,
@@ -28,23 +28,27 @@ class BodaSeeder extends Seeder
                 'notas' => 'Ceremonia al aire libre, menú vegetariano.',
                 'fotos' => json_encode([
                     [
-                        "path" =>  "imagenes/usuario_2/68e2a18817460.jepg",
-                        "url" => "http://127.0.0.1:8000/storage/imagenes/usuario_2/68e2a18817460.jepg",
+                        "path" =>  "imagenes/usuario_2/imagen.jpg",
+                        "url" => "http://127.0.0.1:8000/storage/imagenes/usuario_2/imagen_1.jpg",
                     ],
                     [
-                        "path" => "imagenes/usuario_2/68e2a0c16d7f7.jepg",
-                        "url" =>  "http://127.0.0.1:8000/storage/imagenes/usuario_2/68e2a0c16d7f7.jepg"
+                        "path" => "imagenes/usuario_2/imagen_2.jpg",
+                        "url" =>  "http://127.0.0.1:8000/storage/imagenes/usuario_2/imagen_2.jpg"
                     ],
                     [
-                        "path" =>  "imagenes/usuario_2/68e2a229784b4.jepg",
-                        "url" =>  "http://127.0.0.1:8000/storage/imagenes/usuario_2/68e2a229784b4.jepg"
+                        "path" =>  "imagenes/usuario_2/imagen_3.jpg",
+                        "url" =>  "http://127.0.0.1:8000/storage/imagenes/usuario_2/imagen_3.jpg"
+                    ],
+                     [
+                        "path" =>  "imagenes/usuario_2/imagen_4.jpg",
+                        "url" =>  "http://127.0.0.1:8000/storage/imagenes/usuario_2/imagen_4.jpg"
                     ],
 
 
                 ]),
             ],
             [
-                'nombre_pareja' => 'Lucía & Javier',
+                'nombre_pareja' => 'Juana & Javier',
                 'fecha_boda' => '2035-09-15',
                 'ubicacion' => 'Madrid, España',
                 // 'presupuesto_total' => 15000,
@@ -53,12 +57,28 @@ class BodaSeeder extends Seeder
                 'notas' => 'Boda temática vintage, música en vivo.',
                 'fotos' => json_encode([
                     [
-                        'path' => 'imagenes/usuario_2/storage/usuario_3/t30_5475939.jpg',
-                        'url' => "http://127.0.0.1:8000/storage/imagenes/usuario_3/t30_5475939.jpg",
+                        'path' => 'imagenes/usuario_3/imagen_1.jpg',
+                        'url' => "http://127.0.0.1:8000/storage/imagenes/usuario_3/imagen_1.jpg",
                     ],
                     [
-                        'path' => 'imagenes/usuario_3/t10_dsc00451_1_31948-172503238499056.jpg',
-                        'url' => "http://127.0.0.1:8000/storage/imagenes/usuario_3/t10_dsc00451_1_31948-172503238499056.jpg",
+                        'path' => 'imagenes/usuario_3/imagen_2.jpg',
+                        'url' => "http://127.0.0.1:8000/storage/imagenes/usuario_3/imagen_2.jpg",
+                    ],
+                    [
+                        'path' => 'imagenes/usuario_3/imagen_3.jpg',
+                        'url' => "http://127.0.0.1:8000/storage/imagenes/usuario_3/imagen_3.jpg",
+                    ],
+                    [
+                        'path' => 'imagenes/usuario_3/imagen_4.jpg',
+                        'url' => "http://127.0.0.1:8000/storage/imagenes/usuario_3/imagen_4.jpg",
+                    ],
+                    [
+                        'path' => 'imagenes/usuario_3/imagen_5.jpg',
+                        'url' => "http://127.0.0.1:8000/storage/imagenes/usuario_3/imagen_5.jpg",
+                    ],
+                    [
+                        'path' => 'imagenes/usuario_3/imagen_6.jpg',
+                        'url' => "http://127.0.0.1:8000/storage/imagenes/usuario_3/imagen_6.jpg",
                     ],
                 ]),
             ],

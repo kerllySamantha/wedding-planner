@@ -6,6 +6,7 @@ use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ReservaRequest;
 use App\Http\Resources\ReservaCollection;
+use App\Http\Resources\ReservaResource;
 use App\Models\Boda;
 use App\Models\Reserva;
 use Carbon\Carbon;
@@ -27,9 +28,12 @@ class ReservaController extends Controller
      */
 
 
-    public function show(string $id)
+    public function show(Reserva $reserva)
     {
-        $reserva = Reserva::findOrFail($id);
+        $reserva = Reserva::with('producto.tipoProducto.categoria')->first();
+
+
+
 
         if (!$reserva) {
             return response()->json([
@@ -38,7 +42,7 @@ class ReservaController extends Controller
             ], 404);
         }
 
-        return response()->json($reserva, 201);
+        return new ReservaResource($reserva);
     }
 
 
@@ -150,7 +154,8 @@ class ReservaController extends Controller
 
                     'cliente' => $r->usuario ? [
                         'id' => $r->usuario->id,
-                        'nombre' => $r->usuario->name
+                        'name' => $r->usuario->name,
+                        'rol' => $r->usuario->getRoleNames()->first()
                     ] : null,
 
                     'empresa' => [
@@ -171,7 +176,10 @@ class ReservaController extends Controller
 
                     'producto' => $r->producto ? [
                         'id' => $r->producto->id,
-                        'nombre' => $r->producto->nombre
+                        'nombre' => $r->producto->nombre,
+                        'categoria' => $r->producto->tipoProducto->categoria->nombre ?? "",
+                        'tipo_producto' => $r->producto->tipoProducto->nombre ?? "",
+                        'modalidad' => $r->producto->tipoProducto->modalidad ?? "",
                     ] : null,
                 ]
             ];

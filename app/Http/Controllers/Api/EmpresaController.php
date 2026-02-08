@@ -10,7 +10,7 @@ use App\Http\Resources\EmpresaResource;
 use App\Models\Empresa;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Arr;
 
 class EmpresaController extends Controller
 {
@@ -31,37 +31,25 @@ class EmpresaController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+
+
     public function store(EmpresaRequest $request)
     {
         $validated = $request->validated();
 
         $user = User::create([
-            'name'     => $validated['name'],
-            'email'    => $validated['email'],
+            'name' => $validated['name'],
+            'email' => $validated['email'],
             'password' => bcrypt($validated['password']),
         ]);
 
         $user->assignRole($validated['rol']);
 
+        $empresa = $user->empresa()->create(Arr::except($validated, ['name', 'email', 'password', 'rol', 'servicios']));
 
+        $empresa->servicios()->attach($validated['servicios'] ?? []);
 
-        $empresa = Empresa::create([
-            'user_id'        => $user->id,
-            'nombre_empresa' => $validated['nombre_empresa'],
-            'direccion'      => $validated['direccion'],
-            'telefono'       => $validated['telefono'],
-            'descripcion'    => $validated['descripcion'] ?? null,
-            'logo'           => $validated['logo'] ?? null,
-            'fotos'          => $validated['fotos'] ?? null,
-            'tipo_servicio' => $validated['tipo_servicio'] ?? null
-        ]);
-
-        if (isset($validated['servicios']) && is_array($validated['servicios'])) {
-            $empresa->servicios()->sync($validated['servicios']);
-        }
-
-        // 4. Retornar recurso
-        return new EmpresaResource($empresa);
+        return new EmpresaResource($empresa->load('servicios'));
     }
 
 
@@ -76,7 +64,7 @@ class EmpresaController extends Controller
                 'productos.tipoProducto.categoria',
                 'poblacion.provincia',
                 'usuario',
-            ]   
+            ]
         )->find($id);
 
         return new EmpresaResource($empresa);
@@ -85,58 +73,60 @@ class EmpresaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+
+    public function update(Request $request, Empresa $empresa)
     {
-        $empresa = Empresa::findOrFail($id);
-        $user = User::findOrFail($empresa->user_id);
+        $user = $empresa->usuario;
 
-
-        $user->name = $request->name ?? $user->name;
-        $user->email = $request->email ?? $user->email;
-
+        $userData = Arr::only($request->all(), ['name', 'email']);
         if ($request->filled('password')) {
-            $user->password = bcrypt($request->password);
+            $userData['password'] = bcrypt($request->password);
         }
+        $user->update($userData);
 
         if ($request->filled('rol')) {
             $user->syncRoles([$request->rol]);
         }
 
-        $user->save();
+        $empresaData = Arr::only($request->all(), [
+            'nombre_empresa',
+            'direccion',
+            'telefono',
+            'descripcion',
+            'logo',
+            'tipo_servicio',
+            // 'fotos', // descomenta si quieres permitir actualizar fotos
+            // 'categoria_id', // descomenta si quieres actualizar categoría
+        ]);
+        $empresa->update($empresaData);
 
-        $empresa->nombre_empresa = $request->nombre_empresa ?? $empresa->nombre_empresa;
-        $empresa->direccion = $request->direccion ?? $empresa->direccion;
-        $empresa->telefono = $request->telefono ?? $empresa->telefono;
-        $empresa->descripcion = $request->descripcion ?? $empresa->descripcion;
-        $empresa->logo = $request->logo ?? $empresa->logo;
-        $empresa->tipo_servicio = $request->tipo_servicio ?? $empresa->tipo_servicio;
-        // $empresa->fotos = $request->validated()['fotos'];
-        // $empresa->categoria_id = $request->categoria_id ?? $empresa->categoria_id;
-
-        $empresa->save();
-
+        // 3. Retornar recurso
         return response()->json([
             'status' => 'success',
             'message' => 'Empresa actualizada correctamente',
-            'data' =>  new EmpresaResource($empresa->load(['usuario', 'categoria']))
+            'data' => new EmpresaResource($empresa->load(['user', 'categoria'])),
         ], 200);
     }
+
 
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Empresa $empresa)
     {
-        $empresa = Empresa::findOrFail($id);
-
-        $user = $empresa->user;
-
+        $user = $empresa->usuario;
         $empresa->delete();
 
         if ($user) {
             $user->delete();
         }
-        return  new EmpresaResource($empresa);
+        return new EmpresaResource($empresa);
+    }
+
+    public function getEmpresaPorUsuario(string $id)
+    {
+        $empresa = Empresa::where('user_id', $id)->first();
+        return new EmpresaResource($empresa);
     }
 }

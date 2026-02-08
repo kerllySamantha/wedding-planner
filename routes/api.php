@@ -38,7 +38,7 @@ Route::prefix('reservas')->group(function () {
     Route::get('empresa/{id}', [ReservaController::class, 'getReservaEmpresa']);
     Route::get('empresa/{id}/estado/{estado}', [ReservaController::class, 'getRersevaPorConfirmar']);
 });
-
+Route::get('/empresas/usuario/{id}', [EmpresaController::class, 'getEmpresaPorUsuario']);
 
 
 Route::apiResource('bodas', BodaController::class);

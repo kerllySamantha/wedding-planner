@@ -50,7 +50,7 @@ class User extends Authenticatable
 
     function bodas()
     {
-        $this->hasMany(Boda::class);
+        return $this->hasMany(Boda::class);
     }
 
     // function rol()
@@ -59,11 +59,11 @@ class User extends Authenticatable
     // }
 
     function resenias(){
-        $this->hasMany(Resenia::class);
+       return  $this->hasMany(Resenia::class);
     }
 
     function empresa(){
-        $this->hasOne(Empresa::class);
+       return  $this->hasOne(Empresa::class);
     }
 
     public function mensajesEnviados()

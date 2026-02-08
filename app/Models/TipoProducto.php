@@ -23,4 +23,6 @@ class TipoProducto extends Model
     {
         return $this->hasMany(Presupuesto::class);
     }
+
+   
 }

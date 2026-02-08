@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('categoria_id')->references('id')->on('categorias');
             $table->string('nombre');
             $table->text('descripcion')->nullable();
+            $table->enum('modalidad', ['producto', 'servicio', 'dia'])->default('dia');
             $table->timestamps();
         });
     }

@@ -23,4 +23,9 @@ class Producto extends Model
     {
         return $this->hasMany(ItemPresupuesto::class);
     }
+
+    public function reservas()
+    {
+        return $this->hasMany(Reserva::class);
+    }
 }

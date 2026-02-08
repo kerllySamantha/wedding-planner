@@ -27,6 +27,7 @@ class ProductoResource extends JsonResource
             'tipo_producto' => [
                 'id' => $this->tipoProducto->id,
                 'nombre' => $this->tipoProducto->nombre,
+                'modalidad' => $this->tipoProducto->modalidad,
             ],
 
         ];

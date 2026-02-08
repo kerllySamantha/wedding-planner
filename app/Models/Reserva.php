@@ -15,11 +15,15 @@ class Reserva extends Model
         'estado',
         'origen',
         'notas',
+        'producto_id',
         // 'servicio_id',
         // 'producto_id'
     ];
 
     protected $table = 'reservas';
+
+    protected $with = ['usuario', 'empresa', 'boda', 'producto'];
+
 
     public function usuario()
     {
@@ -34,5 +38,10 @@ class Reserva extends Model
     public function boda()
     {
         return $this->belongsTo(Boda::class, 'boda_id');
+    }
+
+    public function producto()
+    {
+        return $this->belongsTo(Producto::class);
     }
 }

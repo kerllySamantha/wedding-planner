@@ -25,7 +25,7 @@ class ReservaResource extends JsonResource
 
             'usuario' => $this->usuario ? [
                 'id' => $this->usuario->id,
-                'nombre' => $this->usuario->name
+                'nombre' => $this->usuario->name,
             ] : null,
 
             'empresa' => [
@@ -38,17 +38,24 @@ class ReservaResource extends JsonResource
                 'nombre_pareja' => $this->boda->nombre_pareja,
                 'fecha' => $this->boda->fecha,
                 'ubicacion' => $this->boda->ubicacion,
+                'usuario_id' => $this->boda->user_id,
             ] : null,
 
-            'servicio' => $this->servicio ? [
-                'id' => $this->servicio->id,
-                'nombre' => $this->servicio->nombre
-            ] : null,
-
+            // 'servicio' => $this->servicio ? [
+            //     'id' => $this->servicio->id,
+            //     'nombre' => $this->servicio->nombre
+            // ] : null,
             'producto' => $this->producto ? [
                 'id' => $this->producto->id,
-                'nombre' => $this->producto->nombre
+                'nombre' => $this->producto->nombre,
+                'categoria' => $this->producto->tipoProducto->categoria->nombre ?? "",
+                'tipo_producto' => $this->producto->tipoProducto->nombre ?? "",
+                'modalidad' => $this->producto->tipoProducto->modalidad ?? "",
             ] : null,
+            
+            
+
+
         ];
     }
 }

@@ -14,7 +14,7 @@ class EmpresaSeeder extends Seeder
      */
     public function run(): void
     {
-        $empresaUsers = User::role('empresa')->get();
+        $empresaUsers = User::role('empresa')->get()->values()->all();
 
         $empresas = [
             [
@@ -40,11 +40,11 @@ class EmpresaSeeder extends Seeder
                         ],
                         [
                             'path' => 'imagenes/usuario_4/imagen_5.webp',
-                            'url' => "http://127.0.0.1:8000/storage/imagenes/usuario_4/imagen_5.webp",
+                            'url' => "http://127.0.0.1:8000/storage/imagenes/usuario_4/imagen_3.webp",
                         ],
                         [
                             'path' => 'imagenes/usuario_4/imagen_6.webp',
-                            'url' => "http://127.0.0.1:8000/storage/imagenes/usuario_4/imagen_6.webp",
+                            'url' => "http://127.0.0.1:8000/storage/imagenes/usuario_4/imagen_4.webp",
                         ],
                     ]
                 )
@@ -55,8 +55,8 @@ class EmpresaSeeder extends Seeder
                 'direccion' => 'Plaza Mayor 5, Segovia',
                 'telefono' => '921654321',
                 'descripcion' => 'Fotografía profesional con más de 20 años de experiencia.',
-                'user_id' => $empresaUsers[0]->id,
-                // 'categoria_id' => 1,
+                'user_id' => $empresaUsers[1]->id,
+                // 'categoria_id' => 6,
                 // 'servicios' => [2, 4],
                 'poblacion_id' => 282,
                 'fotos' => json_encode(
@@ -75,8 +75,8 @@ class EmpresaSeeder extends Seeder
                         ],
 
                         [
-                            'path' => 'imagenes/empresa_4/imagen_5.webp',
-                            'url' => "http://127.0.0.1:8000/storage/imagenes/empresa_4/imagen_5.webp",
+                            'path' => 'imagenes/empresa_4/imagen_4.webp',
+                            'url' => "http://127.0.0.1:8000/storage/imagenes/empresa_4/imagen_4.webp",
                         ],
 
 
@@ -91,7 +91,7 @@ class EmpresaSeeder extends Seeder
                 Panadería Maeso nace en un pequeño obrador artesano, en un hermoso pueblo
                 de Guadalajara, Checa. Todo comenzó cuando se unió la pasión por la panadería, los eventos, la decoración y la organización de la propia boda de sus dueños. El conocimiento
                 previo en organización de eventos, el gusto por los pequeños detalles y todas las maravillosas ideas que salen de sus cabezas harán que tu día especial sea mucho más dulce.',
-                'user_id' => $empresaUsers[0]->id,
+                'user_id' => $empresaUsers[2]->id,
                 // 'categoria_id' => 4,
                 'poblacion_id' => 282,
                 // 'servicios' => [6, 7],
@@ -109,10 +109,10 @@ class EmpresaSeeder extends Seeder
                             'path' => 'imagenes/empresa_3/imagen_3.webp',
                             'url' => "http://127.0.0.1:8000/storage/imagenes/empresa_3/imagen_3.webp",
                         ],
-                        // [
-                        //     'path' => 'imagenes/empresa_3/imagen_4.webp',
-                        //     'url' => "http://127.0.0.1:8000/storage/imagenes/empresa_3/imagen_4.webp",
-                        // ],
+                        [
+                            'path' => 'imagenes/empresa_3/imagen_4.webp',
+                            'url' => "http://127.0.0.1:8000/storage/imagenes/empresa_3/imagen_4.webp",
+                        ],
                         [
                             'path' => 'imagenes/empresa_3/imagen_5.webp',
                             'url' => "http://127.0.0.1:8000/storage/imagenes/empresa_3/imagen_5.webp",
@@ -132,7 +132,7 @@ class EmpresaSeeder extends Seeder
                 // 'servicios' => [8, 9],
                 'descripcion' => ' es un
                 taller especializado en el diseño y la creación de vestidos de novia, madrina, fiesta y comunión. Cuenta con un amplio abanico de diseños entre los que escoger, además de la posibilidad de poder realizar diseños a medida en su taller, adaptándose a todos tus sueños.',
-                'user_id' => $empresaUsers[0]->id,
+                'user_id' => $empresaUsers[3]->id,
                 // 'categoria_id' => 9,
                 'poblacion_id' => 282,
                 'fotos' => json_encode(
@@ -152,7 +152,7 @@ class EmpresaSeeder extends Seeder
 
                         [
                             'path' => 'imagenes/empresa_5/imagen_5.webp',
-                            'url' => "http://127.0.0.1:8000/storage/imagenes/empresa_5/imagen_5.webp",
+                            'url' => "http://127.0.0.1:8000/storage/imagenes/empresa_5/imagen_4.webp",
                         ],
 
 
@@ -167,7 +167,7 @@ class EmpresaSeeder extends Seeder
                  joyería familiar con taller de joyería en Segobia,
                   cuenta con la experiencia de varias generaciones de servicio y destaca por su trato cercano y un gran
                 catálogo de joyas, tanto para la novia como para el novio. La elección de las alianzas de boda será algo sencillo, sumando otro acierto del amor en el día de vuestra boda.',
-                'user_id' => $empresaUsers[0]->id,
+                'user_id' => $empresaUsers[4]->id,
 
                 // 'categoria_id' => 14,
                 'poblacion_id' => 282,
@@ -212,7 +212,7 @@ class EmpresaSeeder extends Seeder
                 Ningún invitado resistirá la tentación… Es más: ¡te lo agradecerán!
                  Contar con un candy bar durante la fiesta marca la diferencia y permite cargar
                   las pilas para seguir dándolo todo en la pista de baile.',
-                'user_id' => $empresaUsers[0]->id,
+                'user_id' => $empresaUsers[4]->id,
                 // 'categoria_id' => 4,
                 'poblacion_id' => 47,
                 'fotos' => json_encode(
@@ -252,7 +252,7 @@ class EmpresaSeeder extends Seeder
                 Desde carpas beduinas con un aire bohemio, jaimas con encanto exótico o
                  entelados de madera llenos de calidez, hasta dobles techos que transmiten
                   sofisticación.',
-                'user_id' => $empresaUsers[0]->id,
+                'user_id' => $empresaUsers[5]->id,
                 'poblacion_id' => 75,
                 // 'categoria_id' => 16,
                 'fotos' => json_encode(
@@ -290,12 +290,12 @@ class EmpresaSeeder extends Seeder
                 'poblacion_id' => 282,
                 'telefono' => '921667788',
                 'descripcion' => 'Venta de joyas y relojes de alta calidad.',
-                'user_id' => $empresaUsers[0]->id,
+                'user_id' => $empresaUsers[6]->id,
                 // 'categoria_id' => 14,
                 'fotos' => json_encode(
                     [
                         [
-                            'path' => 'imagen/empresa_9/imagen_1.webp',
+                            'path' => 'imagenes/empresa_9/imagen_1.webp',
                             'url' => "http://127.0.0.1:8000/storage/imagenes/empresa_9/imagen_1.webp",
                         ],
                         [
@@ -318,7 +318,15 @@ class EmpresaSeeder extends Seeder
             ],
         ];
 
-        foreach ($empresas as $data) {
+        $empresaUsers = User::role('empresa')->get(); 
+
+        foreach ($empresas as $index => $data) {
+            // Asignar un usuario único a cada empresa
+            if (isset($empresaUsers[$index])) {
+                $data['user_id'] = $empresaUsers[$index]->id;
+            } else {
+                $data['user_id'] = null;
+            }
 
             Empresa::create($data);
         }
