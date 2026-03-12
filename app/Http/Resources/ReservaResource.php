@@ -40,6 +40,7 @@ class ReservaResource extends JsonResource
                 'ubicacion' => $this->boda->ubicacion,
                 'usuario_id' => $this->boda->user_id,
             ] : null,
+            'tipo_reserva' => $this->tipo_reserva,
 
             // 'servicio' => $this->servicio ? [
             //     'id' => $this->servicio->id,
@@ -50,7 +51,7 @@ class ReservaResource extends JsonResource
                 'nombre' => $this->producto->nombre,
                 'categoria' => $this->producto->tipoProducto->categoria->nombre ?? "",
                 'tipo_producto' => $this->producto->tipoProducto->nombre ?? "",
-                'modalidad' => $this->producto->tipoProducto->modalidad ?? "",
+                // 'modalidad' => $this->producto->tipoProducto->modalidad ?? "",
             ] : null,
             
             

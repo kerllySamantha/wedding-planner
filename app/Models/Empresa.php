@@ -51,4 +51,9 @@ class   Empresa extends Model
     public function productos(){
         return $this->hasMany(Producto::class);
     }
+
+    public function pedirPresupuestos()
+    {
+        return $this->hasMany(PedirPresupuesto::class, 'empresa_id');
+    }
 }

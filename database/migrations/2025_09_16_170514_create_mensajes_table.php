@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('mensajes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('emisor_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('receptor_id')->constrained('users')->onDelete('cascade'); 
+            $table->foreignId('emisor_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('receptor_id')->constrained('users')->cascadeOnDelete(); 
             $table->text('contenido');
             $table->string('archivo')->nullable();
             $table->boolean('leido')->default(false); 

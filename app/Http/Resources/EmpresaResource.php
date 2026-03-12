@@ -55,12 +55,18 @@ class EmpresaResource extends JsonResource
                 'tipo_producto' => [
                     'id' => $producto->tipoProducto->id,
                     'nombre' => $producto->tipoProducto->nombre,
+                    'modalidad' => $producto->tipoProducto->modalidad
                 ],
                 'categoria' => [
                     'id' => $producto->tipoProducto->categoria->id,
                     'nombre' => $producto->tipoProducto->categoria->nombre,
                 ],
             ]),
+            'resenias' => [
+
+            ],
+            'promedio_resenias' =>  round($this->resenias_avg_puntuacion, 1),
+            'total_resenias' => $this->resenias_count,
 
         ];
 

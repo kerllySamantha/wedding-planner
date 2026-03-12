@@ -29,7 +29,21 @@ class TipoProductoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'categoria_id' => 'required|integer|exists:categorias,id',
+            'nombre' => 'required|string|max:255',
+            'descripcion' => 'nullable|string',
+            'modalidad' => 'nullable|in:producto,servicio,dia',
+        ]);
+
+        $tipoProducto = TipoProducto::create([
+            'categoria_id' => $validated['categoria_id'],
+            'nombre' => $validated['nombre'],
+            'descripcion' => $validated['descripcion'] ?? null,
+            'modalidad' => $validated['modalidad'] ?? 'dia',
+        ]);
+
+        return response()->json($tipoProducto, 201);
     }
 
     /**

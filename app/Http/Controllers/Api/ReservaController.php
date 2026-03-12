@@ -8,6 +8,7 @@ use App\Http\Requests\ReservaRequest;
 use App\Http\Resources\ReservaCollection;
 use App\Http\Resources\ReservaResource;
 use App\Models\Boda;
+use App\Models\Producto;
 use App\Models\Reserva;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -21,6 +22,7 @@ class ReservaController extends Controller
     {
         $reservas = Reserva::with(['usuario', 'empresa', 'boda'])->paginate(10);
         return new ReservaCollection($reservas);
+        // return response()->json($reservas, 201);
     }
 
     /**
@@ -54,14 +56,14 @@ class ReservaController extends Controller
     public function store(ReservaRequest $request)
     {
         $reserva = Reserva::create([
-            'user_id'      => $request->user_id,
-            'empresa_id'   => $request->empresa_id,
-            'boda_id'      => $request->boda_id,
+            'user_id' => $request->user_id,
+            'empresa_id' => $request->empresa_id,
+            'boda_id' => $request->boda_id,
             'fecha_inicio' => $request->fecha_inicio,
-            'fecha_fin'    => $request->fecha_fin,
-            'estado'       => $request->estado ?? 'pendiente',
-            'origen'       => $request->origen ?? 'proveedor',
-            'notas'        => $request->notas,
+            'fecha_fin' => $request->fecha_fin,
+            'estado' => $request->estado ?? 'pendiente',
+            'origen' => $request->origen ?? 'proveedor',
+            'notas' => $request->notas,
         ]);
 
         return response()->json($reserva, 201);
@@ -79,9 +81,9 @@ class ReservaController extends Controller
         $reserva = Reserva::findOrFail($id);
         $reserva->update([
             'fecha_inicio' => $request->fecha_inicio ?? $reserva->fecha_inicio,
-            'fecha_fin'    => $request->fecha_fin ?? $reserva->fecha_fin,
-            'estado'       => $request->estado ?? $reserva->estado,
-            'notas'        => $request->notas ?? $reserva->notas,
+            'fecha_fin' => $request->fecha_fin ?? $reserva->fecha_fin,
+            'estado' => $request->estado ?? $reserva->estado,
+            'notas' => $request->notas ?? $reserva->notas,
         ]);
 
         return response()->json($reserva, 201);
@@ -129,6 +131,25 @@ class ReservaController extends Controller
         return new ReservaCollection($reservas);
     }
 
+    public function verificarDisponibilidad(Request $request)
+    {
+        $producto = Producto::find($request->producto_id);
+        $fecha = $request->fecha_inicio;
+
+        // 1. Contar cuántas reservas CONFIRMADAS hay para ese producto en esa fecha
+        $reservasExistentes = Reserva::where('producto_id', $producto->id)
+            ->whereDate('fecha_inicio', $fecha)
+            ->where('estado', 'confirmada')
+            ->count();
+
+        // 2. Comparar con el "stock_paralelo"
+        if ($reservasExistentes >= $producto->stock_paralelo) {
+            return response()->json(['disponible' => false, 'msj' => 'Agenda llena para esta fecha'], 400);
+        }
+
+        return response()->json(['disponible' => true]);
+    }
+
     public function getCalendario(string $id)
     {
 
@@ -142,7 +163,7 @@ class ReservaController extends Controller
                     ?? 'Reserva',
 
                 'start' => Carbon::parse($r->fecha_inicio)->toIso8601String(),
-                'end'   => Carbon::parse($r->fecha_fin)->toIso8601String(),
+                'end' => Carbon::parse($r->fecha_fin)->toIso8601String(),
 
                 'backgroundColor' => Helper::colorPorEstado($r->estado),
                 'borderColor' => Helper::colorPorEstado($r->estado),
@@ -173,13 +194,15 @@ class ReservaController extends Controller
                     //     'id' => $r->servicio->id,
                     //     'nombre' => $r->servicio->nombre
                     // ] : null,
+                    'tipo_reserva' => $r->tipo_reserva,
+                    'all_day' => $r->all_day,
 
                     'producto' => $r->producto ? [
                         'id' => $r->producto->id,
                         'nombre' => $r->producto->nombre,
                         'categoria' => $r->producto->tipoProducto->categoria->nombre ?? "",
                         'tipo_producto' => $r->producto->tipoProducto->nombre ?? "",
-                        'modalidad' => $r->producto->tipoProducto->modalidad ?? "",
+                        // 'modalidad' => $r->producto->tipoProducto->modalidad ?? "",
                     ] : null,
                 ]
             ];

@@ -13,6 +13,7 @@ class Presupuesto extends Model
     'boda_id',
     'tipo_producto_id',
     'monto_total',
+    'monto_pagado',
     'estado',
     'fecha_creacion'
   ];

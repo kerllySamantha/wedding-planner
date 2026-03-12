@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ReseniaRequest;
+use App\Http\Resources\ReseniaCollection;
+use App\Http\Resources\ReseniaEmpresaCollection;
 use App\Http\Resources\ReseniaResource;
 use App\Models\Resenia;
 use Illuminate\Http\Request;
@@ -25,7 +27,7 @@ class ReseniaController extends Controller
     public function store(ReseniaRequest $request)
     {
         $resenia = new Resenia();
-        
+
         $resenia->user_id = $request->validated()['user_id'];
         $resenia->empresa_id = $request->validated()['empresa_id'];
         $resenia->puntuacion = $request->validated()['puntuacion'];
@@ -34,7 +36,7 @@ class ReseniaController extends Controller
         // if ($request->hasFile('imagen')) {
         //     $rese->imagen = $request->file('imagen')->store('imagenes', 'public');
         // }
-        
+
         if (!$resenia->save()) {
             return response()->json([
                 'message' => 'No se ha podido realizar la resenia',
@@ -102,5 +104,38 @@ class ReseniaController extends Controller
             'status' => 'success',
 
         ], 200);
+    }
+
+    public function getReseniaEmpresa(string $idEmpresa)
+    {
+        $resenias = Resenia::with(['usuario', 'empresa'])
+            ->where('empresa_id', $idEmpresa)
+            ->whereNotNull('comentario')->paginate(10);
+
+
+
+        return new ReseniaEmpresaCollection($resenias);
+
+    }
+
+
+    public function getReseniasValoradas(string $idEmpresa, Request $request)
+    {
+        $query = Resenia::with(['usuario']) 
+            ->where('empresa_id', $idEmpresa)
+            ->whereNotNull('comentario');
+
+        // Filtro por tipo
+        if ($request->tipo === 'positivas') {
+            $query->where('puntuacion', '>=', 4);
+        }
+
+        if ($request->tipo === 'negativas') {
+            $query->where('puntuacion', '<=', 2);
+        }
+
+        $resenias = $query->latest()->paginate(10);
+
+        return new ReseniaCollection($resenias) ;
     }
 }

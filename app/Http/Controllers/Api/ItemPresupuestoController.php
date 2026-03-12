@@ -33,15 +33,26 @@ class ItemPresupuestoController extends Controller
         $validated = $request->validated();
 
         $existingItem = ItemPresupuesto::where('presupuesto_id', $validated['presupuesto_id'])
-            ->where('nombre_tipo_personalizado', $validated['nombre_tipo_personalizado'])
+            ->where('tipo_producto_id', $validated['tipo_producto_id'])
             ->first();
 
+        $montoPagado = array_key_exists('monto_pagado', $validated)
+            ? $validated['monto_pagado']
+            : ($existingItem?->monto_pagado ?? 0);
+
+        $esPersonalizado = array_key_exists('es_personalizado', $validated)
+            ? $validated['es_personalizado']
+            : ($existingItem?->es_personalizado ?? false);
+
+        $notas = array_key_exists('notas', $validated)
+            ? $validated['notas']
+            : ($existingItem?->notas ?? null);
+
         $itemData = [
-            'precio_unitario' => $validated['precio_unitario'] ?? 0,
-            'cantidad' => $validated['cantidad'] ?? 1,
-            'total_item' => ($validated['precio_unitario'] ?? 0) * ($validated['cantidad'] ?? 1),
-            'es_personalizado' => $validated['es_personalizado'] ?? false,
-            'notas' => $validated['notas'] ?? null,
+            'monto_estimado' => $validated['monto_estimado'],
+            'monto_pagado' => $montoPagado,
+            'es_personalizado' => $esPersonalizado,
+            'notas' => $notas,
         ];
 
         if ($existingItem) {
@@ -51,6 +62,7 @@ class ItemPresupuestoController extends Controller
             $item = ItemPresupuesto::create(array_merge(
                 [
                     'presupuesto_id' => $validated['presupuesto_id'],
+                    'tipo_producto_id' => $validated['tipo_producto_id'],
                     'nombre_tipo_personalizado' => $validated['nombre_tipo_personalizado'] ?? null
                 ],
                 $itemData
@@ -58,18 +70,27 @@ class ItemPresupuestoController extends Controller
         }
 
         $montoTotal = ItemPresupuesto::where('presupuesto_id', $validated['presupuesto_id'])
-            ->sum('total_item');
+            ->sum('monto_estimado');
+        $montoPagadoTotal = ItemPresupuesto::where('presupuesto_id', $validated['presupuesto_id'])
+            ->sum('monto_pagado');
 
         $presupuesto = Presupuesto::find($validated['presupuesto_id']);
         if ($presupuesto) {
-            $presupuesto->update(['monto_total' => $montoTotal]);
+            $presupuesto->update([
+                'monto_total' => $montoTotal,
+                'monto_pagado' => $montoPagadoTotal
+            ]);
         }
+
+        $montoRestante = $montoTotal - $montoPagadoTotal;
 
         return response()->json([
             'status' => 'success',
             'message' => 'Item guardado correctamente',
             'data' => $item,
-            'monto_total_presupuesto' => $montoTotal
+            'monto_total_presupuesto' => $montoTotal,
+            'monto_pagado_presupuesto' => $montoPagadoTotal,
+            'monto_restante_presupuesto' => $montoRestante
         ]);
     }
 

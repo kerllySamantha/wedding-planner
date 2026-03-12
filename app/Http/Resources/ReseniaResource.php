@@ -37,6 +37,7 @@ class ReseniaResource extends JsonResource
             'usuario' => [
                 'id' => $this->usuario->id,
                 'name' => $this->usuario->name,
+                'fotoPerfil' => $this->usuario->fotoPerfil
             ],
             'empresa' => [
                 'id' => $this->empresa->id,

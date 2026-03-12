@@ -88,4 +88,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(Invitado::class);
     }
+
+    public function pedirPresupuestos()
+    {
+        return $this->hasMany(PedirPresupuesto::class, 'user_id');
+    }
 }

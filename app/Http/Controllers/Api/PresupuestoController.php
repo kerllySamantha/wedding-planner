@@ -93,6 +93,8 @@ class PresupuestoController extends Controller
                 return [
                     'id' => $p->id,
                     'monto_total' => $p->monto_total,
+                    'monto_pagado' => $p->monto_pagado ?? 0,
+                    'monto_restante' => ($p->monto_total ?? 0) - ($p->monto_pagado ?? 0),
                     'estado' => $p->estado,
                     'fecha_creacion' => $p->fecha_creacion,
                     'tipo_producto' => [
@@ -102,10 +104,11 @@ class PresupuestoController extends Controller
                     'items_presupuesto' => $p->itemsPresupuesto->map(function ($item) {
                         return [
                             'id' => $item->id,
+                            'tipo_producto_id' => $item->tipo_producto_id,
                             'nombre_tipo_personalizado' => $item->nombre_tipo_personalizado,
-                            'precio_unitario' => $item->precio_unitario,
-                            'cantidad' => $item->cantidad,
-                            'total_item' => $item->total_item,
+                            'monto_estimado' => $item->monto_estimado,
+                            'monto_pagado' => $item->monto_pagado ?? 0,
+                            'diferencia' => ($item->monto_estimado ?? 0) - ($item->monto_pagado ?? 0),
                             'es_personalizado' => $item->es_personalizado,
                             'notas' => $item->notas,
                         ];

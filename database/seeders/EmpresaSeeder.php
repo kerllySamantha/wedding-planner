@@ -15,6 +15,8 @@ class EmpresaSeeder extends Seeder
     public function run(): void
     {
         $empresaUsers = User::role('empresa')->get()->values()->all();
+        $url_servidor  = "http://wedding_planer.local";
+        $url_local = "http://127.0.0.1:8000";
 
         $empresas = [
             [
@@ -32,19 +34,19 @@ class EmpresaSeeder extends Seeder
                     [
                         [
                             'path' => 'imagenes/usuario_4/imagen_1.webp',
-                            'url' => "http://127.0.0.1:8000/storage/imagenes/usuario_4/imagen_1.webp",
+                            'url' => "$url_servidor/storage/imagenes/usuario_4/imagen_1.webp",
                         ],
                         [
                             'path' => 'imagenes/usuario_4/imagen_2.webp',
-                            'url' => "http://127.0.0.1:8000/storage/imagenes/usuario_4/imagen_2.webp",
+                            'url' => "$url_servidor/storage/imagenes/usuario_4/imagen_2.webp",
                         ],
                         [
                             'path' => 'imagenes/usuario_4/imagen_5.webp',
-                            'url' => "http://127.0.0.1:8000/storage/imagenes/usuario_4/imagen_3.webp",
+                            'url' => "$url_servidor/storage/imagenes/usuario_4/imagen_3.webp",
                         ],
                         [
                             'path' => 'imagenes/usuario_4/imagen_6.webp',
-                            'url' => "http://127.0.0.1:8000/storage/imagenes/usuario_4/imagen_4.webp",
+                            'url' => "$url_servidor/storage/imagenes/usuario_4/imagen_4.webp",
                         ],
                     ]
                 )
@@ -63,20 +65,20 @@ class EmpresaSeeder extends Seeder
                     [
                         [
                             'path' => 'imagen/empresa_4/imagen_1.webp',
-                            'url' => "http://127.0.0.1:8000/storage/imagenes/empresa_4/imagen_1.webp",
+                            'url' => "$url_servidor/storage/imagenes/empresa_4/imagen_1.webp",
                         ],
                         [
                             'path' => 'imagenes/empresa_4/imagen_2.webp',
-                            'url' => "http://127.0.0.1:8000/storage/imagenes/empresa_4/imagen_2.webp",
+                            'url' => "$url_servidor/storage/imagenes/empresa_4/imagen_2.webp",
                         ],
                         [
                             'path' => 'imagenes/empresa_4/imagen_3.webp',
-                            'url' => "http://127.0.0.1:8000/storage/imagenes/empresa_4/imagen_3.webp",
+                            'url' => "$url_servidor/storage/imagenes/empresa_4/imagen_3.webp",
                         ],
 
                         [
                             'path' => 'imagenes/empresa_4/imagen_4.webp',
-                            'url' => "http://127.0.0.1:8000/storage/imagenes/empresa_4/imagen_4.webp",
+                            'url' => "$url_servidor/storage/imagenes/empresa_4/imagen_4.webp",
                         ],
 
 
@@ -99,27 +101,27 @@ class EmpresaSeeder extends Seeder
                     [
                         [
                             'path' => 'imagen/empresa_3/imagen_1.webp',
-                            'url' => "http://127.0.0.1:8000/storage/imagenes/empresa_3/imagen_1.webp",
+                            'url' => "$url_servidor/storage/imagenes/empresa_3/imagen_1.webp",
                         ],
                         [
                             'path' => 'imagenes/empresa_3/imagen_2.webp',
-                            'url' => "http://127.0.0.1:8000/storage/imagenes/empresa_3/imagen_2.webp",
+                            'url' => "$url_servidor/storage/imagenes/empresa_3/imagen_2.webp",
                         ],
                         [
                             'path' => 'imagenes/empresa_3/imagen_3.webp',
-                            'url' => "http://127.0.0.1:8000/storage/imagenes/empresa_3/imagen_3.webp",
+                            'url' => "$url_servidor/storage/imagenes/empresa_3/imagen_3.webp",
                         ],
                         [
                             'path' => 'imagenes/empresa_3/imagen_4.webp',
-                            'url' => "http://127.0.0.1:8000/storage/imagenes/empresa_3/imagen_4.webp",
+                            'url' => "$url_servidor/storage/imagenes/empresa_3/imagen_4.webp",
                         ],
                         [
                             'path' => 'imagenes/empresa_3/imagen_5.webp',
-                            'url' => "http://127.0.0.1:8000/storage/imagenes/empresa_3/imagen_5.webp",
+                            'url' => "$url_servidor/storage/imagenes/empresa_3/imagen_5.webp",
                         ],
                         [
                             'path' => 'imagenes/empresa_3/imagen_6.webp',
-                            'url' => "http://127.0.0.1:8000/storage/imagenes/empresa_3/imagen_6.webp",
+                            'url' => "$url_servidor/storage/imagenes/empresa_3/imagen_6.webp",
                         ],
 
                     ]
@@ -139,20 +141,20 @@ class EmpresaSeeder extends Seeder
                     [
                         [
                             'path' => 'imagen/empresa_5/imagen_1.webp',
-                            'url' => "http://127.0.0.1:8000/storage/imagenes/empresa_5/imagen_1.webp",
+                            'url' => "$url_servidor/storage/imagenes/empresa_5/imagen_1.webp",
                         ],
                         [
                             'path' => 'imagenes/empresa_5/imagen_2.webp',
-                            'url' => "http://127.0.0.1:8000/storage/imagenes/empresa_5/imagen_2.webp",
+                            'url' => "$url_servidor/storage/imagenes/empresa_5/imagen_2.webp",
                         ],
                         [
                             'path' => 'imagenes/empresa_5/imagen_3.webp',
-                            'url' => "http://127.0.0.1:8000/storage/imagenes/empresa_5/imagen_3.webp",
+                            'url' => "$url_servidor/storage/imagenes/empresa_5/imagen_3.webp",
                         ],
 
                         [
                             'path' => 'imagenes/empresa_5/imagen_5.webp',
-                            'url' => "http://127.0.0.1:8000/storage/imagenes/empresa_5/imagen_4.webp",
+                            'url' => "$url_servidor/storage/imagenes/empresa_5/imagen_4.webp",
                         ],
 
 
@@ -175,20 +177,20 @@ class EmpresaSeeder extends Seeder
                     [
                         [
                             'path' => 'imagen/empresa_6/imagen_1.webp',
-                            'url' => "http://127.0.0.1:8000/storage/imagenes/empresa_6/imagen_1.webp",
+                            'url' => "$url_servidor/storage/imagenes/empresa_6/imagen_1.webp",
                         ],
                         [
                             'path' => 'imagenes/empresa_6/imagen_2.webp',
-                            'url' => "http://127.0.0.1:8000/storage/imagenes/empresa_6/imagen_2.webp",
+                            'url' => "$url_servidor/storage/imagenes/empresa_6/imagen_2.webp",
                         ],
                         [
                             'path' => 'imagenes/empresa_6/imagen_3.webp',
-                            'url' => "http://127.0.0.1:8000/storage/imagenes/empresa_6/imagen_3.webp",
+                            'url' => "$url_servidor/storage/imagenes/empresa_6/imagen_3.webp",
                         ],
 
                         [
                             'path' => 'imagenes/empresa_6/imagen_4.webp',
-                            'url' => "http://127.0.0.1:8000/storage/imagenes/empresa_6/imagen_4.webp",
+                            'url' => "$url_servidor/storage/imagenes/empresa_6/imagen_4.webp",
                         ],
 
 
@@ -219,20 +221,20 @@ class EmpresaSeeder extends Seeder
                     [
                         [
                             'path' => 'imagen/empresa_8/imagen_1.webp',
-                            'url' => "http://127.0.0.1:8000/storage/imagenes/empresa_8/imagen_1.webp",
+                            'url' => "$url_servidor/storage/imagenes/empresa_8/imagen_1.webp",
                         ],
                         [
                             'path' => 'imagenes/empresa_8/imagen_2.webp',
-                            'url' => "http://127.0.0.1:8000/storage/imagenes/empresa_8/imagen_2.webp",
+                            'url' => "$url_servidor/storage/imagenes/empresa_8/imagen_2.webp",
                         ],
                         [
                             'path' => 'imagenes/empresa_8/imagen_3.webp',
-                            'url' => "http://127.0.0.1:8000/storage/imagenes/empresa_8/imagen_3.webp",
+                            'url' => "$url_servidor/storage/imagenes/empresa_8/imagen_3.webp",
                         ],
 
                         [
                             'path' => 'imagenes/empresa_8/imagen_4.webp',
-                            'url' => "http://127.0.0.1:8000/storage/imagenes/empresa_8/imagen_4.webp",
+                            'url' => "$url_servidor/storage/imagenes/empresa_8/imagen_4.webp",
                         ],
 
 
@@ -259,24 +261,24 @@ class EmpresaSeeder extends Seeder
                     [
                         [
                             'path' => 'imagen/empresa_7/imagen_1.webp',
-                            'url' => "http://127.0.0.1:8000/storage/imagenes/empresa_7/imagen_1.webp",
+                            'url' => "$url_servidor/storage/imagenes/empresa_7/imagen_1.webp",
                         ],
                         [
                             'path' => 'imagenes/empresa_7/imagen_2.webp',
-                            'url' => "http://127.0.0.1:8000/storage/imagenes/empresa_7/imagen_2.webp",
+                            'url' => "$url_servidor/storage/imagenes/empresa_7/imagen_2.webp",
                         ],
                         [
                             'path' => 'imagenes/empresa_7/imagen_3.webp',
-                            'url' => "http://127.0.0.1:8000/storage/imagenes/empresa_7/imagen_3.webp",
+                            'url' => "$url_servidor/storage/imagenes/empresa_7/imagen_3.webp",
                         ],
 
                         [
                             'path' => 'imagenes/empresa_7/imagen_4.webp',
-                            'url' => "http://127.0.0.1:8000/storage/imagenes/empresa_7/imagen_4.webp",
+                            'url' => "$url_servidor/storage/imagenes/empresa_7/imagen_4.webp",
                         ],
                         [
                             'path' => 'imagenes/empresa_7/imagen_5.webp',
-                            'url' => "http://127.0.0.1:8000/storage/imagenes/empresa_7/imagen_5.webp",
+                            'url' => "$url_servidor/storage/imagenes/empresa_7/imagen_5.webp",
                         ],
 
 
@@ -296,20 +298,20 @@ class EmpresaSeeder extends Seeder
                     [
                         [
                             'path' => 'imagenes/empresa_9/imagen_1.webp',
-                            'url' => "http://127.0.0.1:8000/storage/imagenes/empresa_9/imagen_1.webp",
+                            'url' => "$url_servidor/storage/imagenes/empresa_9/imagen_1.webp",
                         ],
                         [
                             'path' => 'imagenes/empresa_9/imagen_2.webp',
-                            'url' => "http://127.0.0.1:8000/storage/imagenes/empresa_9/imagen_2.webp",
+                            'url' => "$url_servidor/storage/imagenes/empresa_9/imagen_2.webp",
                         ],
                         [
                             'path' => 'imagenes/empresa_9/imagen_3.webp',
-                            'url' => "http://127.0.0.1:8000/storage/imagenes/empresa_9/imagen_3.webp",
+                            'url' => "$url_servidor/storage/imagenes/empresa_9/imagen_3.webp",
                         ],
 
                         [
                             'path' => 'imagenes/empresa_9/imagen_4.webp',
-                            'url' => "http://127.0.0.1:8000/storage/imagenes/empresa_9/imagen_4.webp",
+                            'url' => "$url_servidor/storage/imagenes/empresa_9/imagen_4.webp",
                         ],
 
 

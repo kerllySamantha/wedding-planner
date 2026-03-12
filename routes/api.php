@@ -12,13 +12,13 @@ use App\Http\Controllers\Api\BodaController;
 use App\Http\Controllers\Api\MensajeController;
 use App\Http\Controllers\Api\ReservaController;
 use App\Http\Controllers\Api\PerfilUsuarioController;
+use App\Http\Controllers\Api\PedirPresupuestoController;
 use App\Http\Controllers\Api\ProductoController;
 
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\SubirImagenController;
 use App\Http\Controllers\Api\TipoProductoController;
 use App\Http\Controllers\Api\ItemPresupuestoController;
-use App\Models\ItemPresupuesto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -26,6 +26,9 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+Route::get('/empresas/{id}/resenias', [ReseniaController::class, 'getReseniaEmpresa']);
+Route::get('/empresas/{id}/resenias-filtradas', [ReseniaController::class, 'getReseniasValoradas']);
+Route::get('pedirPresupuestos/empresas/{empresa}', [PedirPresupuestoController::class, 'getPedirPresupuestosEmpresa']);
 
 Route::get('/bodas/usuario/{id}', [BodaController::class, 'getBodaByUserId']);
 Route::get('/perfiles/usuario/{id}', [PerfilUsuarioController::class, 'getPerfilByUserId']);
@@ -38,7 +41,7 @@ Route::prefix('reservas')->group(function () {
     Route::get('empresa/{id}', [ReservaController::class, 'getReservaEmpresa']);
     Route::get('empresa/{id}/estado/{estado}', [ReservaController::class, 'getRersevaPorConfirmar']);
 });
-Route::get('/empresas/usuario/{id}', [EmpresaController::class, 'getEmpresaPorUsuario']);
+Route::get('/empresa/usuario/{user}', [EmpresaController::class, 'getEmpresaPorUsuario']);
 
 
 Route::apiResource('bodas', BodaController::class);
@@ -56,12 +59,15 @@ Route::apiResource('productos', ProductoController::class);
 Route::apiResource('presupuestos', PresupuestoController::class);
 Route::apiResource('detalles', ItemPresupuestoController::class);
 Route::apiResource('reservas', ReservaController::class);
+Route::apiResource('pedirPresupuestos', PedirPresupuestoController::class);
 
 
 Route::post('imagenes', [SubirImagenController::class, 'store']);
 Route::post('login', [LoginController::class, 'login']);
 Route::post('logout', [LoginController::class, 'logout']);
 Route::post('/reservas/{id}/cancelar', [ReservaController::class, 'cancelar']);
+
+Route::patch('pedirPresupuestos/{pedirPresupuesto}/respuesta', [PedirPresupuestoController::class, 'responder']);
 
 
 

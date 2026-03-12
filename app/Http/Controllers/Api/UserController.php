@@ -14,12 +14,19 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $usuarios = User::paginate(10);
-        return new UserCollection($usuarios);
-    }
+public function index()
+{
+    $users = User::select('users.*')
+        ->join('model_has_roles as mhr', 'users.id', '=', 'mhr.model_id')
+        ->join('roles', 'roles.id', '=', 'mhr.role_id')
+        ->where('mhr.model_type', User::class)
+        ->with('roles')
+        ->orderBy('roles.name')
+        ->distinct()
+        ->paginate(10);
 
+    return UserResource::collection($users);
+}
     /**
      * Store a newly created resource in storage.
      */
@@ -28,8 +35,8 @@ class UserController extends Controller
 
         $validated = $request->validated();
         $user = User::create([
-            'name'     => $validated['name'],
-            'email'    => $validated['email'],
+            'name' => $validated['name'],
+            'email' => $validated['email'],
             'password' => bcrypt($validated['password']),
         ]);
         $user->assignRole($validated['rol']);

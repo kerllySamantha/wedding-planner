@@ -16,6 +16,8 @@ class BodaSeeder extends Seeder
     public function run(): void
     {
         $usuarios = PerfilUsuario::inRandomOrder()->take(3)->pluck('usuario_id');
+        $url_servidor = "http://wedding_planer.local";
+        $url_local = "http://127.0.0.1:8000";
 
         $bodas = [
             [
@@ -28,20 +30,20 @@ class BodaSeeder extends Seeder
                 'notas' => 'Ceremonia al aire libre, menú vegetariano.',
                 'fotos' => json_encode([
                     [
-                        "path" =>  "imagenes/usuario_2/imagen.jpg",
-                        "url" => "http://127.0.0.1:8000/storage/imagenes/usuario_2/imagen_1.jpg",
+                        "path" => "imagenes/usuario_2/imagen.jpg",
+                        "url" => "$url_servidor/storage/imagenes/usuario_2/imagen_1.jpg",
                     ],
                     [
                         "path" => "imagenes/usuario_2/imagen_2.jpg",
-                        "url" =>  "http://127.0.0.1:8000/storage/imagenes/usuario_2/imagen_2.jpg"
+                        "url" => "$url_servidor/storage/imagenes/usuario_2/imagen_2.jpg"
                     ],
                     [
-                        "path" =>  "imagenes/usuario_2/imagen_3.jpg",
-                        "url" =>  "http://127.0.0.1:8000/storage/imagenes/usuario_2/imagen_3.jpg"
+                        "path" => "imagenes/usuario_2/imagen_3.jpg",
+                        "url" => "$url_servidor/storage/imagenes/usuario_2/imagen_3.jpg"
                     ],
-                     [
-                        "path" =>  "imagenes/usuario_2/imagen_4.jpg",
-                        "url" =>  "http://127.0.0.1:8000/storage/imagenes/usuario_2/imagen_4.jpg"
+                    [
+                        "path" => "imagenes/usuario_2/imagen_4.jpg",
+                        "url" => "$url_servidor/storage/imagenes/usuario_2/imagen_4.jpg"
                     ],
 
 
@@ -58,27 +60,27 @@ class BodaSeeder extends Seeder
                 'fotos' => json_encode([
                     [
                         'path' => 'imagenes/usuario_3/imagen_1.jpg',
-                        'url' => "http://127.0.0.1:8000/storage/imagenes/usuario_3/imagen_1.jpg",
+                        'url' => "$url_servidor/storage/imagenes/usuario_3/imagen_1.jpg",
                     ],
                     [
                         'path' => 'imagenes/usuario_3/imagen_2.jpg',
-                        'url' => "http://127.0.0.1:8000/storage/imagenes/usuario_3/imagen_2.jpg",
+                        'url' => "$url_servidor/storage/imagenes/usuario_3/imagen_2.jpg",
                     ],
                     [
                         'path' => 'imagenes/usuario_3/imagen_3.jpg',
-                        'url' => "http://127.0.0.1:8000/storage/imagenes/usuario_3/imagen_3.jpg",
+                        'url' => "$url_servidor/storage/imagenes/usuario_3/imagen_3.jpg",
                     ],
                     [
                         'path' => 'imagenes/usuario_3/imagen_4.jpg',
-                        'url' => "http://127.0.0.1:8000/storage/imagenes/usuario_3/imagen_4.jpg",
+                        'url' => "$url_servidor/storage/imagenes/usuario_3/imagen_4.jpg",
                     ],
                     [
                         'path' => 'imagenes/usuario_3/imagen_5.jpg',
-                        'url' => "http://127.0.0.1:8000/storage/imagenes/usuario_3/imagen_5.jpg",
+                        'url' => "$url_servidor/storage/imagenes/usuario_3/imagen_5.jpg",
                     ],
                     [
                         'path' => 'imagenes/usuario_3/imagen_6.jpg',
-                        'url' => "http://127.0.0.1:8000/storage/imagenes/usuario_3/imagen_6.jpg",
+                        'url' => "$url_servidor/storage/imagenes/usuario_3/imagen_6.jpg",
                     ],
                 ]),
             ],

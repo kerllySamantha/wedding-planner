@@ -16,7 +16,8 @@ class CategoriaSeeder extends Seeder
     public function run(): void
     {
 
-        $baseUrl = "http://127.0.0.1:8000/storage/imagenes/iconos/";
+        $baseUrl = "http://wedding_planer.local/storage/imagenes/iconos/";
+        $baseUrl_local = "http://127.0.0.1:8000/storage/imagenes/iconos/";
 
         $categorias = [
             ['nombre' => 'Belleza y cuidado personal', 'icono' => $baseUrl . 'imagen_2.png'],
@@ -29,19 +30,19 @@ class CategoriaSeeder extends Seeder
             ['nombre' => 'Joyería y accesorios', 'icono' => $baseUrl . 'imagen_8.png'],
             ['nombre' => 'Lugares y espacios ', 'icono' => $baseUrl . 'imagen_9.png'],
             ['nombre' => 'Mobiliario y ambientación', 'icono' => $baseUrl . 'imagen_10.png'],
-            ['nombre' => 'Moda nupcial', 'icono' =>  $baseUrl . 'imagen_11.png'],
-            ['nombre' => 'Música y entretenimiento', 'icono' =>  $baseUrl . 'imagen_12.png'],
-            ['nombre' => 'Organización y coordinación', 'icono' =>  $baseUrl . 'imagen_13.png'],
-            ['nombre' => 'Pastelería y postres', 'icono' =>  $baseUrl . 'imagen_14.png'],
-            ['nombre' => 'Seguridad y logística', 'icono' =>  $baseUrl . 'imagen_15.png'],
-            ['nombre' => 'Souvenirs y detalles', 'icono' =>  $baseUrl . 'imagen_16.png'],
-            ['nombre' => 'Tecnología y efectos especiales', 'icono' =>  $baseUrl . 'imagen_17.png'],
-            ['nombre' => 'Transporte y movilidad', 'icono' =>  $baseUrl . 'imagen_18.png'],
-            ['nombre' => 'Viaje de novios', 'icono' =>  $baseUrl . 'imagen_19.png'],
+            ['nombre' => 'Moda nupcial', 'icono' => $baseUrl . 'imagen_11.png'],
+            ['nombre' => 'Música y entretenimiento', 'icono' => $baseUrl . 'imagen_12.png'],
+            ['nombre' => 'Organización y coordinación', 'icono' => $baseUrl . 'imagen_13.png'],
+            ['nombre' => 'Pastelería y postres', 'icono' => $baseUrl . 'imagen_14.png'],
+            ['nombre' => 'Seguridad y logística', 'icono' => $baseUrl . 'imagen_15.png'],
+            ['nombre' => 'Souvenirs y detalles', 'icono' => $baseUrl . 'imagen_16.png'],
+            ['nombre' => 'Tecnología y efectos especiales', 'icono' => $baseUrl . 'imagen_17.png'],
+            ['nombre' => 'Transporte y movilidad', 'icono' => $baseUrl . 'imagen_18.png'],
+            ['nombre' => 'Viaje de novios', 'icono' => $baseUrl . 'imagen_19.png'],
         ];
-        
 
-        foreach ($categorias as $categoria ) {
+
+        foreach ($categorias as $categoria) {
             Categoria::create([
                 'nombre' => $categoria['nombre'],
                 'slug' => Str::slug($categoria['nombre']),

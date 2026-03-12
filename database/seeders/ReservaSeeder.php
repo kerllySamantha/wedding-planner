@@ -2,147 +2,106 @@
 
 namespace Database\Seeders;
 
-use App\Models\Boda;
 use App\Models\Empresa;
-use App\Models\Producto;
-use App\Models\Reserva;
 use App\Models\User;
+use App\Models\Producto;
 use Carbon\Carbon;
+use DB;
 use Illuminate\Database\Seeder;
 
 class ReservaSeeder extends Seeder
 {
     public function run(): void
     {
-        $usuarios = User::all();
-        $empresas = Empresa::all();
-        $bodas    = Boda::all();
+        $usuariosEmpresa = User::role('empresa')->get();
 
-        if ($usuarios->isEmpty() || $empresas->isEmpty() || $bodas->isEmpty()) {
+        if ($usuariosEmpresa->isEmpty()) {
+            $this->command->info('No hay usuarios con rol empresa.');
             return;
         }
 
-        $estados  = ['pendiente', 'confirmada', 'cancelada'];
-        $origenes = ['usuario', 'proveedor'];
+        $reservas = [];
+        $cantidad = 30;
 
-        // -----------------------------------
-        // RESERVAS
-        // -----------------------------------
-        foreach ($usuarios as $usuario) {
+        for ($i = 0; $i < $cantidad; $i++) {
+            $tipo = collect(['producto', 'servicio', 'bloqueo'])->random();
+            $estado = collect(['pendiente', 'confirmada', 'cancelada', 'bloqueada'])->random();
+            $origen = collect(['usuario', 'proveedor'])->random();
 
-            // Empresa
-            $empresa = $usuario->hasRole('empresa')
-                ? $usuario->empresa
-                : $empresas->random();
+            $fechaBase = Carbon::now()->addDays(rand(0, 90));
+            $fechaInicio = null;
+            $fechaFin = null;
+            $productoId = null;
+            $allDay = false;
+            $user = null;
+            $empresa = null;
 
-            if (!$empresa) {
-                continue;
-            }
+            // Bloqueo: asignamos empresa aleatoria para cumplir FK
+            if ($tipo === 'bloqueo') {
+                $empresa = Empresa::inRandomOrder()->first();
+                $duracionDias = rand(1, 3);
+                $fechaInicio = $fechaBase->copy()->startOfDay();
+                $fechaFin = $fechaInicio->copy()->addDays($duracionDias);
+                $allDay = true;
+            } else {
+                // Producto o servicio: usuario -> empresa -> productos
+                $user = $usuariosEmpresa->random();
+                $empresa = $user->empresa;
 
-            // Producto opcional
-            $producto = Producto::where('empresa_id', $empresa->id)
-                ->with('tipoProducto')
-                ->inRandomOrder()
-                ->first();
+                if (!$empresa) continue; // saltar si no tiene empresa
 
-            // Modalidad segura
-            $modalidad = $producto?->tipoProducto?->modalidad ?? 'dia';
+                if ($tipo === 'servicio') {
+                    $horaInicio = rand(8, 16);
+                    $duracionHoras = rand(2, 6);
+                    $fechaInicio = $fechaBase->copy()->setTime($horaInicio, 0, 0);
+                    $fechaFin = $fechaInicio->copy()->addHours($duracionHoras);
+                    $allDay = false;
 
-            $boda = $bodas->random();
+                    $productosEmpresa = $empresa->productos()
+                        ->whereHas('tipoProducto', function ($query) {
+                            $query->where('modalidad', 'servicio');
+                        })
+                        ->get();
 
-            // Evitar solape mismo día
-            $intentos = 0;
-            do {
-                $baseDay = Carbon::now('Europe/Madrid')
-                    ->addDays(rand(1, 60))
-                    ->startOfDay();
-
-                $existe = Reserva::where('empresa_id', $empresa->id)
-                    ->whereDate('fecha_inicio', $baseDay->toDateString())
-                    ->exists();
-
-                $intentos++;
-            } while ($existe && $intentos < 10);
-
-            if ($existe) {
-                continue;
-            }
-
-            // Fechas blindadas por modalidad
-            switch ($modalidad) {
-
-                case 'servicio':
-                    // ---- MISMO DÍA, CON HORAS ----
-                    $start = $baseDay->copy()->setTime(rand(8, 16), 0);
-                    $end   = $start->copy()->addHours(rand(1, 6));
-
-                    // seguridad extra
-                    if ($end->isSameDay($start) === false) {
-                        $end = $start->copy()->endOfDay();
-                    }
-                    break;
-
-                case 'producto':
-                case 'dia':
-                default:
-                    // ---- POR DÍAS (MÍNIMO +1) ----
-                    $dias  = rand(1, 4); // 1 o varios días
-                    $start = $baseDay->copy()->startOfDay();
-                    $end   = $start->copy()->addDays($dias);
-                    break;
-            }
-
-            Reserva::create([
-                'user_id'      => $usuario->hasRole('empresa') ? null : $usuario->id,
-                'empresa_id'   => $empresa->id,
-                'boda_id'      => $usuario->hasRole('empresa') ? null : $boda->id,
-                'fecha_inicio' => $start,
-                'fecha_fin'    => $end,
-                'estado'       => $estados[array_rand($estados)],
-                'origen'       => $usuario->hasRole('empresa')
-                                    ? 'proveedor'
-                                    : $origenes[array_rand($origenes)],
-                'notas'        => fake()->sentence(),
-                'producto_id'  => $producto?->id,
-            ]);
-        }
-
-        // -----------------------------------
-        // BLOQUEOS (SIEMPRE POR DÍA)
-        // -----------------------------------
-        foreach ($empresas as $empresa) {
-
-            for ($i = 0; $i < 3; $i++) {
-
-                $intentos = 0;
-                do {
-                    $start = Carbon::now('Europe/Madrid')
-                        ->addDays(rand(1, 60))
-                        ->startOfDay();
-
-                    $existe = Reserva::where('empresa_id', $empresa->id)
-                        ->whereDate('fecha_inicio', $start->toDateString())
-                        ->exists();
-
-                    $intentos++;
-                } while ($existe && $intentos < 10);
-
-                if ($existe) {
-                    continue;
+                    if ($productosEmpresa->isEmpty()) continue; // saltar si no hay productos
+                    $productoId = $productosEmpresa->random()->id;
                 }
 
-                Reserva::create([
-                    'user_id'      => null,
-                    'empresa_id'   => $empresa->id,
-                    'boda_id'      => null,
-                    'fecha_inicio' => $start,
-                    'fecha_fin'    => $start->copy()->addDay(),
-                    'estado'       => 'bloqueada',
-                    'origen'       => 'proveedor',
-                    'notas'        => 'Bloqueo de disponibilidad',
-                    'producto_id'  => null,
-                ]);
+                if ($tipo === 'producto') {
+                    $duracionDias = rand(1, 4);
+                    $fechaInicio = $fechaBase->copy()->startOfDay();
+                    $fechaFin = $fechaInicio->copy()->addDays($duracionDias);
+                    $allDay = true;
+
+                    $productosEmpresa = $empresa->productos()
+                        ->whereHas('tipoProducto', function ($query) {
+                            $query->where('modalidad', 'producto');
+                        })
+                        ->get();
+
+                    if ($productosEmpresa->isEmpty()) continue; // saltar si no hay productos
+                    $productoId = $productosEmpresa->random()->id;
+                }
             }
+
+            $reservas[] = [
+                'user_id' => $user?->id,
+                'empresa_id' => $empresa->id,
+                'producto_id' => $productoId,
+                'boda_id' => null,
+                'fecha_inicio' => $fechaInicio,
+                'fecha_fin' => $fechaFin,
+                'tipo_reserva' => $tipo,
+                'estado' => $estado,
+                'origen' => $origen,
+                'all_day' => $allDay,
+                'notas' => 'Reserva generada automáticamente #' . ($i + 1),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
         }
+
+        DB::table('reservas')->insert($reservas);
+        $this->command->info("Se han creado " . count($reservas) . " reservas coherentes por empresa.");
     }
 }

@@ -119,7 +119,7 @@ class PerfilUsuarioController extends Controller
         ], 200);
     }
 
-    public function getPerfilByUserId($usuarioId)
+    public function getPerfilByUserId(string $usuarioId)
     {
         $perfil = PerfilUsuario::with('user')
             ->where('usuario_id', $usuarioId)

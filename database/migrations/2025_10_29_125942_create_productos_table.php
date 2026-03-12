@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('empresa_id')->nullable()->references('id')->on('empresas');
             $table->foreignId('tipo_producto_id')->references('id')->on('tipo_productos');
+            $table->integer('stock_paralelo')->default(1);
             $table->string('nombre')->nullable();
             $table->text('descripcion')->nullable();
             $table->float('precio_min')->nullable();

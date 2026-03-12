@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('empresa_id')->references('id')->on('empresas');
             $table->foreignId('boda_id')->nullable()->references('id')->on('bodas');
             // $table->date('fecha');
-            $table->enum('estado', ['pendiente', 'confirmada', 'cancelada']);
+            // $table->enum('estado', ['pendiente', 'confirmada', 'cancelada']);
             $table->timestamps();
         }); 
     }

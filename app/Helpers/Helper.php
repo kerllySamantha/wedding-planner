@@ -12,6 +12,8 @@ class Helper
             'rechazada' => '#dc3545',
             'cancelada' => '#170a61',
             'bloqueada' => '#6c757d',
+
+            
             default => '#6c757d'
         };
     }

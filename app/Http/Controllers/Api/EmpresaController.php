@@ -57,17 +57,20 @@ class EmpresaController extends Controller
      * Display the specified resource.
      */
 
-    public function show(string $id)
+    public function show(Empresa $empresa)
     {
-        $empresa = Empresa::with(
+        $empresa->load(
             [
                 'productos.tipoProducto.categoria',
                 'poblacion.provincia',
-                'usuario',
+                'usuario','resenias'
             ]
-        )->find($id);
+        )
+        ->loadAvg('resenias', 'puntuacion')
+        -> loadCount('resenias')->get();
 
         return new EmpresaResource($empresa);
+       // return  response()->json($empresa, 200);
     }
 
     /**
@@ -124,9 +127,9 @@ class EmpresaController extends Controller
         return new EmpresaResource($empresa);
     }
 
-    public function getEmpresaPorUsuario(string $id)
+    public function getEmpresaPorUsuario(User $user)
     {
-        $empresa = Empresa::where('user_id', $id)->first();
+        $empresa = Empresa::where('user_id', $user->id)->first();
         return new EmpresaResource($empresa);
     }
 }
