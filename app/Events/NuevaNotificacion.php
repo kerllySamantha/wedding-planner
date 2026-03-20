@@ -50,17 +50,5 @@ class NuevaNotificacion implements ShouldBroadcast
 }
 
 
-    // public function broadcastWith(): array
-    // {
-    //     return [
-    //         'id'           => $this->notificacion->id,
-    //         'tipo'         => $this->notificacion->tipo,
-    //         'titulo'       => $this->notificacion->titulo,
-    //         'mensaje'      => $this->notificacion->mensaje,
-    //         'leido'        => $this->notificacion->leido,
-    //         'referencia_id'=> $this->notificacion->referencia_id,
-    //         'referencia_type' => $this->notificacion->referencia_type,
-    //         'referencia'   => $this->notificacion->referencia,
-    //     ];
-    // }
+
 }
