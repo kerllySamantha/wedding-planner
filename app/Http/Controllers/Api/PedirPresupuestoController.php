@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PedirPresupuestoRequest;
 use App\Http\Requests\ResponderPedirPresupuestoRequest;
+use App\Events\NuevaNotificacion;
 use App\Models\Notificacion;
 use App\Models\PedirPresupuesto;
 
@@ -29,14 +30,24 @@ class PedirPresupuestoController extends Controller
             ...$request->validated(),
             'estado' => PedirPresupuesto::ESTADO_PENDIENTE,
         ]);
+        
 
-        Notificacion::create([
-            'user_id' => $pedirPresupuesto->empresa_id,
-            'tipo' => 'presupuesto',
-            'titulo' => 'Nueva solicitud de presupuesto',
-            'mensaje' => 'Has recibido una nueva solicitud',
-            'referencia_id' => $pedirPresupuesto->id
-        ]);
+        $pedirPresupuesto->load('empresa.usuario');
+        $usuario_id = $pedirPresupuesto->empresa?->user_id;
+
+        if ($usuario_id) {
+            $notificacion = Notificacion::create([
+                'user_id' => $usuario_id,
+                'tipo' => 'presupuesto',
+                'titulo' => 'Nueva solicitud de presupuesto',
+                'mensaje' => 'Has recibido una nueva solicitud',
+                'referencia_id' => $pedirPresupuesto->id,
+                'referencia_type' => PedirPresupuesto::class
+            ]);
+
+            $notificacion->load('referencia');
+            broadcast(new NuevaNotificacion($notificacion));
+        }
 
         return response()->json($pedirPresupuesto->load(['usuario', 'empresa', 'boda']), 201);
     }

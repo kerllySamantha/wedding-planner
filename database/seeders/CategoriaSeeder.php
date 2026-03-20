@@ -16,7 +16,7 @@ class CategoriaSeeder extends Seeder
     public function run(): void
     {
 
-        $baseUrl = "http://wedding_planer.local/storage/imagenes/iconos/";
+        $baseUrl = "http://weddingplaner.local/storage/imagenes/iconos/";
         $baseUrl_local = "http://127.0.0.1:8000/storage/imagenes/iconos/";
 
         $categorias = [

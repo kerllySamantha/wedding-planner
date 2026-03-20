@@ -16,7 +16,7 @@ class BodaSeeder extends Seeder
     public function run(): void
     {
         $usuarios = PerfilUsuario::inRandomOrder()->take(3)->pluck('usuario_id');
-        $url_servidor = "http://wedding_planer.local";
+        $url_servidor = "http://weddingplaner.local";
         $url_local = "http://127.0.0.1:8000";
 
         $bodas = [

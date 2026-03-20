@@ -13,7 +13,7 @@ class ReseniaSeeder extends Seeder
     public function run(): void
     {
 
-        $url_servidor = "http://wedding_planer.local";
+        $url_servidor = "http://weddingplaner.local";
         $url_local = "http://127.0.0.1:8000";
         $resenias = [
             [

@@ -20,18 +20,20 @@ class LoginController extends Controller
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             $usuario = Auth::user();
 
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Usuario encontrado correctamente',
-                'user' => $usuario,
-                'data' => [
-                    
-                    'id' => $usuario->id,
-                    'name' => $usuario->name,
-                    'email' => $usuario->email,
-                    'rol' => $usuario->getRoleNames()->first(),
-                ]
-            ], 200);
+        $token = $usuario->createToken('auth_token')->plainTextToken;
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Usuario encontrado correctamente',
+            'user' => $usuario,
+            'token' => $token, 
+            'data' => [
+                'id' => $usuario->id,
+                'name' => $usuario->name,
+                'email' => $usuario->email,
+                'rol' => $usuario->getRoleNames()->first(),
+            ]
+        ], 200);
         }
 
         // Credenciales incorrectas
@@ -40,9 +42,9 @@ class LoginController extends Controller
         ], 401);
     }
 
-    public function logout()
-    {
-        Auth::logout();
-        return response()->json(['message' => 'Sesión cerrada'], 200);
-    }
+        public function logout(Request $request)
+        {
+            $request->user()->currentAccessToken()->delete();
+            return response()->json(['message' => 'Sesión cerrada'], 200);
+        }
 }

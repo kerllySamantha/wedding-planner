@@ -15,7 +15,7 @@ class EmpresaSeeder extends Seeder
     public function run(): void
     {
         $empresaUsers = User::role('empresa')->get()->values()->all();
-        $url_servidor  = "http://wedding_planer.local";
+        $url_servidor  = "http://weddingplaner.local";
         $url_local = "http://127.0.0.1:8000";
 
         $empresas = [

@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\CategoriaController;
 use App\Http\Controllers\Api\EmpresaController;
 use App\Http\Controllers\Api\InvitadoController;
 use App\Http\Controllers\Api\LoginController;
+use App\Http\Controllers\Api\NotificacionController;
 use App\Http\Controllers\Api\PoblacionController;
 use App\Http\Controllers\Api\PresupuestoController;
 use App\Http\Controllers\Api\ProvinciaController;
@@ -21,6 +22,7 @@ use App\Http\Controllers\Api\TipoProductoController;
 use App\Http\Controllers\Api\ItemPresupuestoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Broadcast;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -60,11 +62,21 @@ Route::apiResource('presupuestos', PresupuestoController::class);
 Route::apiResource('detalles', ItemPresupuestoController::class);
 Route::apiResource('reservas', ReservaController::class);
 Route::apiResource('pedirPresupuestos', PedirPresupuestoController::class);
-
+Route::apiResource('notificaciones', NotificacionController::class)
+    ->parameters(['notificaciones' => 'notificacion']);
 
 Route::post('imagenes', [SubirImagenController::class, 'store']);
-Route::post('login', [LoginController::class, 'login']);
-Route::post('logout', [LoginController::class, 'logout']);
+// Rutas públicas
+Route::post('/login', [LoginController::class, 'login']);
+
+// Rutas protegidas con Sanctum
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [LoginController::class, 'logout']);
+ 
+});
+
+Broadcast::routes(['middleware' => ['auth:sanctum']]);
+
 Route::post('/reservas/{id}/cancelar', [ReservaController::class, 'cancelar']);
 
 Route::patch('pedirPresupuestos/{pedirPresupuesto}/respuesta', [PedirPresupuestoController::class, 'responder']);

@@ -21,10 +21,6 @@ class Poblacion extends Model
         return $this->belongsTo(Provincia::class, 'id_provincia');
     }
 
-    public function centros()
-    {
-        return $this->hasMany(Centro::class, 'poblacion_id', 'id');
-    }
 
     public function empresas()
     {
