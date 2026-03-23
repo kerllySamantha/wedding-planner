@@ -44,6 +44,7 @@ Route::prefix('reservas')->group(function () {
     Route::get('empresa/{id}/estado/{estado}', [ReservaController::class, 'getRersevaPorConfirmar']);
 });
 Route::get('/empresa/usuario/{user}', [EmpresaController::class, 'getEmpresaPorUsuario']);
+Route::get('empresas/{empresa}/productos', [EmpresaController::class, 'productos']);
 
 
 Route::apiResource('bodas', BodaController::class);
@@ -57,7 +58,8 @@ Route::apiResource('mensajes', MensajeController::class);
 Route::apiResource('provincias', ProvinciaController::class)->only(['index', 'show']);
 Route::apiResource('poblaciones', PoblacionController::class)->only('index');
 Route::apiResource('tipos', TipoProductoController::class);
-Route::apiResource('productos', ProductoController::class);
+Route::apiResource('productos', ProductoController::class)->
+parameters(['productos' => 'producto']);
 Route::apiResource('presupuestos', PresupuestoController::class);
 Route::apiResource('detalles', ItemPresupuestoController::class);
 Route::apiResource('reservas', ReservaController::class);
@@ -66,10 +68,9 @@ Route::apiResource('notificaciones', NotificacionController::class)
     ->parameters(['notificaciones' => 'notificacion']);
 
 Route::post('imagenes', [SubirImagenController::class, 'store']);
-// Rutas públicas
 Route::post('/login', [LoginController::class, 'login']);
 
-// Rutas protegidas con Sanctum
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout']);
  

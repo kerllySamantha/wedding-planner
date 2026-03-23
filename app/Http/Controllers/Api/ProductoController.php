@@ -13,9 +13,16 @@ class ProductoController extends Controller
      */
     public function index()
     {
-        return Producto::all()->toResourceCollection();
-    }
+        $query = Producto::query()->with('empresa');
 
+        if (request()->filled('empresa_id')) {
+            $query->where('empresa_id', request('empresa_id'));
+        }
+
+        $productos = $query->orderByDesc('created_at')->paginate(10);
+
+        return $productos->toResourceCollection();
+    }
     /**
      * Show the form for creating a new resource.
      */
@@ -63,4 +70,7 @@ class ProductoController extends Controller
     {
         //
     }
+
+
+    
 }

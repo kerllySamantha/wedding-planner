@@ -7,6 +7,7 @@ use App\Http\Requests\EmpresaRequest;
 use App\Http\Requests\UserRequest;
 use App\Http\Resources\EmpresaCollection;
 use App\Http\Resources\EmpresaResource;
+use App\Http\Resources\ProductoResource;
 use App\Models\Empresa;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -132,4 +133,13 @@ class EmpresaController extends Controller
         $empresa = Empresa::where('user_id', $user->id)->first();
         return new EmpresaResource($empresa);
     }
+
+    public function productos(Empresa $empresa)
+{
+    $productos = $empresa->productos()
+        ->latest()
+        ->paginate(10);
+
+    return ProductoResource::collection($productos);
+}
 }
