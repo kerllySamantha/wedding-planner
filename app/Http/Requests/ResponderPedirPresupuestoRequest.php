@@ -25,18 +25,39 @@ class ResponderPedirPresupuestoRequest extends FormRequest
     {
         return [
             'estado' => [
-                'required',
+                'nullable',
                 Rule::in([
                     PedirPresupuesto::ESTADO_ACEPTADO_EMPRESA,
                     PedirPresupuesto::ESTADO_RECHAZADO_EMPRESA,
                 ]),
+            ],
+            'producto_id' => [
+                'nullable',
+                'integer',
+                'exists:productos,id',
+                Rule::requiredIf(
+                    $this->input('estado') !== PedirPresupuesto::ESTADO_RECHAZADO_EMPRESA
+                ),
+            ],
+            'modalidad' => [
+                'nullable',
+                Rule::in(['producto', 'servicio', 'dia']),
+            ],
+            'fecha_inicio' => [
+                'nullable',
+                'date',
+            ],
+            'fecha_fin' => [
+                'nullable',
+                'date',
+                'after:fecha_inicio',
             ],
             'importe_ofertado' => [
                 'nullable',
                 'numeric',
                 'min:0',
                 Rule::requiredIf(
-                    $this->input('estado') === PedirPresupuesto::ESTADO_ACEPTADO_EMPRESA
+                    $this->input('estado') !== PedirPresupuesto::ESTADO_RECHAZADO_EMPRESA
                 ),
             ],
             'comentario_empresa' => 'nullable|string',
@@ -47,8 +68,13 @@ class ResponderPedirPresupuestoRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'estado.required' => 'El estado de la respuesta es obligatorio.',
             'estado.in' => 'El estado indicado no es valido para la respuesta de la empresa.',
+            'producto_id.required' => 'El producto es obligatorio para la propuesta.',
+            'producto_id.exists' => 'El producto indicado no existe.',
+            'modalidad.in' => 'La modalidad no es valida.',
+            'fecha_inicio.date' => 'La fecha de inicio no es valida.',
+            'fecha_fin.date' => 'La fecha de fin no es valida.',
+            'fecha_fin.after' => 'La fecha de fin debe ser posterior a la de inicio.',
             'importe_ofertado.required' => 'El importe ofertado es obligatorio cuando la empresa acepta.',
             'importe_ofertado.numeric' => 'El importe ofertado debe ser numerico.',
             'importe_ofertado.min' => 'El importe ofertado no puede ser negativo.',

@@ -12,9 +12,12 @@ class Reserva extends Model
         'boda_id',
         'fecha_inicio',
         'fecha_fin',
+        'tipo_reserva',
         'estado',
         'origen',
         'notas',
+        'all_day',
+        'expires_at',
         'producto_id',
         // 'servicio_id',
         // 'producto_id'
@@ -23,6 +26,10 @@ class Reserva extends Model
     protected $table = 'reservas';
 
     protected $with = ['usuario', 'empresa', 'boda', 'producto'];
+
+    protected $casts = [
+        'expires_at' => 'datetime',
+    ];
 
 
     public function usuario()

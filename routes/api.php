@@ -79,8 +79,13 @@ Route::middleware('auth:sanctum')->group(function () {
 Broadcast::routes(['middleware' => ['auth:sanctum']]);
 
 Route::post('/reservas/{id}/cancelar', [ReservaController::class, 'cancelar']);
+Route::post('/reservas/{id}/confirmar', [ReservaController::class, 'confirmar'])
+    ->middleware('auth:sanctum');
 
-Route::patch('pedirPresupuestos/{pedirPresupuesto}/respuesta', [PedirPresupuestoController::class, 'responder']);
+Route::patch('pedirPresupuestos/{pedirPresupuesto}/respuesta', [PedirPresupuestoController::class, 'responder'])
+    ->middleware('auth:sanctum');
+Route::patch('pedirPresupuestos/{pedirPresupuesto}/aceptar', [PedirPresupuestoController::class, 'aceptarPorUsuario'])
+    ->middleware('auth:sanctum');
 
 
 

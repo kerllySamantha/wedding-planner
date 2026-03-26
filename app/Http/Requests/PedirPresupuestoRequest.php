@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Producto;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class PedirPresupuestoRequest extends FormRequest
 {
@@ -23,6 +25,25 @@ class PedirPresupuestoRequest extends FormRequest
     {
         return [
             'empresa_id' => 'required|exists:empresas,id',
+            'tipo_producto_id' => [
+                'required',
+                'integer',
+                Rule::exists('tipo_productos', 'id'),
+                function ($attribute, $value, $fail) {
+                    $empresaId = $this->input('empresa_id');
+                    if (!$empresaId) {
+                        return;
+                    }
+
+                    $existeEnCatalogo = Producto::where('empresa_id', $empresaId)
+                        ->where('tipo_producto_id', $value)
+                        ->exists();
+
+                    if (!$existeEnCatalogo) {
+                        $fail('El proveedor no tiene productos de ese tipo.');
+                    }
+                },
+            ],
             'user_id' => 'required|exists:users,id',
             'boda_id' => 'nullable|exists:bodas,id',
             'fecha' => 'nullable|date|after:today',
@@ -40,6 +61,8 @@ class PedirPresupuestoRequest extends FormRequest
         return [
             'empresa_id.required' => 'La empresa es obligatoria.',
             'empresa_id.exists' => 'La empresa no existe.',
+            'tipo_producto_id.required' => 'El tipo de producto es obligatorio.',
+            'tipo_producto_id.exists' => 'El tipo de producto no existe.',
             'user_id.required' => 'El usuario es obligatorio.',
             'user_id.exists' => 'El usuario no existe.',
             'boda_id.exists' => 'La boda no existe.',

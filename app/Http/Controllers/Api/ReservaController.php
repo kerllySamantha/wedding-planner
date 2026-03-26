@@ -89,6 +89,106 @@ class ReservaController extends Controller
         return response()->json($reserva, 201);
     }
 
+    public function confirmar(Request $request, string $id)
+    {
+        $reserva = Reserva::findOrFail($id);
+
+        $userId = auth()->id();
+        if ($userId && $reserva->user_id && (int) $reserva->user_id !== (int) $userId) {
+            return response()->json([
+                'message' => 'No tienes permiso para confirmar esta reserva.',
+                'status' => 'error'
+            ], 403);
+        }
+
+        if ($reserva->estado !== 'bloqueada') {
+            return response()->json([
+                'message' => 'La reserva no esta en estado bloqueada.',
+                'status' => 'error'
+            ], 409);
+        }
+
+        if ($reserva->expires_at && $reserva->expires_at->isPast()) {
+            $reserva->update([
+                'estado' => 'cancelada',
+            ]);
+
+            return response()->json([
+                'message' => 'El hold ha expirado.',
+                'status' => 'error'
+            ], 409);
+        }
+
+        $fechaInicio = Carbon::parse($reserva->fecha_inicio);
+        $fechaFin = $reserva->fecha_fin
+            ? Carbon::parse($reserva->fecha_fin)
+            : (clone $fechaInicio)->addDay();
+
+        $overlap = function ($query) use ($fechaInicio, $fechaFin) {
+            $query->where(function ($query) use ($fechaInicio, $fechaFin) {
+                $query->whereNotNull('fecha_inicio')
+                    ->whereNotNull('fecha_fin')
+                    ->where('fecha_inicio', '<', $fechaFin)
+                    ->where('fecha_fin', '>', $fechaInicio);
+            })->orWhere(function ($query) use ($fechaInicio) {
+                $query->whereNotNull('fecha_inicio')
+                    ->whereNull('fecha_fin')
+                    ->whereDate('fecha_inicio', $fechaInicio->toDateString());
+            });
+        };
+
+        $vigentes = function ($query) {
+            $query->where(function ($q) {
+                $q->whereNull('expires_at')
+                    ->orWhere('expires_at', '>', now());
+            });
+        };
+
+        if ($reserva->producto_id) {
+            $producto = $reserva->producto;
+
+            if ($producto) {
+                $reservasExistentes = Reserva::where('producto_id', $reserva->producto_id)
+                    ->whereIn('estado', ['confirmada', 'bloqueada'])
+                    ->where('id', '!=', $reserva->id)
+                    ->where($overlap)
+                    ->where($vigentes)
+                    ->count();
+
+                if ($reservasExistentes >= $producto->stock_paralelo) {
+                    return response()->json([
+                        'message' => 'Agenda llena para esta fecha.',
+                        'status' => 'error'
+                    ], 409);
+                }
+            }
+        } else {
+            $conflicto = Reserva::where('empresa_id', $reserva->empresa_id)
+                ->whereIn('estado', ['confirmada', 'bloqueada'])
+                ->where('id', '!=', $reserva->id)
+                ->where($overlap)
+                ->where($vigentes)
+                ->exists();
+
+            if ($conflicto) {
+                return response()->json([
+                    'message' => 'La fecha ya no esta disponible para este proveedor.',
+                    'status' => 'error'
+                ], 409);
+            }
+        }
+
+        $reserva->update([
+            'estado' => 'confirmada',
+            'expires_at' => null,
+        ]);
+
+        return response()->json([
+            'message' => 'Reserva confirmada correctamente.',
+            'data' => $reserva
+        ], 200);
+    }
+
     public function cancelar($id)
     {
         $reserva = Reserva::findOrFail($id);
@@ -134,12 +234,46 @@ class ReservaController extends Controller
     public function verificarDisponibilidad(Request $request)
     {
         $producto = Producto::find($request->producto_id);
-        $fecha = $request->fecha_inicio;
+        if (!$producto) {
+            return response()->json(['disponible' => false, 'msj' => 'Producto no encontrado'], 404);
+        }
+
+        $fechaInicio = Carbon::parse($request->fecha_inicio)->startOfDay();
+        $fechaFin = (clone $fechaInicio)->addDay();
+
+        $bloqueoEmpresa = Reserva::where('empresa_id', $producto->empresa_id)
+            ->where('tipo_reserva', 'bloqueo')
+            ->whereIn('estado', ['confirmada', 'bloqueada'])
+            ->where(function ($query) {
+                $query->whereNull('expires_at')
+                    ->orWhere('expires_at', '>', now());
+            })
+            ->where(function ($query) use ($fechaInicio, $fechaFin) {
+                $query->where(function ($query) use ($fechaInicio, $fechaFin) {
+                    $query->whereNotNull('fecha_inicio')
+                        ->whereNotNull('fecha_fin')
+                        ->where('fecha_inicio', '<', $fechaFin)
+                        ->where('fecha_fin', '>', $fechaInicio);
+                })->orWhere(function ($query) use ($fechaInicio) {
+                    $query->whereNotNull('fecha_inicio')
+                        ->whereNull('fecha_fin')
+                        ->whereDate('fecha_inicio', $fechaInicio->toDateString());
+                });
+            })
+            ->exists();
+
+        if ($bloqueoEmpresa) {
+            return response()->json(['disponible' => false, 'msj' => 'Agenda bloqueada para esta fecha'], 400);
+        }
 
         // 1. Contar cuántas reservas CONFIRMADAS hay para ese producto en esa fecha
         $reservasExistentes = Reserva::where('producto_id', $producto->id)
-            ->whereDate('fecha_inicio', $fecha)
-            ->where('estado', 'confirmada')
+            ->whereDate('fecha_inicio', $fechaInicio->toDateString())
+            ->whereIn('estado', ['confirmada', 'bloqueada'])
+            ->where(function ($query) {
+                $query->whereNull('expires_at')
+                    ->orWhere('expires_at', '>', now());
+            })
             ->count();
 
         // 2. Comparar con el "stock_paralelo"
@@ -153,7 +287,19 @@ class ReservaController extends Controller
     public function getCalendario(string $id)
     {
 
-        $reservas = Reserva::with(['boda', 'usuario', 'empresa'])->where('empresa_id', $id)->get();
+        $reservas = Reserva::with(['boda', 'usuario', 'empresa'])
+            ->where('empresa_id', $id)
+            ->where(function ($query) {
+                $query->where('estado', '!=', 'bloqueada')
+                    ->orWhere(function ($q) {
+                        $q->where('estado', 'bloqueada')
+                            ->where(function ($q) {
+                                $q->whereNull('expires_at')
+                                    ->orWhere('expires_at', '>', now());
+                            });
+                    });
+            })
+            ->get();
 
         $data = $reservas->map(function ($r) {
             return [
