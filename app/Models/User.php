@@ -94,4 +94,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(PedirPresupuesto::class, 'user_id');
     }
+
+    public function notificaciones()
+    {
+        return $this->hasMany(Notificacion::class);
+    }
 }

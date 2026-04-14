@@ -5,11 +5,10 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PedirPresupuestoRequest;
 use App\Http\Requests\ResponderPedirPresupuestoRequest;
-use App\Events\NuevaNotificacion;
-use App\Models\Notificacion;
 use App\Models\PedirPresupuesto;
 use App\Models\Producto;
 use App\Models\Reserva;
+use App\Support\NotificacionHelper;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -35,23 +34,18 @@ class PedirPresupuestoController extends Controller
             ...$request->validated(),
             'estado' => PedirPresupuesto::ESTADO_PENDIENTE,
         ]);
-        
 
         $pedirPresupuesto->load('empresa.usuario');
         $usuario_id = $pedirPresupuesto->empresa?->user_id;
 
         if ($usuario_id) {
-            $notificacion = Notificacion::create([
-                'user_id' => $usuario_id,
-                'tipo' => 'presupuesto',
-                'titulo' => 'Nueva solicitud de presupuesto',
-                'mensaje' => 'Has recibido una nueva solicitud',
-                'referencia_id' => $pedirPresupuesto->id,
-                'referencia_type' => PedirPresupuesto::class
-            ]);
-
-            $notificacion->load('referencia');
-            broadcast(new NuevaNotificacion($notificacion));
+            NotificacionHelper::crear(
+                $usuario_id,
+                'solicitud_creada',
+                'Nueva solicitud de presupuesto',
+                'Has recibido una nueva solicitud de presupuesto.',
+                $pedirPresupuesto
+            );
         }
 
         return response()->json($pedirPresupuesto->load(['usuario', 'empresa', 'boda', 'tipoProducto']), 201);
@@ -113,17 +107,13 @@ class PedirPresupuestoController extends Controller
 
             $usuarioId = $pedirPresupuesto->user_id;
             if ($usuarioId) {
-                $notificacion = Notificacion::create([
-                    'user_id' => $usuarioId,
-                    'tipo' => 'presupuesto',
-                    'titulo' => 'Presupuesto rechazado',
-                    'mensaje' => 'El proveedor ha rechazado tu solicitud de presupuesto.',
-                    'referencia_id' => $pedirPresupuesto->id,
-                    'referencia_type' => PedirPresupuesto::class
-                ]);
-
-                $notificacion->load('referencia');
-                broadcast(new NuevaNotificacion($notificacion));
+                NotificacionHelper::crear(
+                    $usuarioId,
+                    'presupuesto_rechazado',
+                    'Solicitud rechazada',
+                    'El proveedor ha rechazado tu solicitud de presupuesto.',
+                    $pedirPresupuesto
+                );
             }
 
             return response()->json($pedirPresupuesto->load(['usuario', 'empresa', 'boda', 'tipoProducto']));
@@ -226,17 +216,13 @@ class PedirPresupuestoController extends Controller
 
         $usuarioId = $pedirPresupuesto->user_id;
         if ($usuarioId) {
-            $notificacion = Notificacion::create([
-                'user_id' => $usuarioId,
-                'tipo' => 'presupuesto_pendiente',
-                'titulo' => 'Presupuesto disponible',
-                'mensaje' => 'El proveedor ha enviado una propuesta. Puedes aceptarla y bloquear fecha.',
-                'referencia_id' => $pedirPresupuesto->id,
-                'referencia_type' => PedirPresupuesto::class
-            ]);
-
-            $notificacion->load('referencia');
-            broadcast(new NuevaNotificacion($notificacion));
+            NotificacionHelper::crear(
+                $usuarioId,
+                'presupuesto_respondido',
+                'Presupuesto disponible',
+                'El proveedor ha respondido tu solicitud con una propuesta.',
+                $pedirPresupuesto
+            );
         }
 
         return response()->json($pedirPresupuesto->load(['usuario', 'empresa', 'boda', 'tipoProducto']));
@@ -282,9 +268,9 @@ class PedirPresupuestoController extends Controller
                         ]);
                     }
 
-                    return response()->json([
-                        'reserva_id' => $reservaActual->id,
-                        'reserva' => $reservaActual,
+                return response()->json([
+                    'reserva_id' => $reservaActual->id,
+                    'reserva' => $reservaActual,
                     ], 200);
                 }
 
@@ -447,6 +433,7 @@ class PedirPresupuestoController extends Controller
                 'user_id' => $pedirPresupuesto->user_id,
                 'empresa_id' => $pedirPresupuesto->empresa_id,
                 'boda_id' => $pedirPresupuesto->boda_id,
+                'pedir_presupuesto_id' => $pedirPresupuesto->id,
                 'producto_id' => $producto?->id,
                 'fecha_inicio' => $fechaInicio,
                 'fecha_fin' => $fechaFin,
@@ -462,6 +449,36 @@ class PedirPresupuestoController extends Controller
                 'estado' => PedirPresupuesto::ESTADO_ACEPTADO_USUARIO,
                 'reserva_id' => $reserva->id,
             ]);
+
+            $pedirPresupuesto->load('empresa');
+
+            if ($pedirPresupuesto->empresa?->user_id) {
+                NotificacionHelper::crear(
+                    $pedirPresupuesto->empresa->user_id,
+                    'presupuesto_aceptado',
+                    'Presupuesto aceptado',
+                    'El cliente ha aceptado la propuesta y se ha bloqueado la fecha.',
+                    $pedirPresupuesto
+                );
+
+                NotificacionHelper::crear(
+                    $pedirPresupuesto->empresa->user_id,
+                    'reserva_bloqueada',
+                    'Reserva bloqueada',
+                    'Se ha creado una reserva bloqueada pendiente de pago.',
+                    $reserva
+                );
+            }
+
+            if ($pedirPresupuesto->user_id) {
+                NotificacionHelper::crear(
+                    $pedirPresupuesto->user_id,
+                    'reserva_bloqueada',
+                    'Reserva bloqueada',
+                    'Tu fecha ha quedado bloqueada temporalmente pendiente de pago.',
+                    $reserva
+                );
+            }
 
             return response()->json([
                 'reserva_id' => $reserva->id,
@@ -502,18 +519,16 @@ class PedirPresupuestoController extends Controller
     ]);
 
 
-    if ($pedirPresupuesto->empresa?->user_id) {
-        $notificacion = Notificacion::create([
-            'user_id' => $pedirPresupuesto->empresa->user_id,
-            'tipo' => 'presupuesto',
-            'titulo' => 'Presupuesto rechazado',
-            'mensaje' => 'El usuario ha rechazado tu propuesta.',
-            'referencia_id' => $pedirPresupuesto->id,
-            'referencia_type' => PedirPresupuesto::class
-        ]);
+    $pedirPresupuesto->load('empresa');
 
-        $notificacion->load('referencia');
-        broadcast(new NuevaNotificacion($notificacion));
+    if ($pedirPresupuesto->empresa?->user_id) {
+        NotificacionHelper::crear(
+            $pedirPresupuesto->empresa->user_id,
+            'presupuesto_rechazado',
+            'Presupuesto rechazado',
+            'El cliente ha rechazado tu propuesta.',
+            $pedirPresupuesto
+        );
     }
 
     return response()->json([

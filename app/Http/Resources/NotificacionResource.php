@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\PedirPresupuesto;
+use App\Models\Reserva;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -25,6 +26,18 @@ class NotificacionResource extends JsonResource
                     'modalidad' => $this->referencia->modalidad,
                     'fecha_inicio' => $this->referencia->fecha_inicio,
                     'fecha_fin' => $this->referencia->fecha_fin,
+                ];
+            }
+
+            if ($this->referencia instanceof Reserva) {
+                return [
+                    'id' => $this->referencia->id,
+                    'estado' => $this->referencia->estado,
+                    'fecha_inicio' => $this->referencia->fecha_inicio,
+                    'fecha_fin' => $this->referencia->fecha_fin,
+                    'empresa_id' => $this->referencia->empresa_id,
+                    'user_id' => $this->referencia->user_id,
+                    'pedir_presupuesto_id' => $this->referencia->pedir_presupuesto_id,
                 ];
             }
 

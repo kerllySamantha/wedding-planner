@@ -56,4 +56,9 @@ class   Empresa extends Model
     {
         return $this->hasMany(PedirPresupuesto::class, 'empresa_id');
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

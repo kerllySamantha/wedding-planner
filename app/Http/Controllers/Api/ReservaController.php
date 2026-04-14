@@ -9,9 +9,12 @@ use App\Http\Resources\ReservaCollection;
 use App\Http\Resources\ReservaResource;
 use App\Models\Boda;
 use App\Models\Producto;
+use App\Models\PedirPresupuesto;
 use App\Models\Reserva;
+use App\Support\NotificacionHelper;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ReservaController extends Controller
 {
@@ -32,11 +35,6 @@ class ReservaController extends Controller
 
     public function show(Reserva $reserva)
     {
-        $reserva = Reserva::with('producto.tipoProducto.categoria')->first();
-
-
-
-
         if (!$reserva) {
             return response()->json([
                 'message' => 'No existe ninguna resenia con ese id',
@@ -59,12 +57,44 @@ class ReservaController extends Controller
             'user_id' => $request->user_id,
             'empresa_id' => $request->empresa_id,
             'boda_id' => $request->boda_id,
+            'pedir_presupuesto_id' => $request->pedir_presupuesto_id,
+            'producto_id' => $request->producto_id,
             'fecha_inicio' => $request->fecha_inicio,
             'fecha_fin' => $request->fecha_fin,
             'estado' => $request->estado ?? 'pendiente',
             'origen' => $request->origen ?? 'proveedor',
+            'tipo_reserva' => $request->tipo_reserva ?? 'servicio',
             'notas' => $request->notas,
+            'all_day' => (bool) $request->boolean('all_day'),
         ]);
+
+        if ($reserva->pedir_presupuesto_id) {
+            PedirPresupuesto::whereKey($reserva->pedir_presupuesto_id)->update([
+                'reserva_id' => $reserva->id,
+            ]);
+        }
+
+        if ($reserva->estado === 'bloqueada') {
+            if ($reserva->empresa?->user_id) {
+                NotificacionHelper::crear(
+                    $reserva->empresa->user_id,
+                    'reserva_bloqueada',
+                    'Reserva bloqueada',
+                    'Se ha creado una nueva reserva bloqueada.',
+                    $reserva
+                );
+            }
+
+            if ($reserva->user_id) {
+                NotificacionHelper::crear(
+                    $reserva->user_id,
+                    'reserva_bloqueada',
+                    'Reserva bloqueada',
+                    'Tu reserva ha quedado bloqueada temporalmente.',
+                    $reserva
+                );
+            }
+        }
 
         return response()->json($reserva, 201);
     }
@@ -91,7 +121,7 @@ class ReservaController extends Controller
 
     public function confirmar(Request $request, string $id)
     {
-        $reserva = Reserva::findOrFail($id);
+        $reserva = Reserva::with(['empresa', 'usuario', 'pedirPresupuesto'])->findOrFail($id);
 
         $userId = auth()->id();
         if ($userId && $reserva->user_id && (int) $reserva->user_id !== (int) $userId) {
@@ -178,10 +208,32 @@ class ReservaController extends Controller
             }
         }
 
-        $reserva->update([
-            'estado' => 'confirmada',
-            'expires_at' => null,
-        ]);
+        DB::transaction(function () use ($reserva) {
+            $reserva->update([
+                'estado' => 'confirmada',
+                'expires_at' => null,
+            ]);
+
+            if ($reserva->empresa?->user_id) {
+                NotificacionHelper::crear(
+                    $reserva->empresa->user_id,
+                    'reserva_confirmada',
+                    'Reserva confirmada',
+                    'El pago se ha registrado y la reserva ha quedado confirmada.',
+                    $reserva
+                );
+            }
+
+            if ($reserva->user_id) {
+                NotificacionHelper::crear(
+                    $reserva->user_id,
+                    'reserva_confirmada',
+                    'Reserva confirmada',
+                    'Tu pago se ha registrado y la reserva ha quedado confirmada.',
+                    $reserva
+                );
+            }
+        });
 
         return response()->json([
             'message' => 'Reserva confirmada correctamente.',
@@ -191,9 +243,30 @@ class ReservaController extends Controller
 
     public function cancelar($id)
     {
-        $reserva = Reserva::findOrFail($id);
+        $reserva = Reserva::with(['empresa', 'usuario'])->findOrFail($id);
         $reserva->estado = 'cancelada';
+        $reserva->expires_at = null;
         $reserva->save();
+
+        if ($reserva->empresa?->user_id) {
+            NotificacionHelper::crear(
+                $reserva->empresa->user_id,
+                'reserva_cancelada',
+                'Reserva cancelada',
+                'La reserva asociada ha sido cancelada.',
+                $reserva
+            );
+        }
+
+        if ($reserva->user_id) {
+            NotificacionHelper::crear(
+                $reserva->user_id,
+                'reserva_cancelada',
+                'Reserva cancelada',
+                'Tu reserva ha sido cancelada.',
+                $reserva
+            );
+        }
 
         return response()->json(['message' => 'Reserva cancelada']);
     }

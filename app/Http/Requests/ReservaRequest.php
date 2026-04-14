@@ -27,6 +27,7 @@ class ReservaRequest extends FormRequest
             'user_id' => 'nullable|exists:users,id',
             'empresa_id' => 'required|exists:empresas,id',
             'boda_id' => 'nullable|exists:bodas,id',
+            'pedir_presupuesto_id' => 'nullable|exists:pedir_presupuestos,id',
             'fecha_inicio' => 'required|date',
             'fecha_fin'    => 'nullable|date|after_or_equal:fecha_inicio',
             'estado' => 'required|in:pendiente,confirmada,cancelada,bloqueada',

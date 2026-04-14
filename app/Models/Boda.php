@@ -6,6 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Boda extends Model
 {
+    protected $fillable = [
+        'usuario_id',
+        'nombre_pareja',
+        'fecha_boda',
+        'ubicacion',
+        'provincia_id',
+        'poblacion_id',
+    ];
+
     public function usuario()
     {
         return $this->belongsTo(User::class, 'usuario_id');

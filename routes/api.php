@@ -86,6 +86,8 @@ Route::patch('pedirPresupuestos/{pedirPresupuesto}/respuesta', [PedirPresupuesto
     ->middleware('auth:sanctum');
 Route::patch('pedirPresupuestos/{pedirPresupuesto}/aceptar', [PedirPresupuestoController::class, 'aceptarPorUsuario'])
     ->middleware('auth:sanctum');
+Route::patch('pedirPresupuestos/{pedirPresupuesto}/rechazar', [PedirPresupuestoController::class, 'rechazarPorUsuario'])
+    ->middleware('auth:sanctum');
 
 
 

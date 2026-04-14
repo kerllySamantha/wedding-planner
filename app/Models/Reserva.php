@@ -10,6 +10,7 @@ class Reserva extends Model
         'user_id',
         'empresa_id',
         'boda_id',
+        'pedir_presupuesto_id',
         'fecha_inicio',
         'fecha_fin',
         'tipo_reserva',
@@ -45,6 +46,11 @@ class Reserva extends Model
     public function boda()
     {
         return $this->belongsTo(Boda::class, 'boda_id');
+    }
+
+    public function pedirPresupuesto()
+    {
+        return $this->belongsTo(PedirPresupuesto::class, 'pedir_presupuesto_id');
     }
 
     public function producto()

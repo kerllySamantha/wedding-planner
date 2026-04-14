@@ -47,13 +47,23 @@ class PedirPresupuestoRequest extends FormRequest
             'user_id' => 'required|exists:users,id',
             'boda_id' => 'nullable|exists:bodas,id',
             'fecha' => 'nullable|date|after:today',
+            'fecha_boda' => 'nullable|date|after:today',
             'nombre' => 'required|string|max:255',
             'telefono' => 'required|string|max:20',
             'mensaje' => 'required|string|max:600',
             'email' => 'required|email|max:250',
             'invitados' => 'required|integer',
-            'presupuesto' => 'required|numeric|decimal:0,2'
+            'presupuesto' => 'required_without:presupuesto_estimado|numeric|decimal:0,2',
+            'presupuesto_estimado' => 'required_without:presupuesto|numeric|decimal:0,2',
         ];
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'fecha' => $this->input('fecha', $this->input('fecha_boda')),
+            'presupuesto' => $this->input('presupuesto', $this->input('presupuesto_estimado')),
+        ]);
     }
 
     public function messages(): array

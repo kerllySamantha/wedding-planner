@@ -22,6 +22,7 @@ class ReservaResource extends JsonResource
             'estado' => $this->estado,
             'origen' => $this->origen,
             'notas' => $this->notas,
+            'pedir_presupuesto_id' => $this->pedir_presupuesto_id,
 
             'usuario' => $this->usuario ? [
                 'id' => $this->usuario->id,
