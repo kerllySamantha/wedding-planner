@@ -10,6 +10,7 @@ use App\Http\Resources\ReservaResource;
 use App\Models\Boda;
 use App\Models\Producto;
 use App\Models\PedirPresupuesto;
+use App\Models\Presupuesto;
 use App\Models\Reserva;
 use App\Support\NotificacionHelper;
 use Carbon\Carbon;
@@ -121,7 +122,7 @@ class ReservaController extends Controller
 
     public function confirmar(Request $request, string $id)
     {
-        $reserva = Reserva::with(['empresa', 'usuario', 'pedirPresupuesto'])->findOrFail($id);
+        $reserva = Reserva::with(['empresa', 'usuario', 'pedirPresupuesto.producto'])->findOrFail($id);
 
         $userId = auth()->id();
         if ($userId && $reserva->user_id && (int) $reserva->user_id !== (int) $userId) {
@@ -213,6 +214,31 @@ class ReservaController extends Controller
                 'estado' => 'confirmada',
                 'expires_at' => null,
             ]);
+
+            $pedirPresupuesto = $reserva->pedirPresupuesto;
+            if ($pedirPresupuesto) {
+                if ($pedirPresupuesto->estado !== PedirPresupuesto::ESTADO_ACEPTADO_USUARIO) {
+                    $pedirPresupuesto->update([
+                        'estado' => PedirPresupuesto::ESTADO_ACEPTADO_USUARIO,
+                    ]);
+                }
+
+                $tipoProductoId = $pedirPresupuesto->tipo_producto_id ?? $pedirPresupuesto->producto?->tipo_producto_id;
+                if ($pedirPresupuesto->boda_id && $tipoProductoId && $pedirPresupuesto->importe_ofertado !== null) {
+                    $presupuesto = Presupuesto::where('boda_id', $pedirPresupuesto->boda_id)
+                        ->where('tipo_producto_id', $tipoProductoId)
+                        ->lockForUpdate()
+                        ->first();
+
+                    if ($presupuesto) {
+                        $nuevoMontoPagado = (float) $presupuesto->monto_pagado + (float) $pedirPresupuesto->importe_ofertado;
+                        $presupuesto->update([
+                            'monto_pagado' => $nuevoMontoPagado,
+                            'estado' => $nuevoMontoPagado >= (float) $presupuesto->monto_total,
+                        ]);
+                    }
+                }
+            }
 
             if ($reserva->empresa?->user_id) {
                 NotificacionHelper::crear(
