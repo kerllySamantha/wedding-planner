@@ -11,6 +11,7 @@ use App\Models\Boda;
 use App\Models\Producto;
 use App\Models\PedirPresupuesto;
 use App\Models\Presupuesto;
+use App\Models\ItemPresupuesto;
 use App\Models\Reserva;
 use App\Support\NotificacionHelper;
 use Carbon\Carbon;
@@ -231,10 +232,27 @@ class ReservaController extends Controller
                         ->first();
 
                     if ($presupuesto) {
-                        $nuevoMontoPagado = (float) $presupuesto->monto_pagado + (float) $pedirPresupuesto->importe_ofertado;
+                        $importePagado = (float) $pedirPresupuesto->importe_ofertado;
+
+                        $item = ItemPresupuesto::where('presupuesto_id', $presupuesto->id)
+                            ->where('tipo_producto_id', $tipoProductoId)
+                            ->lockForUpdate()
+                            ->first();
+
+                        if ($item) {
+                            $item->update([
+                                'monto_pagado' => (float) $item->monto_pagado + $importePagado,
+                            ]);
+
+                            $nuevoMontoPagado = (float) ItemPresupuesto::where('presupuesto_id', $presupuesto->id)
+                                ->sum('monto_pagado');
+                        } else {
+                            $nuevoMontoPagado = (float) $presupuesto->monto_pagado + $importePagado;
+                        }
+
                         $presupuesto->update([
                             'monto_pagado' => $nuevoMontoPagado,
-                            'estado' => $nuevoMontoPagado >= (float) $presupuesto->monto_total,
+                            'estado' => true,
                         ]);
                     }
                 }
