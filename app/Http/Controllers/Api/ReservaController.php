@@ -8,6 +8,7 @@ use App\Http\Requests\ReservaRequest;
 use App\Http\Resources\ReservaCollection;
 use App\Http\Resources\ReservaResource;
 use App\Models\Boda;
+use App\Models\ItemPresupuesto;
 use App\Models\Producto;
 use App\Models\PedirPresupuesto;
 use App\Models\Presupuesto;
@@ -244,32 +245,26 @@ class ReservaController extends Controller
                             $item->update([
                                 'monto_pagado' => (float) $item->monto_pagado + $importePagado,
                             ]);
-
-                            $nuevoMontoPagado = (float) ItemPresupuesto::where('presupuesto_id', $presupuesto->id)
-                                ->sum('monto_pagado');
                         } else {
-                            $nuevoMontoPagado = (float) $presupuesto->monto_pagado + $importePagado;
+                            $nuevoMontoPagadoItem = (float) $presupuesto->monto_pagado + $importePagado;
+
+                            ItemPresupuesto::create([
+                                'presupuesto_id' => $presupuesto->id,
+                                'tipo_producto_id' => $tipoProductoId,
+                                'nombre_tipo_personalizado' => $pedirPresupuesto->producto?->nombre ?? 'Reserva confirmada',
+                                'monto_estimado' => 0,
+                                'monto_pagado' => $nuevoMontoPagadoItem,
+                            ]);
                         }
+
+                        $nuevoMontoPagado = (float) ItemPresupuesto::where('presupuesto_id', $presupuesto->id)
+                            ->sum('monto_pagado');
 
                         $presupuesto->update([
                             'monto_pagado' => $nuevoMontoPagado,
-                            'estado' => true,
+                            'estado' => 'aceptado',
                         ]);
                     }
-            $producto = $reserva->producto;
-
-            if ($pedirPresupuesto && $producto && $producto->tipo_producto_id) {
-                $presupuesto = Presupuesto::where('boda_id', $reserva->boda_id)
-                    ->where('tipo_producto_id', $producto->tipo_producto_id)
-                    ->first();
-
-                if ($presupuesto) {
-                    $importePagado = (float) ($pedirPresupuesto->importe_ofertado ?? 0);
-
-                    $presupuesto->update([
-                        'monto_pagado' => $importePagado,
-                        'estado' => 'aceptado',
-                    ]);
                 }
             }
 
