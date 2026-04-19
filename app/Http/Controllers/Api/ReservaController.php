@@ -11,11 +11,11 @@ use App\Models\Boda;
 use App\Models\Producto;
 use App\Models\PedirPresupuesto;
 use App\Models\Presupuesto;
-use App\Models\ItemPresupuesto;
 use App\Models\Reserva;
 use App\Support\NotificacionHelper;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class ReservaController extends Controller
@@ -27,14 +27,11 @@ class ReservaController extends Controller
     {
         $reservas = Reserva::with(['usuario', 'empresa', 'boda'])->paginate(10);
         return new ReservaCollection($reservas);
-        // return response()->json($reservas, 201);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Display the specified resource.
      */
-
-
     public function show(Reserva $reserva)
     {
         if (!$reserva) {
@@ -46,9 +43,6 @@ class ReservaController extends Controller
 
         return new ReservaResource($reserva);
     }
-
-
-
 
     /**
      * Store a newly created resource in storage.
@@ -102,10 +96,6 @@ class ReservaController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(ReservaRequest $request, string $id)
@@ -126,6 +116,17 @@ class ReservaController extends Controller
         $reserva = Reserva::with(['empresa', 'usuario', 'pedirPresupuesto.producto'])->findOrFail($id);
 
         $userId = auth()->id();
+        $reserva = Reserva::with([
+            'empresa',
+            'usuario',
+            'pedirPresupuesto',
+            'producto.tipoProducto'
+        ])->findOrFail($id);
+
+        /** @var \Illuminate\Contracts\Auth\Guard $guard */
+        $guard = auth();
+        $userId = $guard->id();
+        
         if ($userId && $reserva->user_id && (int) $reserva->user_id !== (int) $userId) {
             return response()->json([
                 'message' => 'No tienes permiso para confirmar esta reserva.',
@@ -255,6 +256,20 @@ class ReservaController extends Controller
                             'estado' => true,
                         ]);
                     }
+            $producto = $reserva->producto;
+
+            if ($pedirPresupuesto && $producto && $producto->tipo_producto_id) {
+                $presupuesto = Presupuesto::where('boda_id', $reserva->boda_id)
+                    ->where('tipo_producto_id', $producto->tipo_producto_id)
+                    ->first();
+
+                if ($presupuesto) {
+                    $importePagado = (float) ($pedirPresupuesto->importe_ofertado ?? 0);
+
+                    $presupuesto->update([
+                        'monto_pagado' => $importePagado,
+                        'estado' => 'aceptado',
+                    ]);
                 }
             }
 
@@ -278,6 +293,13 @@ class ReservaController extends Controller
                 );
             }
         });
+
+        $reserva->refresh()->load([
+            'empresa',
+            'usuario',
+            'pedirPresupuesto',
+            'producto.tipoProducto'
+        ]);
 
         return response()->json([
             'message' => 'Reserva confirmada correctamente.',
@@ -326,24 +348,19 @@ class ReservaController extends Controller
         return response()->json(['message' => 'Datos eliminados correctamente', 200]);
     }
 
-
     public function getRersevaPorConfirmar(string $id, string $estado)
     {
-
         $reservas = Reserva::where('empresa_id', (int) $id)
             ->where('estado', $estado)
             ->get();
-
 
         return new ReservaCollection($reservas);
     }
 
     public function getReservaEmpresa(string $id)
     {
-
         $reservas = Reserva::where('empresa_id', (int) $id)
             ->get();
-
 
         return new ReservaCollection($reservas);
     }
@@ -383,7 +400,6 @@ class ReservaController extends Controller
             return response()->json(['disponible' => false, 'msj' => 'Agenda bloqueada para esta fecha'], 400);
         }
 
-        // 1. Contar cuántas reservas CONFIRMADAS hay para ese producto en esa fecha
         $reservasExistentes = Reserva::where('producto_id', $producto->id)
             ->whereDate('fecha_inicio', $fechaInicio->toDateString())
             ->whereIn('estado', ['confirmada', 'bloqueada'])
@@ -393,7 +409,6 @@ class ReservaController extends Controller
             })
             ->count();
 
-        // 2. Comparar con el "stock_paralelo"
         if ($reservasExistentes >= $producto->stock_paralelo) {
             return response()->json(['disponible' => false, 'msj' => 'Agenda llena para esta fecha'], 400);
         }
@@ -403,7 +418,6 @@ class ReservaController extends Controller
 
     public function getCalendario(string $id)
     {
-
         $reservas = Reserva::with(['boda', 'usuario', 'empresa'])
             ->where('empresa_id', $id)
             ->where(function ($query) {
@@ -453,10 +467,6 @@ class ReservaController extends Controller
                         'fecha' => $r->boda->fecha
                     ] : null,
 
-                    // 'servicio' => $r->servicio ? [
-                    //     'id' => $r->servicio->id,
-                    //     'nombre' => $r->servicio->nombre
-                    // ] : null,
                     'tipo_reserva' => $r->tipo_reserva,
                     'all_day' => $r->all_day,
 
@@ -465,7 +475,6 @@ class ReservaController extends Controller
                         'nombre' => $r->producto->nombre,
                         'categoria' => $r->producto->tipoProducto->categoria->nombre ?? "",
                         'tipo_producto' => $r->producto->tipoProducto->nombre ?? "",
-                        // 'modalidad' => $r->producto->tipoProducto->modalidad ?? "",
                     ] : null,
                 ]
             ];

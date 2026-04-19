@@ -20,7 +20,13 @@ class PedirPresupuestoController extends Controller
      */
     public function index()
     {
-        $solicitudes = PedirPresupuesto::with(['usuario', 'empresa', 'boda', 'tipoProducto'])->paginate(10);
+        $solicitudes = PedirPresupuesto::with([
+            'usuario',
+            'empresa',
+            'boda',
+            'tipoProducto',
+            'reserva'
+        ])->paginate(10);
 
         return response()->json($solicitudes);
     }
@@ -56,7 +62,15 @@ class PedirPresupuestoController extends Controller
      */
     public function show(PedirPresupuesto $pedirPresupuesto)
     {
-        return response()->json($pedirPresupuesto->load(['usuario', 'empresa', 'boda', 'tipoProducto']));
+        return response()->json(
+            $pedirPresupuesto->load([
+                'usuario',
+                'empresa',
+                'boda',
+                'tipoProducto',
+                'reserva'
+            ])
+        );
     }
 
     /**
@@ -71,7 +85,9 @@ class PedirPresupuestoController extends Controller
 
     public function responder(ResponderPedirPresupuestoRequest $request, PedirPresupuesto $pedirPresupuesto)
     {
-        $userId = auth()->id();
+        /** @var \Illuminate\Contracts\Auth\Guard $guard */
+        $guard = auth();
+        $userId = $guard->id();
 
         if (!$userId) {
             return response()->json([
@@ -230,7 +246,9 @@ class PedirPresupuestoController extends Controller
 
     public function aceptarPorUsuario(Request $request, PedirPresupuesto $pedirPresupuesto)
     {
-        $userId = auth()->id();
+        /** @var \Illuminate\Contracts\Auth\Guard $guard */
+        $guard = auth();
+        $userId = $guard->id();
 
         if (!$userId) {
             return response()->json([
@@ -246,10 +264,7 @@ class PedirPresupuestoController extends Controller
             ], 403);
         }
 
-        if (!in_array($pedirPresupuesto->estado, [
-            PedirPresupuesto::ESTADO_PENDIENTE_USUARIO,
-            PedirPresupuesto::ESTADO_ACEPTADO_USUARIO,
-        ], true)) {
+        if ($pedirPresupuesto->estado !== PedirPresupuesto::ESTADO_PENDIENTE_USUARIO) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'El presupuesto no esta pendiente de tu confirmacion.'
@@ -268,9 +283,13 @@ class PedirPresupuestoController extends Controller
                         ]);
                     }
 
-                return response()->json([
-                    'reserva_id' => $reservaActual->id,
-                    'reserva' => $reservaActual,
+                    $pedirPresupuesto->refresh()->load(['usuario', 'empresa', 'boda', 'tipoProducto', 'reserva']);
+
+                    return response()->json([
+                        'message' => 'Presupuesto aceptado correctamente.',
+                        'pedir_presupuesto' => $pedirPresupuesto,
+                        'reserva_id' => $reservaActual->id,
+                        'reserva' => $reservaActual,
                     ], 200);
                 }
 
@@ -480,7 +499,11 @@ class PedirPresupuestoController extends Controller
                 );
             }
 
+            $pedirPresupuesto->refresh()->load(['usuario', 'empresa', 'boda', 'tipoProducto', 'reserva']);
+
             return response()->json([
+                'message' => 'Presupuesto aceptado y fecha bloqueada.',
+                'pedir_presupuesto' => $pedirPresupuesto,
                 'reserva_id' => $reserva->id,
                 'reserva' => $reserva,
             ], 200);
@@ -490,51 +513,53 @@ class PedirPresupuestoController extends Controller
 
 
     public function rechazarPorUsuario(PedirPresupuesto $pedirPresupuesto)
-{
-    $userId = auth()->id();
+    {
+        /** @var \Illuminate\Contracts\Auth\Guard $guard */
+        $guard = auth();
+        $userId = $guard->id();
 
-    if (!$userId) {
+        if (!$userId) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No autenticado.'
+            ], 401);
+        }
+
+        if ((int) $pedirPresupuesto->user_id !== (int) $userId) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No tienes permiso para rechazar este presupuesto.'
+            ], 403);
+        }
+
+        if ($pedirPresupuesto->estado !== PedirPresupuesto::ESTADO_PENDIENTE_USUARIO) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Este presupuesto no se puede rechazar.'
+            ], 409);
+        }
+
+        $pedirPresupuesto->update([
+            'estado' => PedirPresupuesto::ESTADO_RECHAZADO_USUARIO
+        ]);
+
+
+        $pedirPresupuesto->load('empresa');
+
+        if ($pedirPresupuesto->empresa?->user_id) {
+            NotificacionHelper::crear(
+                $pedirPresupuesto->empresa->user_id,
+                'presupuesto_rechazado',
+                'Presupuesto rechazado',
+                'El cliente ha rechazado tu propuesta.',
+                $pedirPresupuesto
+            );
+        }
+
         return response()->json([
-            'status' => 'error',
-            'message' => 'No autenticado.'
-        ], 401);
+            'message' => 'Presupuesto rechazado correctamente'
+        ]);
     }
-
-    if ((int) $pedirPresupuesto->user_id !== (int) $userId) {
-        return response()->json([
-            'status' => 'error',
-            'message' => 'No tienes permiso para rechazar este presupuesto.'
-        ], 403);
-    }
-
-    if ($pedirPresupuesto->estado !== PedirPresupuesto::ESTADO_PENDIENTE_USUARIO) {
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Este presupuesto no se puede rechazar.'
-        ], 409);
-    }
-
-    $pedirPresupuesto->update([
-        'estado' => PedirPresupuesto::ESTADO_RECHAZADO_USUARIO
-    ]);
-
-
-    $pedirPresupuesto->load('empresa');
-
-    if ($pedirPresupuesto->empresa?->user_id) {
-        NotificacionHelper::crear(
-            $pedirPresupuesto->empresa->user_id,
-            'presupuesto_rechazado',
-            'Presupuesto rechazado',
-            'El cliente ha rechazado tu propuesta.',
-            $pedirPresupuesto
-        );
-    }
-
-    return response()->json([
-        'message' => 'Presupuesto rechazado correctamente'
-    ]);
-}
 
     /**
      * Remove the specified resource from storage.
@@ -548,9 +573,13 @@ class PedirPresupuestoController extends Controller
 
     public function getPedirPresupuestosEmpresa(string $idEmpresa)
     {
-        $pedirPresupuesto = PedirPresupuesto::with('tipoProducto')
+        $pedirPresupuesto = PedirPresupuesto::with([
+            'tipoProducto',
+            'reserva'
+        ])
             ->where('empresa_id', $idEmpresa)
             ->get();
+
         return response()->json($pedirPresupuesto, 200);
     }
 }

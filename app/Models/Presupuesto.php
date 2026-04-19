@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\EstadoPedirPresupuesto;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -17,6 +18,10 @@ class Presupuesto extends Model
     'estado',
     'fecha_creacion'
   ];
+
+  protected $casts = [
+    'estado' => EstadoPedirPresupuesto::class,
+];
 
 
   public function boda()
