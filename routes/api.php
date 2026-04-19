@@ -59,7 +59,7 @@ Route::apiResource('provincias', ProvinciaController::class)->only(['index', 'sh
 Route::apiResource('poblaciones', PoblacionController::class)->only('index');
 Route::apiResource('tipos', TipoProductoController::class);
 Route::apiResource('productos', ProductoController::class)->
-parameters(['productos' => 'producto']);
+parameters(['productos' => 'producto'])->only('index');
 Route::apiResource('presupuestos', PresupuestoController::class);
 Route::apiResource('detalles', ItemPresupuestoController::class);
 Route::apiResource('reservas', ReservaController::class);

@@ -13,7 +13,10 @@ class TipoProductoController extends Controller
      */
     public function index()
     {
-        return TipoProducto::all()->toResourceCollection();
+
+        return TipoProducto::orderBy('nombre', 'asc')
+            ->get()
+            ->toResourceCollection();
     }
 
     /**

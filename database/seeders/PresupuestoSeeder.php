@@ -22,7 +22,7 @@ class PresupuestoSeeder extends Seeder
                     // 'nombre' => 'Decoración',
                     // 'descripcion' => 'Decoración de salón y ceremonia',
                     'monto_total' => 2000.00,
-                    'estado' => false,
+                    // 'estado' => false,
                     'fecha_creacion' => Carbon::now(),
                 ],
                 [
@@ -31,7 +31,7 @@ class PresupuestoSeeder extends Seeder
                     // 'descripcion' => 'Comida y bebida para los invitados',
                     'tipo_producto_id' => 2,
                     'monto_total' => 5000.00,
-                    'estado' => false,
+                    // 'estado' => false,
                     'fecha_creacion' => Carbon::now(),
                 ],
                 [
@@ -40,7 +40,7 @@ class PresupuestoSeeder extends Seeder
                     // 'descripcion' => 'Fotógrafo profesional para toda la boda',
                     'tipo_producto_id' => 1,
                     'monto_total' => 1500.00,
-                    'estado' => false,
+                    // 'estado' => false,
                     'fecha_creacion' => Carbon::now(),
                 ],
             ]
