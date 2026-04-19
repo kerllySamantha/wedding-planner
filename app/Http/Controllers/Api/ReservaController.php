@@ -228,14 +228,13 @@ class ReservaController extends Controller
 
                 $tipoProductoId = $pedirPresupuesto->tipo_producto_id ?? $pedirPresupuesto->producto?->tipo_producto_id;
                 if ($pedirPresupuesto->boda_id && $tipoProductoId && $pedirPresupuesto->importe_ofertado !== null) {
+                    $importePagado = (float) $pedirPresupuesto->importe_ofertado;
                     $presupuesto = Presupuesto::where('boda_id', $pedirPresupuesto->boda_id)
                         ->where('tipo_producto_id', $tipoProductoId)
                         ->lockForUpdate()
                         ->first();
 
                     if ($presupuesto) {
-                        $importePagado = (float) $pedirPresupuesto->importe_ofertado;
-
                         $item = ItemPresupuesto::where('presupuesto_id', $presupuesto->id)
                             ->where('tipo_producto_id', $tipoProductoId)
                             ->lockForUpdate()
@@ -246,14 +245,12 @@ class ReservaController extends Controller
                                 'monto_pagado' => (float) $item->monto_pagado + $importePagado,
                             ]);
                         } else {
-                            $nuevoMontoPagadoItem = (float) $presupuesto->monto_pagado + $importePagado;
-
                             ItemPresupuesto::create([
                                 'presupuesto_id' => $presupuesto->id,
                                 'tipo_producto_id' => $tipoProductoId,
                                 'nombre_tipo_personalizado' => $pedirPresupuesto->producto?->nombre ?? 'Reserva confirmada',
                                 'monto_estimado' => 0,
-                                'monto_pagado' => $nuevoMontoPagadoItem,
+                                'monto_pagado' => $importePagado,
                             ]);
                         }
 
@@ -262,7 +259,24 @@ class ReservaController extends Controller
 
                         $presupuesto->update([
                             'monto_pagado' => $nuevoMontoPagado,
-                            'estado' => 'aceptado',
+                            'estado' => PedirPresupuesto::ESTADO_ACEPTADO_USUARIO,
+                        ]);
+                    } else {
+                        $presupuestoCreado = Presupuesto::create([
+                            'boda_id' => $pedirPresupuesto->boda_id,
+                            'tipo_producto_id' => $tipoProductoId,
+                            'monto_total' => 0,
+                            'monto_pagado' => $importePagado,
+                            'estado' => PedirPresupuesto::ESTADO_ACEPTADO_USUARIO,
+                            'fecha_creacion' => now()->toDateString(),
+                        ]);
+
+                        ItemPresupuesto::create([
+                            'presupuesto_id' => $presupuestoCreado->id,
+                            'tipo_producto_id' => $tipoProductoId,
+                            'nombre_tipo_personalizado' => $pedirPresupuesto->producto?->nombre ?? 'Reserva confirmada',
+                            'monto_estimado' => 0,
+                            'monto_pagado' => $importePagado,
                         ]);
                     }
                 }
