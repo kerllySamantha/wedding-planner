@@ -113,6 +113,9 @@ class ReservaController extends Controller
 
     public function confirmar(Request $request, string $id)
     {
+        $reserva = Reserva::with(['empresa', 'usuario', 'pedirPresupuesto.producto'])->findOrFail($id);
+
+        $userId = auth()->id();
         $reserva = Reserva::with([
             'empresa',
             'usuario',
@@ -215,6 +218,44 @@ class ReservaController extends Controller
             ]);
 
             $pedirPresupuesto = $reserva->pedirPresupuesto;
+            if ($pedirPresupuesto) {
+                if ($pedirPresupuesto->estado !== PedirPresupuesto::ESTADO_ACEPTADO_USUARIO) {
+                    $pedirPresupuesto->update([
+                        'estado' => PedirPresupuesto::ESTADO_ACEPTADO_USUARIO,
+                    ]);
+                }
+
+                $tipoProductoId = $pedirPresupuesto->tipo_producto_id ?? $pedirPresupuesto->producto?->tipo_producto_id;
+                if ($pedirPresupuesto->boda_id && $tipoProductoId && $pedirPresupuesto->importe_ofertado !== null) {
+                    $presupuesto = Presupuesto::where('boda_id', $pedirPresupuesto->boda_id)
+                        ->where('tipo_producto_id', $tipoProductoId)
+                        ->lockForUpdate()
+                        ->first();
+
+                    if ($presupuesto) {
+                        $importePagado = (float) $pedirPresupuesto->importe_ofertado;
+
+                        $item = ItemPresupuesto::where('presupuesto_id', $presupuesto->id)
+                            ->where('tipo_producto_id', $tipoProductoId)
+                            ->lockForUpdate()
+                            ->first();
+
+                        if ($item) {
+                            $item->update([
+                                'monto_pagado' => (float) $item->monto_pagado + $importePagado,
+                            ]);
+
+                            $nuevoMontoPagado = (float) ItemPresupuesto::where('presupuesto_id', $presupuesto->id)
+                                ->sum('monto_pagado');
+                        } else {
+                            $nuevoMontoPagado = (float) $presupuesto->monto_pagado + $importePagado;
+                        }
+
+                        $presupuesto->update([
+                            'monto_pagado' => $nuevoMontoPagado,
+                            'estado' => true,
+                        ]);
+                    }
             $producto = $reserva->producto;
 
             if ($pedirPresupuesto && $producto && $producto->tipo_producto_id) {
