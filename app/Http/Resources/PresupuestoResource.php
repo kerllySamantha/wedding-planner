@@ -19,6 +19,7 @@ class PresupuestoResource extends JsonResource
             'nombre' => $this->nombre,
             'descripcion' => $this->descripcion,
             'monto_total' => $this->monto_total,
+            'monto_pagado' => $this->monto_pagado,
             'estado' => $this->estado,
             'fecha_creacion' => $this->fecha_creacion
 

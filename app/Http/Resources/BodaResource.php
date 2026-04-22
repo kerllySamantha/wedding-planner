@@ -54,8 +54,9 @@ class BodaResource extends JsonResource
                     ],
                     // 'nombre' => $tipo->nombre,
                     // 'descripcion' => $tipo->descripcion,
-                    'monto_total' => $tipo->monto_total,
-                    'estado' => $tipo->estado,
+                    'monto_total' => (float) $tipo->monto_total,
+                    'estado' =>  $tipo->estado,
+                    'monto_pagado' => (float) $tipo->monto_pagado,
                     'fecha_creacion' => $tipo->fecha_creacion
                 ]
             ),

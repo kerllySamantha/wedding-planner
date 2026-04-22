@@ -46,11 +46,11 @@ class EmpresaController extends Controller
 
         $user->assignRole($validated['rol']);
 
-        $empresa = $user->empresa()->create(Arr::except($validated, ['name', 'email', 'password', 'rol', 'servicios']));
+        $empresa = $user->empresa()->create(Arr::except($validated, ['name', 'email', 'password', 'rol']));
 
-        $empresa->servicios()->attach($validated['servicios'] ?? []);
+        // $empresa->servicios()->attach($validated['servicios'] ?? []);
 
-        return new EmpresaResource($empresa->load('servicios'));
+        return new EmpresaResource($empresa->load('user'));
     }
 
 

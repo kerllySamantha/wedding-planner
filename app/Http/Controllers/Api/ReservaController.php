@@ -116,7 +116,9 @@ class ReservaController extends Controller
     {
         $reserva = Reserva::with(['empresa', 'usuario', 'pedirPresupuesto.producto'])->findOrFail($id);
 
-        $userId = auth()->id();
+          
+        $userId = Auth::user()->id
+        ;
         $reserva = Reserva::with([
             'empresa',
             'usuario',

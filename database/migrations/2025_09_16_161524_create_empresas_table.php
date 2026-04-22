@@ -16,8 +16,8 @@ return new class extends Migration
             $table->string('nombre_empresa');
             $table->string('direccion');
             $table->string('telefono');
-            $table->text('descripcion');
-            $table->string('tipo_servicio')->nullable();
+            $table->text('descripcion')->nullable();
+            $table->string('tipo_servicio');
             $table->string('logo')->nullable(true);
             $table->json('fotos')->nullable(true);
             $table->foreignId('user_id')->references('id')->on('users');

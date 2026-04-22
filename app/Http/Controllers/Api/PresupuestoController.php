@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PresupuestoRequest;
 use App\Http\Resources\PresupuestoCollection;
+use App\Http\Resources\PresupuestoResource;
 use App\Models\Boda;
 use App\Models\Presupuesto;
 use Illuminate\Http\Request;
@@ -48,7 +49,7 @@ class PresupuestoController extends Controller
      */
     public function show(Presupuesto $presupuesto)
     {
-        //
+        return new  PresupuestoResource($presupuesto);
     }
 
     /**

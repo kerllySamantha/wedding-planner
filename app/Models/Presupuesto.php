@@ -21,6 +21,8 @@ class Presupuesto extends Model
 
   protected $casts = [
     'estado' => EstadoPedirPresupuesto::class,
+     'monto_estimado' => 'decimal:2',
+    'monto_pagado' => 'decimal:2',
 ];
 
 

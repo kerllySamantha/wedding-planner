@@ -29,7 +29,7 @@ class BodaController extends Controller
     public function store(BodaRequest $request)
     {
         $data = $request->validated();
-        $data['user_id'] = $data['user_id'] ?? auth()->id();
+        $data['user_id'] = $data['user_id'] ?? Auth::user()->id;
         $boda = Boda::create($data);
         // $boda->user_id = Auth::id() ?? 1;
         // $boda->nombre_pareja = $request->nombre_pareja;

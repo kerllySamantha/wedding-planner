@@ -23,21 +23,25 @@ class EmpresaRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => ['required', Password::min(8)
-                ->letters()
-                ->mixedCase()
-                ->numbers()
-                ->symbols()
-                ->uncompromised()],
+            'password' => [
+                'required',
+                Password::min(8)
+                    ->letters()
+                    ->mixedCase()
+                    ->numbers()
+                    ->symbols()
+                    ->uncompromised()
+            ],
             'rol' => 'required|string|exists:roles,name',
             'nombre_empresa' => 'required|string|max:255',
             'direccion' => 'required|string|max:255',
             'telefono' => 'required|string|max:20',
             'descripcion' => 'nullable|string',
             'logo' => 'nullable|string',
-            'fotos' => 'required|array',
-            'tipo_servicio' => 'string',
-            'fotos.*' => 'string',
+            'fotos' => 'nullable|array',
+            'tipo_servicio' => 'required|string',
+            'fotos.*' => 'nullable|string',
+            'poblacion_id' => 'required|exists:poblaciones,id',
             // 'categoria_id' => 'required|exists:categorias,id',
             'user_id' => 'prohibited',
         ];
@@ -46,30 +50,51 @@ class EmpresaRequest extends FormRequest
     public function messages(): array
     {
         return [
-            // Empresa
+            // nombre_empresa
             'nombre_empresa.required' => 'El nombre de la empresa es obligatorio.',
-            'nombre_empresa.string'   => 'El nombre de la empresa debe ser un texto válido.',
-            'nombre_empresa.max'      => 'El nombre de la empresa no puede tener más de 255 caracteres.',
+            'nombre_empresa.string' => 'El nombre de la empresa debe ser un texto válido.',
+            'nombre_empresa.max' => 'El nombre de la empresa no puede tener más de 255 caracteres.',
 
+            
+            // direccion
+            
             'direccion.required' => 'La dirección es obligatoria.',
-            'direccion.string'   => 'La dirección debe ser un texto válido.',
-            'direccion.max'      => 'La dirección no puede tener más de 255 caracteres.',
+            'direccion.string' => 'La dirección debe ser un texto válido.',
+            'direccion.max' => 'La dirección no puede tener más de 255 caracteres.',
 
-            // 'logo.string' => 'El logo debe ser un texto válido (URL o nombre de archivo).',
+            // telefono  ← FALTA
+            'telefono.required' => 'El teléfono es obligatorio.',
+            'telefono.string' => 'El teléfono debe ser un texto válido.',
+            'telefono.max' => 'El teléfono no puede tener más de 20 caracteres.',
 
-            // 'fotos.string' => 'Las fotos deben enviarse como texto o URL.',
+            // tipo_servicio  ← FALTA
+            'tipo_servicio.required' => 'El tipo de empresa es obligatorio.',
+            'tipo_servicio.string' => 'El tipo de empresa debe ser un texto válido.',
 
-            // 'descripcion.string'   => 'La descripción debe ser un texto válido.',
+            // poblacion_id  ← FALTA
+            'poblacion_id.required' => 'La población es obligatoria.',
+            'poblacion_id.exists' => 'La población seleccionada no existe.',
 
-            // 'categoria_id.required' => 'Debes seleccionar una categoría.',
-            // 'categoria_id.exists'   => 'La categoría seleccionada no existe.',
-
-            // Usuario
+            // name
             'name.required' => 'El nombre del usuario es obligatorio.',
+            'name.string' => 'El nombre debe ser un texto válido.',
+            'name.max' => 'El nombre no puede tener más de 255 caracteres.',
+
+            // email
             'email.required' => 'El email es obligatorio.',
-            'email.email' => 'El email debe ser válido.',
+            'email.email' => 'El email debe tener un formato válido.',
+            'email.unique' => 'Este email ya está registrado.',  // ← FALTA
+            'email.max' => 'El email no puede tener más de 255 caracteres.',
+
+            // password
             'password.required' => 'La contraseña es obligatoria.',
+
+            // rol
             'rol.required' => 'Debes asignar un rol al usuario.',
+            'rol.exists' => 'El rol seleccionado no existe.',  // ← FALTA
+
+            // user_id
+            'user_id.prohibited' => 'No puedes asignar un usuario manualmente.',  // ← FALTA
         ];
     }
 }

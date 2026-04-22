@@ -58,6 +58,7 @@ class EmpresaSeeder extends Seeder
                 'telefono' => '921654321',
                 'descripcion' => 'Fotografía profesional con más de 20 años de experiencia.',
                 'user_id' => $empresaUsers[1]->id,
+                'tipo_servicio' => 'Fotografia',
                 // 'categoria_id' => 6,
                 // 'servicios' => [2, 4],
                 'poblacion_id' => 282,
@@ -89,6 +90,7 @@ class EmpresaSeeder extends Seeder
                 'nombre_empresa' => 'Panadería El Trigal',
                 'direccion' => 'Calle Real 12, Segovia',
                 'telefono' => '921123456',
+                'tipo_servicio' => 'Servicio de Pasteleria y Panaderia',
                 'descripcion' => 'Panadería artesanal con recetas tradicionales segovianas.
                 Panadería Maeso nace en un pequeño obrador artesano, en un hermoso pueblo
                 de Guadalajara, Checa. Todo comenzó cuando se unió la pasión por la panadería, los eventos, la decoración y la organización de la propia boda de sus dueños. El conocimiento
@@ -131,6 +133,7 @@ class EmpresaSeeder extends Seeder
                 'nombre_empresa' => 'Valdés & Pastor',
                 'direccion' => 'Avenida de la Constitución 23, Segovia',
                 'telefono' => '921987654',
+                'tipo_servicio' => 'Vestidos Novia',
                 // 'servicios' => [8, 9],
                 'descripcion' => ' es un
                 taller especializado en el diseño y la creación de vestidos de novia, madrina, fiesta y comunión. Cuenta con un amplio abanico de diseños entre los que escoger, además de la posibilidad de poder realizar diseños a medida en su taller, adaptándose a todos tus sueños.',
@@ -165,6 +168,7 @@ class EmpresaSeeder extends Seeder
                 'nombre_empresa' => 'Joyeria Marga Mirá',
                 'direccion' => 'Calle San Juan 8, Segovia',
                 'telefono' => '921112233',
+                'tipo_servicio' => 'Expertos e joyas',
                 'descripcion' => 'Joyería Marga Mira es una
                  joyería familiar con taller de joyería en Segobia,
                   cuenta con la experiencia de varias generaciones de servicio y destaca por su trato cercano y un gran
@@ -202,6 +206,7 @@ class EmpresaSeeder extends Seeder
                 'direccion' => ' Carrer l Ermita,80,
                 local 1,',
                 'telefono' => '921445566',
+                'tipo_servicio' => 'Dulcerias',
                 'descripcion' => '¿A quién le amarga un dulce?
                 ¡Y si son Los Dulces de Yania, todavía menos! Y es que la propuesta que te ofrece esta
                  empresa para el día de tu boda será realmente
@@ -245,6 +250,7 @@ class EmpresaSeeder extends Seeder
                 'nombre_empresa' => 'Carpas 24/7',
                 'direccion' => 'Calle Real 18, Cox',
                 'telefono' => '921556677',
+                'tipo_servicio' => 'Carpas portables',
                 'descripcion' => '¿Sueñas con una celebración al aire libre, pero quieres
                  la tranquilidad de contar con un espacio
                 cubierto elegante y seguro? En Carpas 24/7 transformamos
@@ -291,6 +297,7 @@ class EmpresaSeeder extends Seeder
                 'direccion' => 'Calle Mayor 10, Segovia',
                 'poblacion_id' => 282,
                 'telefono' => '921667788',
+                'tipo_servicio' => 'Joyeria Lujo',
                 'descripcion' => 'Venta de joyas y relojes de alta calidad.',
                 'user_id' => $empresaUsers[6]->id,
                 // 'categoria_id' => 14,

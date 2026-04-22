@@ -17,7 +17,9 @@ class   Empresa extends Model
         'logo',
         'fotos',
         'categoria_id',
-        'user_id'
+        'user_id',
+        'poblacion_id',
+        'tipo_servicio'
     ];
     
     function usuario() {
