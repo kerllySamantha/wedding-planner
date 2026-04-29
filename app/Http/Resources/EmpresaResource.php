@@ -32,7 +32,7 @@ class EmpresaResource extends JsonResource
             'id' => $this->id,
             'nombre_empresa' => $this->nombre_empresa,
             'direccion' => $this->direccion,
-            'telefonono' => $this->telefono,
+            'telefono' => $this->telefono,
             'descripcion' => $this->descripcion,
             'tipo_servicio' => $this->tipo_servicio,
             'logo' => $this->logo,

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('bodas', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('usuario_id')->unique()->nullable()->constrained('users')->onDelete('cascade'); 
+            $table->foreignId('usuario_id')->unique()->nullable()->constrained('users')->cascadeOnDelete(); 
             $table->string('nombre_pareja'); 
             // $table->foreignId('boda_user_id')->references('id')->on('users');
             $table->date('fecha_boda'); 
