@@ -25,6 +25,8 @@ class PedirPresupuesto extends Model
         'user_id',
         'reserva_id',
         'producto_id',
+        'producto_personalizado_nombre',
+        'es_producto_personalizado',
         'modalidad',
         'fecha',
         'fecha_inicio',
@@ -47,6 +49,7 @@ class PedirPresupuesto extends Model
         'fecha_fin' => 'datetime',
         'fecha_respuesta' => 'datetime',
         'importe_ofertado' => 'decimal:2',
+        'es_producto_personalizado' => 'boolean',
     ];
 
     public function usuario()
