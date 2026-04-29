@@ -35,9 +35,11 @@ class ResponderPedirPresupuestoRequest extends FormRequest
                 'nullable',
                 'integer',
                 'exists:productos,id',
-                Rule::requiredIf(
-                    $this->input('estado') !== PedirPresupuesto::ESTADO_RECHAZADO_EMPRESA
-                ),
+            ],
+            'producto_personalizado_nombre' => [
+                'nullable',
+                'string',
+                'max:255',
             ],
             'modalidad' => [
                 'nullable',
@@ -70,6 +72,7 @@ class ResponderPedirPresupuestoRequest extends FormRequest
         return [
             'estado.in' => 'El estado indicado no es valido para la respuesta de la empresa.',
             'producto_id.required' => 'El producto es obligatorio para la propuesta.',
+            'producto_personalizado_nombre.max' => 'El nombre del producto personalizado no puede superar 255 caracteres.',
             'producto_id.exists' => 'El producto indicado no existe.',
             'modalidad.in' => 'La modalidad no es valida.',
             'fecha_inicio.date' => 'La fecha de inicio no es valida.',

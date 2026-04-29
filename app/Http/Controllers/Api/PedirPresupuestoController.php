@@ -115,6 +115,8 @@ class PedirPresupuestoController extends Controller
                 'importe_ofertado' => null,
                 'comentario_empresa' => $validated['comentario_empresa'] ?? null,
                 'producto_id' => null,
+                'producto_personalizado_nombre' => null,
+                'es_producto_personalizado' => false,
                 'modalidad' => null,
                 'fecha_inicio' => null,
                 'fecha_fin' => null,
@@ -135,30 +137,35 @@ class PedirPresupuestoController extends Controller
             return response()->json($pedirPresupuesto->load(['usuario', 'empresa', 'boda', 'tipoProducto']));
         }
 
-        if (empty($validated['producto_id'])) {
+        $usaProductoPersonalizado = empty($validated['producto_id']) && !empty($validated['producto_personalizado_nombre']);
+
+        if (empty($validated['producto_id']) && !$usaProductoPersonalizado) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'El producto es obligatorio para la propuesta.'
+                'message' => 'Debes indicar un producto del sistema o un nombre de producto personalizado.'
             ], 422);
         }
 
-        $producto = Producto::with('tipoProducto')->find($validated['producto_id']);
+        $producto = null;
+        if (!empty($validated['producto_id'])) {
+            $producto = Producto::with('tipoProducto')->find($validated['producto_id']);
 
-        if (!$producto) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Producto no encontrado.'
-            ], 422);
+            if (!$producto) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Producto no encontrado.'
+                ], 422);
+            }
+
+            if ((int) $producto->empresa_id !== (int) $pedirPresupuesto->empresa_id) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'El producto no pertenece a este proveedor.'
+                ], 422);
+            }
         }
 
-        if ((int) $producto->empresa_id !== (int) $pedirPresupuesto->empresa_id) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'El producto no pertenece a este proveedor.'
-            ], 422);
-        }
-
-        $modalidad = $validated['modalidad'] ?? $producto->tipoProducto?->modalidad;
+        $modalidad = $validated['modalidad'] ?? $producto?->tipoProducto?->modalidad;
 
         if (!$modalidad) {
             return response()->json([
@@ -220,7 +227,9 @@ class PedirPresupuestoController extends Controller
         }
 
         $pedirPresupuesto->update([
-            'producto_id' => $producto->id,
+            'producto_id' => $producto?->id,
+            'producto_personalizado_nombre' => $usaProductoPersonalizado ? $validated['producto_personalizado_nombre'] : null,
+            'es_producto_personalizado' => $usaProductoPersonalizado,
             'modalidad' => $modalidad,
             'fecha_inicio' => $fechaInicio,
             'fecha_fin' => $fechaFin,
