@@ -19,7 +19,7 @@ class   Empresa extends Model
         'categoria_id',
         'user_id',
         'poblacion_id',
-        'tipo_servicio'
+        'tipo_servicio',
     ];
     
     function usuario() {

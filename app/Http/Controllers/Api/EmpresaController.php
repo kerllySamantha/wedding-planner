@@ -3,143 +3,228 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UpdateEmpresaRequest;
 use App\Http\Requests\EmpresaRequest;
-use App\Http\Requests\UserRequest;
 use App\Http\Resources\EmpresaCollection;
 use App\Http\Resources\EmpresaResource;
 use App\Http\Resources\ProductoResource;
+use App\Models\Categoria;
 use App\Models\Empresa;
+use App\Models\TipoProducto;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class EmpresaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $empresas = Empresa::with(['usuario', 'productos'])->orderBy('nombre_empresa')->paginate(10);
+        $empresas = Empresa::with(['usuario', 'productos.tipoProducto.categoria'])
+            ->withAvg('resenias', 'puntuacion')
+            ->withCount('resenias')
+            ->orderBy('nombre_empresa')
+            ->paginate(10);
+
         return new EmpresaCollection($empresas);
-
-        // return response()->json([
-        //     'success' => 'Empresas mostradas correctamente',
-        //     'data' => $empresas
-        // ]);
     }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-
 
     public function store(EmpresaRequest $request)
     {
         $validated = $request->validated();
 
-        $user = User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => bcrypt($validated['password']),
-        ]);
+        try {
+            return DB::transaction(function () use ($validated, $request) {
 
-        $user->assignRole($validated['rol']);
+                $user = User::create([
+                    'name'     => $validated['name'],
+                    'email'    => $validated['email'],
+                    'password' => bcrypt($validated['password']),
+                ]);
 
-        $empresa = $user->empresa()->create(Arr::except($validated, ['name', 'email', 'password', 'rol']));
+                $user->assignRole($validated['rol']);
 
-        // $empresa->servicios()->attach($validated['servicios'] ?? []);
+                if ($request->hasFile('logo')) {
+                    $validated['logo'] = $request->file('logo')
+                        ->store('logos', 'public');
+                }
 
-        return new EmpresaResource($empresa->load('user'));
+                if ($request->hasFile('fotos')) {
+                    $validated['fotos'] = json_encode(
+                        collect($request->file('fotos'))
+                            ->map(fn($foto) => $foto->store('fotos', 'public'))
+                            ->toArray()
+                    );
+                }
+
+                $empresa = $user->empresa()->create(
+                    Arr::except($validated, ['name', 'email', 'password', 'rol'])
+                );
+
+                return response()->json([
+                    'status'  => 'success',
+                    'message' => 'Empresa creada correctamente',
+                    'data'    => new EmpresaResource(
+                        $empresa->load(['usuario', 'productos.tipoProducto.categoria'])
+                    ),
+                ], 201);
+            });
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Error al crear la empresa',
+                'error'   => config('app.debug') ? $e->getMessage() : null,
+            ], 500);
+        }
     }
-
-
-    /**
-     * Display the specified resource.
-     */
 
     public function show(Empresa $empresa)
     {
-        $empresa->load(
-            [
-                'productos.tipoProducto.categoria',
-                'poblacion.provincia',
-                'usuario','resenias'
-            ]
-        )
-        ->loadAvg('resenias', 'puntuacion')
-        -> loadCount('resenias')->get();
+        $empresa->load(['productos.tipoProducto.categoria', 'poblacion.provincia', 'usuario', 'resenias'])
+            ->loadAvg('resenias', 'puntuacion')
+            ->loadCount('resenias');
 
         return new EmpresaResource($empresa);
-       // return  response()->json($empresa, 200);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-
-    public function update(Request $request, Empresa $empresa)
+    public function update(UpdateEmpresaRequest $request, Empresa $empresa)
     {
-        $user = $empresa->usuario;
+        $validated = $request->validated();
 
-        $userData = Arr::only($request->all(), ['name', 'email']);
-        if ($request->filled('password')) {
-            $userData['password'] = bcrypt($request->password);
+        try {
+            return DB::transaction(function () use ($validated, $request, $empresa) {
+
+                // 1. Actualizar usuario
+                $user     = $empresa->usuario;
+                $userData = Arr::only($validated, ['name', 'email']);
+
+                if (!empty($validated['password'])) {
+                    $userData['password'] = bcrypt($validated['password']);
+                }
+
+                if (!empty($userData)) {
+                    $user->update($userData);
+                }
+
+                if (!empty($validated['rol'])) {
+                    $user->syncRoles([$validated['rol']]);
+                }
+
+                // 2. Manejar logo
+                if ($request->hasFile('logo')) {
+                    if ($empresa->logo) {
+                        Storage::disk('public')->delete($empresa->logo);
+                    }
+                    $validated['logo'] = $request->file('logo')
+                        ->store('logos', 'public');
+                }
+
+                // 3. Actualizar datos de la empresa
+                $empresaData = Arr::only($validated, [
+                    'nombre_empresa', 'direccion', 'telefono',
+                    'descripcion', 'logo', 'tipo_servicio', 'poblacion_id',
+                ]);
+
+                if (!empty($empresaData)) {
+                    $empresa->update($empresaData);
+                }
+
+                // 4. Manejar productos solo si vienen en la request
+                if (!empty($validated['productos'])) {
+                    foreach ($validated['productos'] as $productoData) {
+
+                        // Saltar si faltan campos clave
+                        if (empty($productoData['categoria_nombre']) ||
+                            empty($productoData['tipo_producto_nombre']) ||
+                            empty($productoData['nombre'])) {
+                            continue;
+                        }
+
+                        // 4.1 Buscar categoría (no crear)
+                        $categoria = Categoria::where('nombre', $productoData['categoria_nombre'])->first();
+                        if (!$categoria) {
+                            throw new \Exception("La categoría '{$productoData['categoria_nombre']}' no existe.");
+                        }
+
+                        // 4.2 Buscar tipoProducto (no crear)
+                        $tipoProducto = TipoProducto::where([
+                            'nombre'       => $productoData['tipo_producto_nombre'],
+                            'categoria_id' => $categoria->id,
+                        ])->first();
+                        if (!$tipoProducto) {
+                            throw new \Exception("El tipo de producto '{$productoData['tipo_producto_nombre']}' no existe.");
+                        }
+
+                        // 4.3 Actualizar o crear producto
+                        if (!empty($productoData['id'])) {
+                            $empresa->productos()
+                                ->where('id', $productoData['id'])
+                                ->update([
+                                    'nombre'           => $productoData['nombre'],
+                                    'descripcion'      => $productoData['descripcion'] ?? null,
+                                    'precio_min'           => $productoData['precio_min'] ?? null,
+                                    'precio_max'           => $productoData['precio_max'] ?? null,
+                                    'tipo_producto_id' => $tipoProducto->id,
+                                ]);
+                        } else {
+                            $empresa->productos()->create([
+                                'nombre'           => $productoData['nombre'],
+                                'descripcion'      => $productoData['descripcion'] ?? null,
+                                'precio'           => $productoData['precio'] ?? null,
+                                'tipo_producto_id' => $tipoProducto->id,
+                            ]);
+                        }
+                    }
+                }
+
+                return response()->json([
+                    'status'  => 'success',
+                    'message' => 'Empresa actualizada correctamente',
+                    'data'    => new EmpresaResource(
+                        $empresa->fresh()->load(['usuario', 'productos.tipoProducto.categoria', 'poblacion.provincia'])
+                    ),
+                ], 200);
+            });
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Error al actualizar la empresa',
+                'error'   => config('app.debug') ? $e->getMessage() : null,
+            ], 500);
         }
-        $user->update($userData);
-
-        if ($request->filled('rol')) {
-            $user->syncRoles([$request->rol]);
-        }
-
-        $empresaData = Arr::only($request->all(), [
-            'nombre_empresa',
-            'direccion',
-            'telefono',
-            'descripcion',
-            'logo',
-            'tipo_servicio',
-            // 'fotos', // descomenta si quieres permitir actualizar fotos
-            // 'categoria_id', // descomenta si quieres actualizar categoría
-        ]);
-        $empresa->update($empresaData);
-
-        // 3. Retornar recurso
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Empresa actualizada correctamente',
-            'data' => new EmpresaResource($empresa->load(['user', 'categoria'])),
-        ], 200);
     }
 
-
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Empresa $empresa)
     {
         $user = $empresa->usuario;
         $empresa->delete();
+        $user?->delete();
 
-        if ($user) {
-            $user->delete();
-        }
-        return new EmpresaResource($empresa);
+        return response()->json([
+            'status'  => 'success',
+            'message' => 'Empresa eliminada correctamente',
+        ], 200);
     }
 
     public function getEmpresaPorUsuario(User $user)
     {
-        $empresa = Empresa::where('user_id', $user->id)->first();
+        $empresa = Empresa::where('user_id', $user->id)
+            ->with(['productos.tipoProducto.categoria', 'poblacion.provincia'])
+            ->firstOrFail();
+
         return new EmpresaResource($empresa);
     }
 
     public function productos(Empresa $empresa)
-{
-    $productos = $empresa->productos()
-        ->latest()
-        ->paginate(10);
+    {
+        $productos = $empresa->productos()
+            ->with(['tipoProducto.categoria'])
+            ->latest()
+            ->paginate(10);
 
-    return ProductoResource::collection($productos);
-}
+        return ProductoResource::collection($productos);
+    }
 }
