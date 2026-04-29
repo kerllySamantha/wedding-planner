@@ -166,20 +166,26 @@ class EmpresaController extends Controller
                             throw new \Exception('La empresa solo puede tener productos de un único tipo de producto.');
                         }
 
-                        // 4.4 En update solo se permiten productos existentes de la empresa
-                        if (empty($productoData['id'])) {
-                            continue;
-                        }
+                        // 4.4 Si viene id actualiza; si no existe, crea un producto asociado a la empresa
+                        $payloadProducto = [
+                            'nombre'           => $productoData['nombre'],
+                            'descripcion'      => $productoData['descripcion'] ?? null,
+                            'precio_min'       => $productoData['precio_min'] ?? null,
+                            'precio_max'       => $productoData['precio_max'] ?? null,
+                            'tipo_producto_id' => $tipoProducto->id,
+                        ];
 
-                        $empresa->productos()
-                            ->where('id', $productoData['id'])
-                            ->update([
-                                'nombre'           => $productoData['nombre'],
-                                'descripcion'      => $productoData['descripcion'] ?? null,
-                                'precio_min'       => $productoData['precio_min'] ?? null,
-                                'precio_max'       => $productoData['precio_max'] ?? null,
-                                'tipo_producto_id' => $tipoProducto->id,
-                            ]);
+                        if (!empty($productoData['id'])) {
+                            $actualizados = $empresa->productos()
+                                ->where('id', $productoData['id'])
+                                ->update($payloadProducto);
+
+                            if ($actualizados === 0) {
+                                throw new \Exception('El producto indicado no pertenece a esta empresa.');
+                            }
+                        } else {
+                            $empresa->productos()->create($payloadProducto);
+                        }
 
                         $tipoProductoEmpresaId = $tipoProducto->id;
                     }
