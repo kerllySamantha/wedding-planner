@@ -133,6 +133,10 @@ class EmpresaController extends Controller
 
                 // 4. Manejar productos solo si vienen en la request
                 if (!empty($validated['productos'])) {
+                    $tipoProductoEmpresaId = $empresa->productos()
+                        ->whereNotNull('tipo_producto_id')
+                        ->value('tipo_producto_id');
+
                     foreach ($validated['productos'] as $productoData) {
 
                         // Saltar si faltan campos clave
@@ -157,25 +161,27 @@ class EmpresaController extends Controller
                             throw new \Exception("El tipo de producto '{$productoData['tipo_producto_nombre']}' no existe.");
                         }
 
-                        // 4.3 Actualizar o crear producto
-                        if (!empty($productoData['id'])) {
-                            $empresa->productos()
-                                ->where('id', $productoData['id'])
-                                ->update([
-                                    'nombre'           => $productoData['nombre'],
-                                    'descripcion'      => $productoData['descripcion'] ?? null,
-                                    'precio_min'           => $productoData['precio_min'] ?? null,
-                                    'precio_max'           => $productoData['precio_max'] ?? null,
-                                    'tipo_producto_id' => $tipoProducto->id,
-                                ]);
-                        } else {
-                            $empresa->productos()->create([
+                        // 4.3 Una empresa solo puede pertenecer a un tipo de producto
+                        if ($tipoProductoEmpresaId !== null && $tipoProductoEmpresaId !== $tipoProducto->id) {
+                            throw new \Exception('La empresa solo puede tener productos de un único tipo de producto.');
+                        }
+
+                        // 4.4 En update solo se permiten productos existentes de la empresa
+                        if (empty($productoData['id'])) {
+                            continue;
+                        }
+
+                        $empresa->productos()
+                            ->where('id', $productoData['id'])
+                            ->update([
                                 'nombre'           => $productoData['nombre'],
                                 'descripcion'      => $productoData['descripcion'] ?? null,
-                                'precio'           => $productoData['precio'] ?? null,
+                                'precio_min'       => $productoData['precio_min'] ?? null,
+                                'precio_max'       => $productoData['precio_max'] ?? null,
                                 'tipo_producto_id' => $tipoProducto->id,
                             ]);
-                        }
+
+                        $tipoProductoEmpresaId = $tipoProducto->id;
                     }
                 }
 
