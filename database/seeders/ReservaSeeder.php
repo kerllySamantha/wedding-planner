@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Boda;
 use App\Models\Empresa;
 use App\Models\User;
 use App\Models\Producto;
@@ -14,6 +15,7 @@ class ReservaSeeder extends Seeder
     public function run(): void
     {
         $usuariosEmpresa = User::role('empresa')->get();
+        $bodas = Boda::all();
 
         if ($usuariosEmpresa->isEmpty()) {
             $this->command->info('No hay usuarios con rol empresa.');
@@ -27,6 +29,7 @@ class ReservaSeeder extends Seeder
             $tipo = collect(['producto', 'servicio', 'bloqueo'])->random();
             $estado = collect(['pendiente', 'confirmada', 'cancelada', 'bloqueada'])->random();
             $origen = collect(['usuario', 'proveedor'])->random();
+            $bodaId = null;
 
             $fechaBase = Carbon::now()->addDays(rand(0, 90));
             $fechaInicio = null;
@@ -49,6 +52,9 @@ class ReservaSeeder extends Seeder
                 $empresa = $user->empresa;
 
                 if (!$empresa) continue; // saltar si no tiene empresa
+                if (!$bodas->isEmpty()) {
+                    $bodaId = $bodas->random()->id;
+                }
 
                 if ($tipo === 'servicio') {
                     $horaInicio = rand(8, 16);
@@ -88,7 +94,7 @@ class ReservaSeeder extends Seeder
                 'user_id' => $user?->id,
                 'empresa_id' => $empresa->id,
                 'producto_id' => $productoId,
-                'boda_id' => null,
+                'boda_id' => $bodaId,
                 'fecha_inicio' => $fechaInicio,
                 'fecha_fin' => $fechaFin,
                 'tipo_reserva' => $tipo,
