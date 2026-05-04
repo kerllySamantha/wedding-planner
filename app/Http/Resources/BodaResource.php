@@ -29,6 +29,41 @@ class BodaResource extends JsonResource
             ];
         });
 
+        $presupuestos = $this->presupuesto->map(
+            fn($tipo) => [
+                'id' => $tipo->id,
+                'tipo' => [
+                    'id' => $tipo->tipoProducto->id,
+                    'nombre' => $tipo->tipoProducto->nombre,
+                ],
+                'monto_total' => (float) $tipo->monto_total,
+                'estado' =>  $tipo->estado,
+                'monto_pagado' => (float) $tipo->monto_pagado,
+                'fecha_creacion' => $tipo->fecha_creacion
+            ]
+        );
+
+        $resumenPresupuesto = [
+            'total_estimado' => (float) $this->presupuesto->sum('monto_total'),
+            'total_pagado' => (float) $this->presupuesto->sum('monto_pagado'),
+            'pendiente_pago' => (float) max(
+                0,
+                $this->presupuesto->sum('monto_total') - $this->presupuesto->sum('monto_pagado')
+            ),
+        ];
+
+        $proveedores = $this->reservas
+            ->filter(fn($reserva) => !is_null($reserva->empresa))
+            ->map(fn($reserva) => [
+                'reserva_id' => $reserva->id,
+                'empresa_id' => $reserva->empresa->id,
+                'nombre' => $reserva->empresa->nombre_empresa,
+                'estado_reserva' => $reserva->estado,
+                'tipo_reserva' => $reserva->tipo_reserva,
+            ])
+            ->unique('empresa_id')
+            ->values();
+
         return [
             'id' => $this->id,
             'nombre_pareja' => $this->nombre_pareja,
@@ -43,44 +78,23 @@ class BodaResource extends JsonResource
                 'id' =>  $this->poblacion ? $this->poblacion->provincia->id : "",
             ],
             'usuario' => new UserResource($this->usuario),
-            // 'presupuesto_total' => $this->presupuesto_total,
             'notas' => $this->notas,
-            'presupuestos' => $this->presupuesto->map(
-                fn($tipo) => [
-                    'id' => $tipo->id,
-                    'tipo' => [
-                        'id' => $tipo->tipoProducto->id,
-                        'nombre' => $tipo->tipoProducto->nombre,
-                    ],
-                    // 'nombre' => $tipo->nombre,
-                    // 'descripcion' => $tipo->descripcion,
-                    'monto_total' => (float) $tipo->monto_total,
-                    'estado' =>  $tipo->estado,
-                    'monto_pagado' => (float) $tipo->monto_pagado,
-                    'fecha_creacion' => $tipo->fecha_creacion
-                ]
-            ),
-            'resumen_presupuesto' => [
-                'total_estimado' => (float) $this->presupuesto->sum('monto_total'),
-                'total_pagado' => (float) $this->presupuesto->sum('monto_pagado'),
-                'pendiente_pago' => (float) max(
-                    0,
-                    $this->presupuesto->sum('monto_total') - $this->presupuesto->sum('monto_pagado')
-                ),
-            ],
-            'proveedores' => $this->reservas
-                ->filter(fn($reserva) => !is_null($reserva->empresa))
-                ->map(fn($reserva) => [
-                    'reserva_id' => $reserva->id,
-                    'empresa_id' => $reserva->empresa->id,
-                    'nombre' => $reserva->empresa->nombre_empresa,
-                    'estado_reserva' => $reserva->estado,
-                    'tipo_reserva' => $reserva->tipo_reserva,
-                ])
-                ->unique('empresa_id')
-                ->values(),
 
-            'fotos' => $fotos
+            // Nuevo contrato API: separar planificación vs. resultado final.
+            'planificacion' => [
+                'presupuestos' => $presupuestos,
+                'resumen_presupuesto' => $resumenPresupuesto,
+                'proveedores' => $proveedores,
+            ],
+            'resultado_evento' => [
+                'fotos' => $fotosConUrl->values(),
+            ],
+
+            // Compatibilidad temporal con frontend existente.
+            'presupuestos' => $presupuestos,
+            'resumen_presupuesto' => $resumenPresupuesto,
+            'proveedores' => $proveedores,
+            'fotos' => $fotos,
         ];
     }
 }
