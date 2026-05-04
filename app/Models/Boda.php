@@ -13,6 +13,8 @@ class Boda extends Model
         'ubicacion',
         'provincia_id',
         'poblacion_id',
+        'notas',
+        'fotos',
     ];
 
     public function usuario()

@@ -19,7 +19,7 @@ class BodaController extends Controller
      */
     public function index()
     {
-        $bodas = Boda::with('usuario')->paginate(10);
+        $bodas = Boda::with(['usuario', 'poblacion.provincia', 'presupuesto.tipoProducto', 'reservas.empresa'])->paginate(10);
         return new BodaCollection($bodas);
     }
 
@@ -53,6 +53,7 @@ class BodaController extends Controller
      */
     public function show(Boda $boda)
     {
+        $boda->load(['usuario', 'poblacion.provincia', 'presupuesto.tipoProducto', 'reservas.empresa']);
 
         if (!$boda) {
             return response()->json([
@@ -99,7 +100,7 @@ class BodaController extends Controller
 
     public function getBodaByUserId($usuarioId)
     {
-        $boda = Boda::with('usuario')
+        $boda = Boda::with(['usuario', 'poblacion.provincia', 'presupuesto.tipoProducto', 'reservas.empresa'])
             ->where('usuario_id', $usuarioId)
             ->first();
 

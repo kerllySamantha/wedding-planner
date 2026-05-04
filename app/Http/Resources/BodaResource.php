@@ -60,6 +60,25 @@ class BodaResource extends JsonResource
                     'fecha_creacion' => $tipo->fecha_creacion
                 ]
             ),
+            'resumen_presupuesto' => [
+                'total_estimado' => (float) $this->presupuesto->sum('monto_total'),
+                'total_pagado' => (float) $this->presupuesto->sum('monto_pagado'),
+                'pendiente_pago' => (float) max(
+                    0,
+                    $this->presupuesto->sum('monto_total') - $this->presupuesto->sum('monto_pagado')
+                ),
+            ],
+            'proveedores' => $this->reservas
+                ->filter(fn($reserva) => !is_null($reserva->empresa))
+                ->map(fn($reserva) => [
+                    'reserva_id' => $reserva->id,
+                    'empresa_id' => $reserva->empresa->id,
+                    'nombre' => $reserva->empresa->nombre_empresa,
+                    'estado_reserva' => $reserva->estado,
+                    'tipo_reserva' => $reserva->tipo_reserva,
+                ])
+                ->unique('empresa_id')
+                ->values(),
 
             'fotos' => $fotos
         ];
