@@ -18,7 +18,16 @@ class PerfilUsuarioResource extends JsonResource
             'id' => $this->id,
             'telefono' => $this->telefono,
             'direccion' => $this->direccion,
-            'usuario' => new UserResource($this->user)
+            'fecha_boda' => $this->fecha_boda,
+            'usuario' => new UserResource($this->user),
+            'poblacion' => [
+                'nombre' => $this->poblacion->nombre ?? "",
+                'id' => $this->poblacion->id ?? "",
+            ],
+            'provincia' => [
+                'nombre' => $this->poblacion->provincia->nombre ?? "",
+                'id' => $this->poblacion->provincia->id ?? "",
+            ],
         ];
     }
 }

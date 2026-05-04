@@ -46,7 +46,7 @@ class UpdateEmpresaRequest extends FormRequest
             'poblacion_id' => 'sometimes|nullable|exists:poblaciones,id',
             'logo' => 'sometimes|nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'fotos' => 'sometimes|nullable|array',
-            'fotos.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
+            'fotos.*' => 'sometimes|nullable|string', // ← strings, ya fueron subidas antes
             'productos' => 'sometimes|nullable|array',
             'productos.*.id' => 'sometimes|nullable|exists:productos,id',
             'productos.*.nombre' => 'required_with:productos|string|max:255',
@@ -58,7 +58,7 @@ class UpdateEmpresaRequest extends FormRequest
             // TipoProducto
             'productos.*.tipo_producto_nombre' => 'required_with:productos|string|max:255',
             'productos.*.tipo_producto_descripcion' => 'nullable|string',
-            'productos.*.modalidad' => 'nullable|string',
+            // 'productos.*.modalidad' => 'nullable|string',
 
             // Categoria
             'productos.*.categoria_nombre' => 'required_with:productos|string|max:255',

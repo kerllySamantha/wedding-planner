@@ -38,8 +38,8 @@ class EmpresaController extends Controller
             return DB::transaction(function () use ($validated, $request) {
 
                 $user = User::create([
-                    'name'     => $validated['name'],
-                    'email'    => $validated['email'],
+                    'name' => $validated['name'],
+                    'email' => $validated['email'],
                     'password' => bcrypt($validated['password']),
                 ]);
 
@@ -63,9 +63,9 @@ class EmpresaController extends Controller
                 );
 
                 return response()->json([
-                    'status'  => 'success',
+                    'status' => 'success',
                     'message' => 'Empresa creada correctamente',
-                    'data'    => new EmpresaResource(
+                    'data' => new EmpresaResource(
                         $empresa->load(['usuario', 'productos.tipoProducto.categoria'])
                     ),
                 ], 201);
@@ -73,9 +73,9 @@ class EmpresaController extends Controller
 
         } catch (\Exception $e) {
             return response()->json([
-                'status'  => 'error',
+                'status' => 'error',
                 'message' => 'Error al crear la empresa',
-                'error'   => config('app.debug') ? $e->getMessage() : null,
+                'error' => config('app.debug') ? $e->getMessage() : null,
             ], 500);
         }
     }
@@ -97,7 +97,7 @@ class EmpresaController extends Controller
             return DB::transaction(function () use ($validated, $request, $empresa) {
 
                 // 1. Actualizar usuario
-                $user     = $empresa->usuario;
+                $user = $empresa->usuario;
                 $userData = Arr::only($validated, ['name', 'email']);
 
                 if (!empty($validated['password'])) {
@@ -123,65 +123,78 @@ class EmpresaController extends Controller
 
                 // 3. Actualizar datos de la empresa
                 $empresaData = Arr::only($validated, [
-                    'nombre_empresa', 'direccion', 'telefono',
-                    'descripcion', 'logo', 'tipo_servicio', 'poblacion_id',
+                    'nombre_empresa',
+                    'direccion',
+                    'telefono',
+                    'descripcion',
+                    'logo',
+                    'tipo_servicio',
+                    'poblacion_id',
                 ]);
+
+                // ✅ BUG FIX: fotos debe añadirse ANTES de llamar a $empresa->update()
+                if (array_key_exists('fotos', $validated)) {
+                    $empresaData['fotos'] = json_encode($validated['fotos'] ?? []);
+                }
 
                 if (!empty($empresaData)) {
                     $empresa->update($empresaData);
                 }
 
-                // 4. Manejar productos solo si vienen en la request
-                if (!empty($validated['productos'])) {
+                // 4. Manejar productos
+                if (array_key_exists('productos', $validated) && !empty($validated['productos'])) {
+
                     $tipoProductoEmpresaId = $empresa->productos()
                         ->whereNotNull('tipo_producto_id')
                         ->value('tipo_producto_id');
 
-                    foreach ($validated['productos'] as $productoData) {
+                    foreach ($validated['productos'] as $index => $productoData) {
 
                         // Saltar si faltan campos clave
-                        if (empty($productoData['categoria_nombre']) ||
+                        if (
+                            empty($productoData['categoria_nombre']) ||
                             empty($productoData['tipo_producto_nombre']) ||
-                            empty($productoData['nombre'])) {
+                            empty($productoData['nombre'])
+                        ) {
                             continue;
                         }
 
-                        // 4.1 Buscar categoría (no crear)
+                        // 4.1 Buscar categoría
                         $categoria = Categoria::where('nombre', $productoData['categoria_nombre'])->first();
                         if (!$categoria) {
-                            throw new \Exception("La categoría '{$productoData['categoria_nombre']}' no existe.");
+                            throw new \Exception("Categoría '{$productoData['categoria_nombre']}' no encontrada.");
                         }
 
-                        // 4.2 Buscar tipoProducto (no crear)
+                        // 4.2 Buscar tipoProducto
                         $tipoProducto = TipoProducto::where([
-                            'nombre'       => $productoData['tipo_producto_nombre'],
+                            'nombre' => $productoData['tipo_producto_nombre'],
                             'categoria_id' => $categoria->id,
                         ])->first();
                         if (!$tipoProducto) {
-                            throw new \Exception("El tipo de producto '{$productoData['tipo_producto_nombre']}' no existe.");
+                            throw new \Exception("Tipo de producto '{$productoData['tipo_producto_nombre']}' no encontrado.");
                         }
 
-                        // 4.3 Una empresa solo puede pertenecer a un tipo de producto
+                        // 4.3 Una empresa = un único tipo de producto
                         if ($tipoProductoEmpresaId !== null && $tipoProductoEmpresaId !== $tipoProducto->id) {
                             throw new \Exception('La empresa solo puede tener productos de un único tipo de producto.');
                         }
 
-                        // 4.4 Si viene id actualiza; si no existe, crea un producto asociado a la empresa
+                        // 4.4 Crear o actualizar producto
                         $payloadProducto = [
-                            'nombre'           => $productoData['nombre'],
-                            'descripcion'      => $productoData['descripcion'] ?? null,
-                            'precio_min'       => $productoData['precio_min'] ?? null,
-                            'precio_max'       => $productoData['precio_max'] ?? null,
+                            'nombre' => $productoData['nombre'],
+                            'descripcion' => $productoData['descripcion'] ?? null,
+                            'precio_min' => $productoData['precio_min'] ?? null,
+                            'precio_max' => $productoData['precio_max'] ?? null,
                             'tipo_producto_id' => $tipoProducto->id,
                         ];
 
                         if (!empty($productoData['id'])) {
-                            $actualizados = $empresa->productos()
+                            $actualizado = $empresa->productos()
                                 ->where('id', $productoData['id'])
                                 ->update($payloadProducto);
 
-                            if ($actualizados === 0) {
-                                throw new \Exception('El producto indicado no pertenece a esta empresa.');
+                            if ($actualizado === 0) {
+                                throw new \Exception("El producto ID {$productoData['id']} no pertenece a esta empresa.");
                             }
                         } else {
                             $empresa->productos()->create($payloadProducto);
@@ -192,9 +205,9 @@ class EmpresaController extends Controller
                 }
 
                 return response()->json([
-                    'status'  => 'success',
+                    'status' => 'success',
                     'message' => 'Empresa actualizada correctamente',
-                    'data'    => new EmpresaResource(
+                    'data' => new EmpresaResource(
                         $empresa->fresh()->load(['usuario', 'productos.tipoProducto.categoria', 'poblacion.provincia'])
                     ),
                 ], 200);
@@ -202,9 +215,9 @@ class EmpresaController extends Controller
 
         } catch (\Exception $e) {
             return response()->json([
-                'status'  => 'error',
+                'status' => 'error',
                 'message' => 'Error al actualizar la empresa',
-                'error'   => config('app.debug') ? $e->getMessage() : null,
+                'error' => config('app.debug') ? $e->getMessage() : null,
             ], 500);
         }
     }
@@ -216,7 +229,7 @@ class EmpresaController extends Controller
         $user?->delete();
 
         return response()->json([
-            'status'  => 'success',
+            'status' => 'success',
             'message' => 'Empresa eliminada correctamente',
         ], 200);
     }
