@@ -17,7 +17,7 @@ class Producto extends Model
         'empresa_id'
     ];
 
-    
+
     use HasFactory;
     public function empresa()
     {

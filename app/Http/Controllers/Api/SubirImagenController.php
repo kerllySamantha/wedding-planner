@@ -13,21 +13,36 @@ class SubirImagenController extends Controller
     {
         $request->validate([
             'imagen' => 'required|string',
-            'extension' => 'required|string',
-            'user_id' => 'required|integer' 
+            'extension' => 'required|in:jpg,jpeg,png,webp,gif',
+            'user_id' => 'required|integer'
         ]);
 
         try {
             $imagenBase64 = $request->input('imagen');
             $extension = $request->input('extension');
             $userId = $request->input('user_id');
-
-            // Limpiar el prefijo base64
+            
             $imagen = preg_replace('/^data:image\/\w+;base64,/', '', $imagenBase64);
-            $imagenDecodificada = base64_decode($imagen);
+
+            $imagenDecodificada = base64_decode($imagen, true);
+            if ($imagenDecodificada === false) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Imagen en base64 inválida'
+                ], 422);
+            }
 
             // Generar carpeta por usuario
             $carpetaUsuario = "imagenes/usuario_{$userId}";
+
+            $extension = strtolower($extension);
+            $permitidas = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
+            if (!in_array($extension, $permitidas)) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Extensión no permitida'
+                ], 422);
+            }
 
             // Crear la carpeta si no existe
             if (!Storage::disk('public')->exists($carpetaUsuario)) {
@@ -42,7 +57,7 @@ class SubirImagenController extends Controller
 
             // Ruta relativa y URL pública
             $path = "{$carpetaUsuario}/{$nombreArchivo}";
-            $url = asset("storage/{$path}");    
+            $url = asset("storage/{$path}");
 
             return response()->json([
                 'status' => 'success',

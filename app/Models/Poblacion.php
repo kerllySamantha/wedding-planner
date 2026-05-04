@@ -27,4 +27,10 @@ class Poblacion extends Model
         return $this->hasMany(Empresa::class, 'poblacion_id', 'id');
 
     }
+
+     public function perfiles()
+    {
+        return $this->hasMany(PerfilUsuario::class, 'poblacion_id', 'id');
+
+    }
 }

@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\PerfilUsuarioRequest;
 use App\Http\Requests\UserRequest;
 use App\Http\Resources\PerfilUsuarioResource;
+use App\Models\Boda;
 use App\Models\PerfilUsuario;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PerfilUsuarioController extends Controller
 {
@@ -27,39 +29,43 @@ class PerfilUsuarioController extends Controller
 
     public function store(PerfilUsuarioRequest $request)
     {
-        // Validar los datos
         $validated = $request->validated();
 
-        // Crear usuario
-        $user = User::create([
-            'name'     => $validated['name'],
-            'email'    => $validated['email'],
-            'password' => bcrypt($validated['password']),
-        ]);
+        $perfil = DB::transaction(function () use ($validated, $request) {
+            $user = User::create([
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'password' => bcrypt($validated['password']),
+            ]);
 
-        // Asignar rol
-        $user->assignRole($validated['rol']);
+            $user->assignRole($validated['rol']);
 
-        // Crear perfil
-        $perfil = PerfilUsuario::create([
-            'usuario_id' => $user->id,
-            'direccion'  => $validated['direccion'],
-            'telefono'   => $validated['telefono'],
-        ]);
+            $perfil = PerfilUsuario::create(
+                ['usuario_id' => $user->id] + $request->only(['direccion', 'telefono', 'poblacion_id', 'fecha_boda'])
+            );
+
+            Boda::create([
+                'usuario_id' => $user->id,
+                'nombre_pareja' => $validated['name'],
+                'fecha_boda' => $validated['fecha_boda'],
+                'ubicacion' => $validated['direccion'],
+                'poblacion_id' => $validated['poblacion_id'],
+            ]);
+
+            return $perfil;
+        });
 
         return response()->json([
             'message' => 'Perfil creado correctamente',
-            'status'  => 'success',
-            'data'    => new PerfilUsuarioResource($perfil)
+            'status' => 'success',
+            'data' => new PerfilUsuarioResource($perfil)
         ], 201);
     }
-
 
     /**
      * Display the specified resource.
      */
     public function show(string $id)
-
     {
         $perfil = PerfilUsuario::findOrFail($id);
         if (!$perfil) {
@@ -88,21 +94,21 @@ class PerfilUsuarioController extends Controller
     {
         $perfil = PerfilUsuario::findOrFail($id);
 
-        $perfil->usuario_id   = $request->usuario_id;
+        $perfil->usuario_id = $request->usuario_id;
         $perfil->direccion = $request->direccion;
-        $perfil->telefono  = $request->telefono;
+        $perfil->telefono = $request->telefono;
 
         if (!$perfil->save()) {
             return response()->json([
                 'message' => 'No se ha podido actualizar el perfil',
-                'status'  => 'error',
+                'status' => 'error',
             ], 400);
         }
 
         return response()->json([
             'message' => 'Perfil actualizado correctamente',
-            'status'  => 'success',
-            'data'    => $perfil
+            'status' => 'success',
+            'data' => $perfil
         ], 200);
     }
 
@@ -133,6 +139,7 @@ class PerfilUsuarioController extends Controller
             'status' => 'success',
             'message' => 'Boda encontrada correctamente',
             'data' => new PerfilUsuarioResource($perfil)
-        ]);;
+        ]);
+        ;
     }
 }
