@@ -19,10 +19,10 @@ class Presupuesto extends Model
     'fecha_creacion'
   ];
 
-  protected $casts = [
-    'estado' => EstadoPedirPresupuesto::class,
-     'monto_estimado' => 'decimal:2',
-    'monto_pagado' => 'decimal:2',
+protected $casts = [
+    'estado'         => EstadoPedirPresupuesto::class,
+    'monto_estimado' => 'float',
+    'monto_pagado'   => 'float',
 ];
 
 

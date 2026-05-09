@@ -46,13 +46,21 @@ class UpdateEmpresaRequest extends FormRequest
             'poblacion_id' => 'sometimes|nullable|exists:poblaciones,id',
             'logo' => 'sometimes|nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'fotos' => 'sometimes|nullable|array',
-            'fotos.*' => 'sometimes|nullable|string', // ← strings, ya fueron subidas antes
+            'fotos.*.path' => 'required|string',
+            'fotos.*.url' => 'required|string',
             'productos' => 'sometimes|nullable|array',
             'productos.*.id' => 'sometimes|nullable|exists:productos,id',
             'productos.*.nombre' => 'required_with:productos|string|max:255',
             'productos.*.descripcion' => 'nullable|string',
             'productos.*.precio_min' => 'nullable|numeric|min:0', // ← corregido
             'productos.*.precio_max' => 'nullable|numeric|min:0', // ← corregido
+            'productos_eliminados.*' => [
+                'integer',
+                Rule::exists('productos', 'id')->where(function ($q) use ($empresa) {
+                    $q->where('empresa_id', $empresa->id);
+                }),
+            ],
+            'productos_eliminados' => 'sometimes|array',
 
 
             // TipoProducto
@@ -73,6 +81,8 @@ class UpdateEmpresaRequest extends FormRequest
             'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
             'logo.image' => 'El logo debe ser una imagen.',
             'logo.max' => 'El logo no puede superar los 2MB.',
+            'fotos.*.path.required' => 'La ruta de la imagen es obligatoria.',
+            'fotos.*.url.required' => 'La URL de la imagen es obligatoria.',
         ];
     }
 }

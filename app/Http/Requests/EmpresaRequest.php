@@ -38,9 +38,10 @@ class EmpresaRequest extends FormRequest
             'telefono' => 'required|string|max:20',
             'descripcion' => 'nullable|string',
             'logo' => 'nullable|string',
-            'fotos' => 'nullable|array',
             'tipo_servicio' => 'required|string',
-            'fotos.*' => 'nullable|string',
+            'fotos' => ['nullable', 'array'],
+            'fotos.*.path' => ['required', 'string'],
+            'fotos.*.url' => ['required', 'string'],
             'poblacion_id' => 'required|exists:poblaciones,id',
             // 'categoria_id' => 'required|exists:categorias,id',
             'user_id' => 'prohibited',
@@ -55,9 +56,9 @@ class EmpresaRequest extends FormRequest
             'nombre_empresa.string' => 'El nombre de la empresa debe ser un texto válido.',
             'nombre_empresa.max' => 'El nombre de la empresa no puede tener más de 255 caracteres.',
 
-            
+
             // direccion
-            
+
             'direccion.required' => 'La dirección es obligatoria.',
             'direccion.string' => 'La dirección debe ser un texto válido.',
             'direccion.max' => 'La dirección no puede tener más de 255 caracteres.',

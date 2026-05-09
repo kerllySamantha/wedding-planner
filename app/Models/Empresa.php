@@ -21,6 +21,8 @@ class   Empresa extends Model
         'poblacion_id',
         'tipo_servicio',
     ];
+
+    protected $casts = ['fotos' => 'array'];
     
     function usuario() {
        return  $this->belongsTo(User::class, 'user_id');

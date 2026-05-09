@@ -29,7 +29,6 @@ class EmpresaController extends Controller
 
         return new EmpresaCollection($empresas);
     }
-
     public function store(EmpresaRequest $request)
     {
         $validated = $request->validated();
@@ -53,9 +52,28 @@ class EmpresaController extends Controller
                 if ($request->hasFile('fotos')) {
                     $validated['fotos'] = json_encode(
                         collect($request->file('fotos'))
-                            ->map(fn($foto) => $foto->store('fotos', 'public'))
+                            ->values()
+                            ->map(function ($foto, $index) use ($user) {
+                                $numero = $index + 1;
+                                $extension = $foto->getClientOriginalExtension();
+
+                                $path = $foto->storeAs(
+                                    "imagenes/empresa_{$user->id}",
+                                    "imagen_{$numero}.{$extension}",
+                                    'public'
+                                );
+
+                                return [
+                                    'path' => $path,
+                                    'url' => asset("storage/{$path}"),
+                                ];
+                            })
                             ->toArray()
                     );
+                }
+
+                if (isset($validated['fotos'])) {
+                    $validated['fotos'] = json_encode($validated['fotos']);
                 }
 
                 $empresa = $user->empresa()->create(
@@ -96,123 +114,27 @@ class EmpresaController extends Controller
         try {
             return DB::transaction(function () use ($validated, $request, $empresa) {
 
-                // 1. Actualizar usuario
-                $user = $empresa->usuario;
-                $userData = Arr::only($validated, ['name', 'email']);
+                // 1. Usuario
+                $this->updateUser($empresa->usuario, $validated);
 
-                if (!empty($validated['password'])) {
-                    $userData['password'] = bcrypt($validated['password']);
-                }
+                // 2. Logo e Información de Empresa
+                $this->updateEmpresaData($empresa, $request, $validated);
 
-                if (!empty($userData)) {
-                    $user->update($userData);
-                }
-
-                if (!empty($validated['rol'])) {
-                    $user->syncRoles([$validated['rol']]);
-                }
-
-                // 2. Manejar logo
-                if ($request->hasFile('logo')) {
-                    if ($empresa->logo) {
-                        Storage::disk('public')->delete($empresa->logo);
-                    }
-                    $validated['logo'] = $request->file('logo')
-                        ->store('logos', 'public');
-                }
-
-                // 3. Actualizar datos de la empresa
-                $empresaData = Arr::only($validated, [
-                    'nombre_empresa',
-                    'direccion',
-                    'telefono',
-                    'descripcion',
-                    'logo',
-                    'tipo_servicio',
-                    'poblacion_id',
-                ]);
-
-                // ✅ BUG FIX: fotos debe añadirse ANTES de llamar a $empresa->update()
-                if (array_key_exists('fotos', $validated)) {
-                    $empresaData['fotos'] = json_encode($validated['fotos'] ?? []);
-                }
-
-                if (!empty($empresaData)) {
-                    $empresa->update($empresaData);
-                }
-
-                // 4. Manejar productos
-                if (array_key_exists('productos', $validated) && !empty($validated['productos'])) {
-
-                    $tipoProductoEmpresaId = $empresa->productos()
-                        ->whereNotNull('tipo_producto_id')
-                        ->value('tipo_producto_id');
-
-                    foreach ($validated['productos'] as $index => $productoData) {
-
-                        // Saltar si faltan campos clave
-                        if (
-                            empty($productoData['categoria_nombre']) ||
-                            empty($productoData['tipo_producto_nombre']) ||
-                            empty($productoData['nombre'])
-                        ) {
-                            continue;
-                        }
-
-                        // 4.1 Buscar categoría
-                        $categoria = Categoria::where('nombre', $productoData['categoria_nombre'])->first();
-                        if (!$categoria) {
-                            throw new \Exception("Categoría '{$productoData['categoria_nombre']}' no encontrada.");
-                        }
-
-                        // 4.2 Buscar tipoProducto
-                        $tipoProducto = TipoProducto::where([
-                            'nombre' => $productoData['tipo_producto_nombre'],
-                            'categoria_id' => $categoria->id,
-                        ])->first();
-                        if (!$tipoProducto) {
-                            throw new \Exception("Tipo de producto '{$productoData['tipo_producto_nombre']}' no encontrado.");
-                        }
-
-                        // 4.3 Una empresa = un único tipo de producto
-                        if ($tipoProductoEmpresaId !== null && $tipoProductoEmpresaId !== $tipoProducto->id) {
-                            throw new \Exception('La empresa solo puede tener productos de un único tipo de producto.');
-                        }
-
-                        // 4.4 Crear o actualizar producto
-                        $payloadProducto = [
-                            'nombre' => $productoData['nombre'],
-                            'descripcion' => $productoData['descripcion'] ?? null,
-                            'precio_min' => $productoData['precio_min'] ?? null,
-                            'precio_max' => $productoData['precio_max'] ?? null,
-                            'tipo_producto_id' => $tipoProducto->id,
-                        ];
-
-                        if (!empty($productoData['id'])) {
-                            $actualizado = $empresa->productos()
-                                ->where('id', $productoData['id'])
-                                ->update($payloadProducto);
-
-                            if ($actualizado === 0) {
-                                throw new \Exception("El producto ID {$productoData['id']} no pertenece a esta empresa.");
-                            }
-                        } else {
-                            $empresa->productos()->create($payloadProducto);
-                        }
-
-                        $tipoProductoEmpresaId = $tipoProducto->id;
-                    }
-                }
+                // 3. Productos
+                $this->handleProductos($empresa, $validated);
 
                 return response()->json([
                     'status' => 'success',
                     'message' => 'Empresa actualizada correctamente',
                     'data' => new EmpresaResource(
-                        $empresa->fresh()->load(['usuario', 'productos.tipoProducto.categoria', 'poblacion.provincia'])
+                        $empresa->fresh()->load([
+                            'usuario',
+                            'productos.tipoProducto.categoria',
+                            'poblacion.provincia',
+                        ])
                     ),
                 ], 200);
             });
-
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
@@ -220,6 +142,110 @@ class EmpresaController extends Controller
                 'error' => config('app.debug') ? $e->getMessage() : null,
             ], 500);
         }
+    }
+
+    private function updateUser(User $user , array $validated): void
+    {
+        $userData = Arr::only($validated, ['name', 'email']);
+
+        if (!empty($validated['password'])) {
+            $userData['password'] = bcrypt($validated['password']);
+        }
+
+        if (!empty($userData)) {
+            $user->update($userData);
+        }
+
+        if (!empty($validated['rol'])) {
+            $user->syncRoles([$validated['rol']]);
+        }
+    }
+
+
+    private function updateEmpresaData(Empresa $empresa, UpdateEmpresaRequest $request, array $validated): void
+    {
+        if ($request->hasFile('logo')) {
+            if ($empresa->logo) {
+                Storage::disk('public')->delete($empresa->logo);
+            }
+            $validated['logo'] = $request->file('logo')->store('logos', 'public');
+        }
+
+        $empresaData = Arr::only($validated, [
+            'nombre_empresa',
+            'direccion',
+            'telefono',
+            'descripcion',
+            'logo',
+            'tipo_servicio',
+            'poblacion_id'
+        ]);
+
+        if (array_key_exists('fotos', $validated)) {
+            $empresaData['fotos'] = json_encode($validated['fotos'] ?? []);
+        }
+
+        $empresa->update($empresaData);
+    }
+
+
+    private function handleProductos(Empresa $empresa, array $validated): void
+    {
+        // Eliminar productos marcados explícitamente
+        if (!empty($validated['productos_eliminados'])) {
+            $empresa->productos()->whereIn('id', $validated['productos_eliminados'])->delete();
+        }
+
+        if (!isset($validated['productos']) || !is_array($validated['productos'])) {
+            return;
+        }
+
+        $tiposEmpresa = $empresa->productos()->whereNotNull('tipo_producto_id')
+            ->pluck('tipo_producto_id')->unique()->values();
+
+        if ($tiposEmpresa->count() > 1) {
+            throw new \Exception('La empresa tiene productos con múltiples tipos.');
+        }
+
+        $tipoProductoEmpresaId = $tiposEmpresa->first();
+        $idsPayload = [];
+
+        foreach ($validated['productos'] as $productoData) {
+            if (empty($productoData['categoria_nombre']) || empty($productoData['tipo_producto_nombre']) || empty($productoData['nombre'])) {
+                continue;
+            }
+
+            $categoria = Categoria::where('nombre', $productoData['categoria_nombre'])->firstOrFail();
+            $tipoProducto = TipoProducto::where([
+                'nombre' => $productoData['tipo_producto_nombre'],
+                'categoria_id' => $categoria->id,
+            ])->firstOrFail();
+
+            if ($tipoProductoEmpresaId !== null && (int) $tipoProductoEmpresaId !== (int) $tipoProducto->id) {
+                throw new \Exception('La empresa solo puede tener productos de un único tipo.');
+            }
+
+            $payloadProducto = [
+                'nombre' => $productoData['nombre'],
+                'descripcion' => $productoData['descripcion'] ?? null,
+                'precio_min' => $productoData['precio_min'] ?? null,
+                'precio_max' => $productoData['precio_max'] ?? null,
+                'tipo_producto_id' => $tipoProducto->id,
+            ];
+
+            if (!empty($productoData['id'])) {
+                $empresa->productos()->where('id', $productoData['id'])->update($payloadProducto);
+                $idsPayload[] = (int) $productoData['id'];
+            } else {
+                $nuevo = $empresa->productos()->create($payloadProducto);
+                $idsPayload[] = (int) $nuevo->id;
+            }
+
+            $tipoProductoEmpresaId = $tipoProducto->id;
+        }
+
+        // Sync por omisión (eliminar los que no vinieron en el payload)
+        $empresa->productos()->whereNotIn('id', $idsPayload)->delete();
     }
 
     public function destroy(Empresa $empresa)

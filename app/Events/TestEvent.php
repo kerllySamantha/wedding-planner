@@ -3,6 +3,7 @@
 
 namespace App\Events;
 
+use Dom\Text;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Queue\SerializesModels;
@@ -11,7 +12,7 @@ class TestEvent implements ShouldBroadcast
 {
     use SerializesModels;
 
-    public $message;
+    public string $message;
 
     public function __construct(string $message)
     {
