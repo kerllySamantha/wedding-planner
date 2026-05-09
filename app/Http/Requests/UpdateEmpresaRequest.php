@@ -49,7 +49,13 @@ class UpdateEmpresaRequest extends FormRequest
             'fotos.*.path' => 'required|string',
             'fotos.*.url' => 'required|string',
             'productos' => 'required|array|min:1',
-            'productos.*.id' => 'nullable|integer|exists:productos,id',
+            'productos.*.id' => [
+                'nullable',
+                'integer',
+                Rule::exists('productos', 'id')->where(function ($q) use ($empresa) {
+                    $q->where('empresa_id', $empresa->id);
+                }),
+            ],
             'productos.*.nombre' => 'required_with:productos|string|max:255',
             'productos.*.descripcion' => 'nullable|string',
             'productos.*.precio_min' => 'nullable|numeric|min:0', // ← corregido
@@ -83,6 +89,7 @@ class UpdateEmpresaRequest extends FormRequest
             'logo.max' => 'El logo no puede superar los 2MB.',
             'fotos.*.path.required' => 'La ruta de la imagen es obligatoria.',
             'fotos.*.url.required' => 'La URL de la imagen es obligatoria.',
+            'productos.*.id.exists' => 'Uno o más productos no pertenecen a esta empresa.',
         ];
     }
 }
