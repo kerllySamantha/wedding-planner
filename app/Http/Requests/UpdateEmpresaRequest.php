@@ -28,7 +28,7 @@ class UpdateEmpresaRequest extends FormRequest
 
         return [
             // --- Datos del usuario ---
-            'name' => 'sometimes|string|max:255',
+            'name' => 'required|string|max:255',
             'email' => [
                 'sometimes',
                 'email',
@@ -38,22 +38,22 @@ class UpdateEmpresaRequest extends FormRequest
             'rol' => 'sometimes|string|exists:roles,name',
 
             // --- Datos de la empresa ---
-            'nombre_empresa' => 'sometimes|string|max:255',
-            'direccion' => 'sometimes|nullable|string',
+            'nombre_empresa' => 'required|string|max:255',
+            'direccion' => 'required|string',
             'telefono' => 'sometimes|nullable|string|max:20',
             'descripcion' => 'sometimes|nullable|string',
             'tipo_servicio' => 'sometimes|nullable|string',
-            'poblacion_id' => 'sometimes|nullable|exists:poblaciones,id',
+            'poblacion_id' => 'required|exists:poblaciones,id',
             'logo' => 'sometimes|nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'fotos' => 'sometimes|nullable|array',
             'fotos.*.path' => 'required|string',
             'fotos.*.url' => 'required|string',
-            'productos' => 'sometimes|nullable|array',
-            'productos.*.id' => 'sometimes|nullable|exists:productos,id',
+            'productos' => 'required|array|min:1',
+            'productos.*.id' => 'nullable|integer|exists:productos,id',
             'productos.*.nombre' => 'required_with:productos|string|max:255',
             'productos.*.descripcion' => 'nullable|string',
             'productos.*.precio_min' => 'nullable|numeric|min:0', // ← corregido
-            'productos.*.precio_max' => 'nullable|numeric|min:0', // ← corregido
+            'productos.*.precio_max' => 'nullable|numeric|min:0|gte:productos.*.precio_min',
             'productos_eliminados.*' => [
                 'integer',
                 Rule::exists('productos', 'id')->where(function ($q) use ($empresa) {

@@ -191,61 +191,52 @@ class EmpresaController extends Controller
 
     private function handleProductos(Empresa $empresa, array $validated): void
     {
-        // Eliminar productos marcados explícitamente
         if (!empty($validated['productos_eliminados'])) {
             $empresa->productos()->whereIn('id', $validated['productos_eliminados'])->delete();
         }
 
-        if (!isset($validated['productos']) || !is_array($validated['productos'])) {
-            return;
-        }
-
-        $tiposEmpresa = $empresa->productos()->whereNotNull('tipo_producto_id')
-            ->pluck('tipo_producto_id')->unique()->values();
-
-        if ($tiposEmpresa->count() > 1) {
-            throw new \Exception('La empresa tiene productos con múltiples tipos.');
-        }
-
-        $tipoProductoEmpresaId = $tiposEmpresa->first();
-        $idsPayload = [];
-
         foreach ($validated['productos'] as $productoData) {
-            if (empty($productoData['categoria_nombre']) || empty($productoData['tipo_producto_nombre']) || empty($productoData['nombre'])) {
-                continue;
+            $precioMin = $productoData['precio_min'] ?? null;
+            $precioMax = $productoData['precio_max'] ?? null;
+
+            if ($precioMin !== null && $precioMax !== null && (float) $precioMin > (float) $precioMax) {
+                throw new \InvalidArgumentException('precio_min no puede ser mayor que precio_max.');
             }
 
-            $categoria = Categoria::where('nombre', $productoData['categoria_nombre'])->firstOrFail();
-            $tipoProducto = TipoProducto::where([
-                'nombre' => $productoData['tipo_producto_nombre'],
-                'categoria_id' => $categoria->id,
-            ])->firstOrFail();
+            $categoria = Categoria::where('nombre', $productoData['categoria_nombre'])->first();
+            if (!$categoria) {
+                throw new \InvalidArgumentException('La categoría indicada no existe.');
+            }
 
-            if ($tipoProductoEmpresaId !== null && (int) $tipoProductoEmpresaId !== (int) $tipoProducto->id) {
-                throw new \Exception('La empresa solo puede tener productos de un único tipo.');
+            $tipoProducto = TipoProducto::where('nombre', $productoData['tipo_producto_nombre'])
+                ->where('categoria_id', $categoria->id)
+                ->first();
+
+            if (!$tipoProducto) {
+                throw new \InvalidArgumentException('El tipo de producto indicado no existe para la categoría seleccionada.');
             }
 
             $payloadProducto = [
                 'nombre' => $productoData['nombre'],
                 'descripcion' => $productoData['descripcion'] ?? null,
-                'precio_min' => $productoData['precio_min'] ?? null,
-                'precio_max' => $productoData['precio_max'] ?? null,
+                'precio_min' => $precioMin,
+                'precio_max' => $precioMax,
                 'tipo_producto_id' => $tipoProducto->id,
             ];
 
             if (!empty($productoData['id'])) {
-                $empresa->productos()->where('id', $productoData['id'])->update($payloadProducto);
-                $idsPayload[] = (int) $productoData['id'];
-            } else {
-                $nuevo = $empresa->productos()->create($payloadProducto);
-                $idsPayload[] = (int) $nuevo->id;
+                $producto = $empresa->productos()->where('id', $productoData['id'])->first();
+
+                if (!$producto) {
+                    throw new \InvalidArgumentException('No puedes actualizar un producto que no pertenece a esta empresa.');
+                }
+
+                $producto->update($payloadProducto);
+                continue;
             }
 
-            $tipoProductoEmpresaId = $tipoProducto->id;
+            $empresa->productos()->create($payloadProducto);
         }
-
-        // Sync por omisión (eliminar los que no vinieron en el payload)
-        $empresa->productos()->whereNotIn('id', $idsPayload)->delete();
     }
 
     public function destroy(Empresa $empresa)
