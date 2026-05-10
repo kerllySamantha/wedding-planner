@@ -10,6 +10,7 @@ use App\Http\Resources\EmpresaResource;
 use App\Http\Resources\ProductoResource;
 use App\Models\Categoria;
 use App\Models\Empresa;
+use App\Models\Producto;
 use App\Models\TipoProducto;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -233,15 +234,32 @@ class EmpresaController extends Controller
             if ($productoId !== null) {
                 $producto = $empresa->productos()->where('id', $productoId)->first();
 
-                if (!$producto) {
-                    throw new \InvalidArgumentException('No puedes actualizar un producto que no pertenece a esta empresa.');
+                if ($producto) {
+                    $producto->update($payloadProducto);
+                    continue;
                 }
 
-                $producto->update($payloadProducto);
-                continue;
+                $productoSistema = Producto::query()
+                    ->where('id', $productoId)
+                    ->whereNull('empresa_id')
+                    ->exists();
+
+                if (!$productoSistema) {
+                    throw new \InvalidArgumentException('No puedes actualizar un producto que no pertenece a esta empresa.');
+                }
             }
 
-            $empresa->productos()->create($payloadProducto);
+            $empresa->productos()->updateOrCreate(
+                [
+                    'nombre' => $payloadProducto['nombre'],
+                    'tipo_producto_id' => $payloadProducto['tipo_producto_id'],
+                ],
+                $payloadProducto
+            );
+        }
+
+        if (!empty($productosEliminados)) {
+            $empresa->productos()->whereIn('id', $productosEliminados)->delete();
         }
 
         if (!empty($productosEliminados)) {
