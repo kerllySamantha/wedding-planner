@@ -52,7 +52,12 @@ class UpdateEmpresaRequest extends FormRequest
             'productos.*.id' => [
                 'nullable',
                 'integer',
-                Rule::exists('productos', 'id'),
+                Rule::exists('productos', 'id')->where(function ($query) use ($empresa) {
+                    $query->where(function ($subQuery) use ($empresa) {
+                        $subQuery->where('empresa_id', $empresa->id)
+                            ->orWhereNull('empresa_id');
+                    });
+                }),
             ],
             'productos.*.nombre' => 'required_with:productos|string|max:255',
             'productos.*.descripcion' => 'nullable|string',
@@ -82,7 +87,7 @@ class UpdateEmpresaRequest extends FormRequest
             'logo.max' => 'El logo no puede superar los 2MB.',
             'fotos.*.path.required' => 'La ruta de la imagen es obligatoria.',
             'fotos.*.url.required' => 'La URL de la imagen es obligatoria.',
-            'productos.*.id.exists' => 'Uno o más productos no pertenecen a esta empresa.',
+            'productos.*.id.exists' => 'Uno o más productos no pertenecen a esta empresa ni al catálogo general.',
         ];
     }
 }
