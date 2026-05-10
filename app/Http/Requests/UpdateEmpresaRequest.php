@@ -68,12 +68,13 @@ class UpdateEmpresaRequest extends FormRequest
 
 
             // TipoProducto
-            'productos.*.tipo_producto_nombre' => 'required_with:productos|string|max:255',
+            'productos.*.tipo_producto_id' => 'nullable|integer|exists:tipo_productos,id',
+            'productos.*.tipo_producto_nombre' => 'required_without:productos.*.tipo_producto_id|string|max:255',
             'productos.*.tipo_producto_descripcion' => 'nullable|string',
             // 'productos.*.modalidad' => 'nullable|string',
 
             // Categoria
-            'productos.*.categoria_nombre' => 'required_with:productos|string|max:255',
+            'productos.*.categoria_nombre' => 'required_without:productos.*.tipo_producto_id|string|max:255',
         ];
     }
 
