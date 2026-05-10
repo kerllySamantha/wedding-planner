@@ -11,12 +11,15 @@ class ProductoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $query = Producto::query()->with('empresa');
 
-        if (request()->filled('empresa_id')) {
-            $query->where('empresa_id', request('empresa_id'));
+        if ($request->filled('empresa_id')) {
+            $query->where('empresa_id', $request->integer('empresa_id'));
+        } elseif (!$request->boolean('include_empresa_productos', false)) {
+            // Catalogo general: solo productos globales del sistema.
+            $query->whereNull('empresa_id');
         }
 
         $productos = $query->orderByDesc('created_at')->paginate(10);
