@@ -58,12 +58,7 @@ class UpdateEmpresaRequest extends FormRequest
             'productos.*.descripcion' => 'nullable|string',
             'productos.*.precio_min' => 'nullable|numeric|min:0', // ← corregido
             'productos.*.precio_max' => 'nullable|numeric|min:0|gte:productos.*.precio_min',
-            'productos_eliminados.*' => [
-                'integer',
-                Rule::exists('productos', 'id')->where(function ($q) use ($empresa) {
-                    $q->where('empresa_id', $empresa->id);
-                }),
-            ],
+            'productos_eliminados.*' => 'integer',
             'productos_eliminados' => 'sometimes|array',
 
 
