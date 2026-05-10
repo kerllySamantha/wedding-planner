@@ -261,10 +261,6 @@ class EmpresaController extends Controller
         if (!empty($productosEliminados)) {
             $empresa->productos()->whereIn('id', $productosEliminados)->delete();
         }
-
-        if (!empty($productosEliminados)) {
-            $empresa->productos()->whereIn('id', $productosEliminados)->delete();
-        }
     }
 
     public function destroy(Empresa $empresa)
