@@ -191,11 +191,17 @@ class EmpresaController extends Controller
 
     private function handleProductos(Empresa $empresa, array $validated): void
     {
-        if (!empty($validated['productos_eliminados'])) {
-            $empresa->productos()->whereIn('id', $validated['productos_eliminados'])->delete();
-        }
+        $productosEliminados = collect($validated['productos_eliminados'] ?? [])
+            ->map(fn ($id) => (int) $id)
+            ->all();
 
         foreach ($validated['productos'] as $productoData) {
+            $productoId = !empty($productoData['id']) ? (int) $productoData['id'] : null;
+
+            if ($productoId !== null && in_array($productoId, $productosEliminados, true)) {
+                continue;
+            }
+
             $precioMin = $productoData['precio_min'] ?? null;
             $precioMax = $productoData['precio_max'] ?? null;
 
@@ -224,8 +230,8 @@ class EmpresaController extends Controller
                 'tipo_producto_id' => $tipoProducto->id,
             ];
 
-            if (!empty($productoData['id'])) {
-                $producto = $empresa->productos()->where('id', $productoData['id'])->first();
+            if ($productoId !== null) {
+                $producto = $empresa->productos()->where('id', $productoId)->first();
 
                 if (!$producto) {
                     throw new \InvalidArgumentException('No puedes actualizar un producto que no pertenece a esta empresa.');
@@ -236,6 +242,10 @@ class EmpresaController extends Controller
             }
 
             $empresa->productos()->create($payloadProducto);
+        }
+
+        if (!empty($productosEliminados)) {
+            $empresa->productos()->whereIn('id', $productosEliminados)->delete();
         }
     }
 
