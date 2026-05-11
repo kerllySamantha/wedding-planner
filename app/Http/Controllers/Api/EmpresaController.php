@@ -210,14 +210,19 @@ class EmpresaController extends Controller
                 throw new \InvalidArgumentException('precio_min no puede ser mayor que precio_max.');
             }
 
-            $categoria = Categoria::where('nombre', $productoData['categoria_nombre'])->first();
-            if (!$categoria) {
-                throw new \InvalidArgumentException('La categoría indicada no existe.');
-            }
+            $tipoProducto = null;
+            if (!empty($productoData['tipo_producto_id'])) {
+                $tipoProducto = TipoProducto::find((int) $productoData['tipo_producto_id']);
+            } else {
+                $categoria = Categoria::where('nombre', $productoData['categoria_nombre'])->first();
+                if (!$categoria) {
+                    throw new \InvalidArgumentException('La categoría indicada no existe.');
+                }
 
-            $tipoProducto = TipoProducto::where('nombre', $productoData['tipo_producto_nombre'])
-                ->where('categoria_id', $categoria->id)
-                ->first();
+                $tipoProducto = TipoProducto::where('nombre', $productoData['tipo_producto_nombre'])
+                    ->where('categoria_id', $categoria->id)
+                    ->first();
+            }
 
             if (!$tipoProducto) {
                 throw new \InvalidArgumentException('El tipo de producto indicado no existe para la categoría seleccionada.');
@@ -256,10 +261,6 @@ class EmpresaController extends Controller
                 ],
                 $payloadProducto
             );
-        }
-
-        if (!empty($productosEliminados)) {
-            $empresa->productos()->whereIn('id', $productosEliminados)->delete();
         }
 
         if (!empty($productosEliminados)) {
