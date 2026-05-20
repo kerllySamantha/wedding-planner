@@ -928,292 +928,201 @@
                 <li class="sidebar-section-title" aria-hidden="true">General</li>
 
                 <li class="sidebar-nav-item">
-
-                    <a href="{{ route('admin.dashboard') }}"
-                        class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"
-                        aria-current="{{ request()->routeIs('admin.dashboard') ? 'page' : 'false' }}">
-
-                        <i class="bi bi-speedometer2" aria-hidden="true"></i>
+                    <a href="#">
+                        <i class="bi bi-speedometer2"></i>
 
                         <span class="nav-label">
                             Dashboard
                         </span>
-
                     </a>
-
                 </li>
 
                 <li class="sidebar-nav-item">
-
-                    <a href="{{ route('admin.reports.index') }}"
-                        class="{{ request()->routeIs('admin.reports.*') ? 'active' : '' }}"
-                        aria-current="{{ request()->routeIs('admin.reports.*') ? 'page' : 'false' }}">
-
-                        <i class="bi bi-file-earmark-bar-graph" aria-hidden="true"></i>
+                    <a href="#">
+                        <i class="bi bi-file-earmark-bar-graph"></i>
 
                         <span class="nav-label">
                             Informes
                         </span>
-
                     </a>
-
                 </li>
 
                 <li class="sidebar-nav-item">
-                    <a href="#" class="{{ request()->routeIs('admin.billing') ? 'active' : '' }}"
-                        aria-current="{{ request()->routeIs('admin.billing') ? 'page' : 'false' }}">
-
-                        <i class="bi bi-receipt-cutoff" aria-hidden="true"></i>
+                    <a href="#">
+                        <i class="bi bi-receipt-cutoff"></i>
 
                         <span class="nav-label">
                             Facturación
                         </span>
-
                     </a>
                 </li>
-                {{-- ── General ── --}}
-                {{-- <li class="sidebar-section-title" aria-hidden="true">General</li>
 
-                <li class="sidebar-nav-item">
-                    <a href="{{ url('/admin') }}" class="{{ request()->is('admin') ? 'active' : '' }}"
-                        aria-current="{{ request()->is('admin') ? 'page' : 'false' }}">
-                        <i class="bi bi-speedometer2" aria-hidden="true"></i>
-                        <span class="nav-label">Panel</span>
-                    </a>
-                </li> --}}
-
-                {{-- ── Landing (desplegable) ── --}}
-                @php
-                    $isLandingActive =
-                        request()->routeIs('admin.hero-sections.*') ||
-                        request()->routeIs('admin.benefits.*') ||
-                        request()->routeIs('admin.prices.*') ||
-                        request()->routeIs('admin.steps.*') ||
-                        request()->routeIs('admin.security-cards.*') ||
-                        request()->routeIs('admin.concept-items.*') ||
-                        request()->routeIs('admin.feature-sections.*') ||
-                        request()->routeIs('admin.law-sections.*') ||
-                        request()->routeIs('admin.faqs.*') ||
-                        request()->routeIs('admin.demo-settings.*') ||
-                        request()->routeIs('admin.contacto.*') ||
-                        request()->routeIs('admin.aplicaciones.*');
-                @endphp
-
+                {{-- ── Landing ── --}}
                 <li class="sidebar-section-title" aria-hidden="true">Contenido</li>
 
                 <li class="sidebar-nav-item sidebar-nav-group">
-                    <details {{ $isLandingActive ? 'open' : '' }}>
-                        <summary class="sidebar-group-trigger {{ $isLandingActive ? 'active' : '' }}"
-                            aria-expanded="{{ $isLandingActive ? 'true' : 'false' }}">
-                            <i class="bi bi-layout-text-window-reverse" aria-hidden="true"></i>
+
+                    <details>
+
+                        <summary class="sidebar-group-trigger">
+
+                            <i class="bi bi-layout-text-window-reverse"></i>
+
                             <span class="nav-label">Landing</span>
-                            <i class="bi bi-chevron-down sidebar-chevron" aria-hidden="true"></i>
+
+                            <i class="bi bi-chevron-down sidebar-chevron"></i>
+
                         </summary>
 
                         <ul class="sidebar-subnav" role="list">
 
                             <li>
-                                <a href="{{ route('admin.hero-sections.index') }}"
-                                    class="{{ request()->routeIs('admin.hero-sections.*') ? 'active' : '' }}"
-                                    aria-current="{{ request()->routeIs('admin.hero-sections.*') ? 'page' : 'false' }}">
-                                    <i class="bi bi-image" aria-hidden="true"></i>
+                                <a href="#">
+                                    <i class="bi bi-image"></i>
                                     <span class="nav-label">Hero</span>
                                 </a>
                             </li>
 
                             <li>
-                                <a href="{{ route('admin.benefits.index') }}"
-                                    class="{{ request()->routeIs('admin.benefits.*') ? 'active' : '' }}"
-                                    aria-current="{{ request()->routeIs('admin.benefits.*') ? 'page' : 'false' }}">
-                                    <i class="bi bi-stars" aria-hidden="true"></i>
+                                <a href="#">
+                                    <i class="bi bi-stars"></i>
                                     <span class="nav-label">Beneficios</span>
                                 </a>
                             </li>
 
                             <li>
-                                <a href="{{ route('admin.prices.index') }}"
-                                    class="{{ request()->routeIs('admin.prices.*') ? 'active' : '' }}"
-                                    aria-current="{{ request()->routeIs('admin.prices.*') ? 'page' : 'false' }}">
-                                    <i class="bi bi-tag" aria-hidden="true"></i>
+                                <a href="#">
+                                    <i class="bi bi-tag"></i>
                                     <span class="nav-label">Precios</span>
                                 </a>
                             </li>
 
                             <li>
-                                <a href="{{ route('admin.steps.index') }}"
-                                    class="{{ request()->routeIs('admin.steps.*') ? 'active' : '' }}"
-                                    aria-current="{{ request()->routeIs('admin.steps.*') ? 'page' : 'false' }}">
-                                    <i class="bi bi-list-ol" aria-hidden="true"></i>
+                                <a href="#">
+                                    <i class="bi bi-list-ol"></i>
                                     <span class="nav-label">Pasos</span>
                                 </a>
                             </li>
 
                             <li>
-                                <a href="{{ route('admin.security-cards.index') }}"
-                                    class="{{ request()->routeIs('admin.security-cards.*') ? 'active' : '' }}"
-                                    aria-current="{{ request()->routeIs('admin.security-cards.*') ? 'page' : 'false' }}">
-                                    <i class="bi bi-shield-check" aria-hidden="true"></i>
+                                <a href="#">
+                                    <i class="bi bi-shield-check"></i>
                                     <span class="nav-label">Seguridad</span>
                                 </a>
                             </li>
 
                             <li>
-                                <a href="{{ route('admin.concept-items.index') }}"
-                                    class="{{ request()->routeIs('admin.concept-items.*') ? 'active' : '' }}"
-                                    aria-current="{{ request()->routeIs('admin.concept-items.*') ? 'page' : 'false' }}">
-                                    <i class="bi bi-lightbulb" aria-hidden="true"></i>
+                                <a href="#">
+                                    <i class="bi bi-lightbulb"></i>
                                     <span class="nav-label">Concepto</span>
                                 </a>
                             </li>
 
                             <li>
-                                <a href="{{ route('admin.feature-sections.index') }}"
-                                    class="{{ request()->routeIs('admin.feature-sections.*') ? 'active' : '' }}"
-                                    aria-current="{{ request()->routeIs('admin.feature-sections.*') ? 'page' : 'false' }}">
-                                    <i class="bi bi-grid" aria-hidden="true"></i>
+                                <a href="#">
+                                    <i class="bi bi-grid"></i>
                                     <span class="nav-label">Características</span>
                                 </a>
                             </li>
 
                             <li>
-                                <a href="{{ route('admin.law-sections.index') }}"
-                                    class="{{ request()->routeIs('admin.law-sections.*') ? 'active' : '' }}"
-                                    aria-current="{{ request()->routeIs('admin.law-sections.*') ? 'page' : 'false' }}">
-                                    <i class="bi bi-journal-text" aria-hidden="true"></i>
+                                <a href="#">
+                                    <i class="bi bi-journal-text"></i>
                                     <span class="nav-label">Ley control horario</span>
                                 </a>
                             </li>
 
                             <li>
-                                <a href="{{ route('admin.faqs.index') }}"
-                                    class="{{ request()->routeIs('admin.faqs.*') ? 'active' : '' }}"
-                                    aria-current="{{ request()->routeIs('admin.faqs.*') ? 'page' : 'false' }}">
-                                    <i class="bi bi-question-circle" aria-hidden="true"></i>
+                                <a href="#">
+                                    <i class="bi bi-question-circle"></i>
                                     <span class="nav-label">FAQ</span>
                                 </a>
                             </li>
 
                             <li>
-                                <a href="{{ route('admin.demo-settings.index') }}"
-                                    class="{{ request()->routeIs('admin.demo-settings.*') ? 'active' : '' }}"
-                                    aria-current="{{ request()->routeIs('admin.demo-settings.*') ? 'page' : 'false' }}">
-                                    <i class="bi bi-play-circle" aria-hidden="true"></i>
+                                <a href="#">
+                                    <i class="bi bi-play-circle"></i>
                                     <span class="nav-label">Demo</span>
                                 </a>
                             </li>
 
                             <li>
-                                <a href="{{ route('admin.contacto.index') }}"
-                                    class="{{ request()->routeIs('admin.contacto.*') ? 'active' : '' }}"
-                                    aria-current="{{ request()->routeIs('admin.contacto.*') ? 'page' : 'false' }}">
-                                    <i class="bi bi-envelope" aria-hidden="true"></i>
+                                <a href="#">
+                                    <i class="bi bi-envelope"></i>
                                     <span class="nav-label">Contacto</span>
                                 </a>
                             </li>
 
                             <li>
-                                <a href="{{ route('admin.aplicaciones.index') }}"
-                                    class="{{ request()->routeIs('admin.aplicaciones.*') ? 'active' : '' }}"
-                                    aria-current="{{ request()->routeIs('admin.aplicaciones.*') ? 'page' : 'false' }}">
-                                    <i class="bi bi-phone" aria-hidden="true"></i>
+                                <a href="#">
+                                    <i class="bi bi-phone"></i>
                                     <span class="nav-label">Aplicaciones</span>
                                 </a>
                             </li>
 
                         </ul>
+
                     </details>
+
                 </li>
 
-                {{-- ── Configuración (desplegable) ── --}}
-                @php
-                    $isConfigActive =
-                        request()->routeIs('admin.footer-settings.*') ||
-                        request()->routeIs('admin.page-sections.*') ||
-                        request()->routeIs('admin.modals.*') ||
-                        request()->routeIs('admin.navbar-items.*');
-                @endphp
-
+                {{-- ── Configuración ── --}}
                 <li class="sidebar-nav-item sidebar-nav-group">
 
-                    <details {{ $isConfigActive ? 'open' : '' }}>
+                    <details>
 
-                        <summary class="sidebar-group-trigger {{ $isConfigActive ? 'active' : '' }}"
-                            aria-expanded="{{ $isConfigActive ? 'true' : 'false' }}">
+                        <summary class="sidebar-group-trigger">
 
-                            <i class="bi bi-gear" aria-hidden="true"></i>
+                            <i class="bi bi-gear"></i>
 
                             <span class="nav-label">
                                 Composición
                             </span>
 
-                            <i class="bi bi-chevron-down sidebar-chevron" aria-hidden="true"></i>
+                            <i class="bi bi-chevron-down sidebar-chevron"></i>
 
                         </summary>
 
                         <ul class="sidebar-subnav" role="list">
 
                             <li>
-
-                                <a href="{{ route('admin.navbar-items.index') }}"
-                                    class="{{ request()->routeIs('admin.navbar-items.*') ? 'active' : '' }}"
-                                    aria-current="{{ request()->routeIs('admin.navbar-items.*') ? 'page' : 'false' }}">
-
-                                    <i class="bi bi-list" aria-hidden="true"></i>
+                                <a href="#">
+                                    <i class="bi bi-list"></i>
 
                                     <span class="nav-label">
                                         Navbar
                                     </span>
-
                                 </a>
-
                             </li>
 
                             <li>
-
-                                <a href="{{ route('admin.footer-settings.index') }}"
-                                    class="{{ request()->routeIs('admin.footer-settings.*') ? 'active' : '' }}"
-                                    aria-current="{{ request()->routeIs('admin.footer-settings.*') ? 'page' : 'false' }}">
-
-                                    <i class="bi bi-save" aria-hidden="true"></i>
+                                <a href="#">
+                                    <i class="bi bi-save"></i>
 
                                     <span class="nav-label">
                                         Footer
                                     </span>
-
                                 </a>
-
                             </li>
 
                             <li>
-
-                                <a href="{{ route('admin.page-sections.index') }}"
-                                    class="{{ request()->routeIs('admin.page-sections.*') ? 'active' : '' }}"
-                                    aria-current="{{ request()->routeIs('admin.page-sections.*') ? 'page' : 'false' }}">
-
-                                    <i class="bi bi-layers" aria-hidden="true"></i>
+                                <a href="#">
+                                    <i class="bi bi-layers"></i>
 
                                     <span class="nav-label">
                                         Secciones
                                     </span>
-
                                 </a>
-
                             </li>
 
                             <li>
-
-                                <a href="{{ route('admin.modals.index') }}"
-                                    class="{{ request()->routeIs('admin.modals.*') ? 'active' : '' }}"
-                                    aria-current="{{ request()->routeIs('admin.modals.*') ? 'page' : 'false' }}">
-
-                                    <i class="bi bi-window" aria-hidden="true"></i>
+                                <a href="#">
+                                    <i class="bi bi-window"></i>
 
                                     <span class="nav-label">
                                         Modales
                                     </span>
-
                                 </a>
-
                             </li>
 
                         </ul>
@@ -1222,180 +1131,175 @@
 
                 </li>
 
-                {{-- <li class="sidebar-nav-item">
-                    <a href="#" class="{{ request()->routeIs('admin.media*') ? 'active' : '' }}"
-                        aria-current="{{ request()->routeIs('admin.media*') ? 'page' : 'false' }}">
-                        <i class="bi bi-image" aria-hidden="true"></i>
-                        <span class="nav-label">Multimedia</span>
-                    </a>
-                </li> --}}
-
+                {{-- ── Usuarios ── --}}
                 <li class="sidebar-section-title" aria-hidden="true">Usuarios</li>
 
-                {{-- ADMIN: gestión de usuarios --}}
-                @if (auth()->user()->hasRole('admin'))
-                    <li class="sidebar-nav-item">
-
-                        <a href="{{ route('admin.users.index') }}"
-                            class="{{ request()->routeIs('admin.users.*') ? 'active' : '' }}"
-                            aria-current="{{ request()->routeIs('admin.users.*') ? 'page' : 'false' }}">
-
-                            <i class="bi bi-people" aria-hidden="true"></i>
-
-                            <span class="nav-label">
-
-                                Usuarios
-
-                            </span>
-
-                        </a>
-
-                    </li>
-
-                    <li class="sidebar-nav-item">
-
-                        <a href="{{ route('admin.demo-requests.index') }}"
-                            class="{{ request()->routeIs('admin.demo-requests.*') ? 'active' : '' }}"
-                            aria-current="{{ request()->routeIs('admin.demo-requests.*') ? 'page' : 'false' }}">
-
-                            <i class="bi bi-calendar-check" aria-hidden="true"></i>
-
-                            <span class="nav-label">
-
-                                Solicitudes demo
-
-                            </span>
-
-                        </a>
-
-                    </li>
-                @endif
-
-                {{-- TODOS LOS USUARIOS: perfil propio --}}
                 <li class="sidebar-nav-item">
+                    <a href="#">
 
-                    <a href="{{ route('admin.profile') }}"
-                        class="{{ request()->routeIs('admin.profile*') ? 'active' : '' }}"
-                        aria-current="{{ request()->routeIs('admin.profile*') ? 'page' : 'false' }}">
-
-                        <i class="bi bi-person-circle" aria-hidden="true"></i>
+                        <i class="bi bi-people"></i>
 
                         <span class="nav-label">
-
-                            Mi perfil
-
+                            Usuarios
                         </span>
 
                     </a>
-
                 </li>
 
-                {{-- <li class="sidebar-nav-item">
-                    <a href="#" class="{{ request()->routeIs('admin.roles*') ? 'active' : '' }}"
-                        aria-current="{{ request()->routeIs('admin.roles*') ? 'page' : 'false' }}">
-                        <i class="bi bi-shield-check" aria-hidden="true"></i>
-                        <span class="nav-label">Roles</span>
-                    </a>
-                </li> --}}
+                <li class="sidebar-nav-item">
+                    <a href="#">
 
+                        <i class="bi bi-calendar-check"></i>
+
+                        <span class="nav-label">
+                            Solicitudes demo
+                        </span>
+
+                    </a>
+                </li>
+
+                <li class="sidebar-nav-item">
+                    <a href="#">
+
+                        <i class="bi bi-person-circle"></i>
+
+                        <span class="nav-label">
+                            Mi perfil
+                        </span>
+
+                    </a>
+                </li>
+
+                {{-- ── Sistema ── --}}
                 <li class="sidebar-section-title" aria-hidden="true">Sistema</li>
 
                 <li class="sidebar-nav-item">
-                    <a href="#" class="{{ request()->routeIs('admin.settings') ? 'active' : '' }}"
-                        aria-current="{{ request()->routeIs('admin.settings') ? 'page' : 'false' }}">
-                        <i class="bi bi-gear" aria-hidden="true"></i>
-                        <span class="nav-label">Configuración</span>
+                    <a href="#">
+
+                        <i class="bi bi-gear"></i>
+
+                        <span class="nav-label">
+                            Configuración
+                        </span>
+
                     </a>
                 </li>
-
-                {{-- <li class="sidebar-nav-item">
-                    <a href="#" class="{{ request()->routeIs('admin.logs') ? 'active' : '' }}"
-                        aria-current="{{ request()->routeIs('admin.logs') ? 'page' : 'false' }}">
-                        <i class="bi bi-terminal" aria-hidden="true"></i>
-                        <span class="nav-label">Logs</span>
-                    </a>
-                </li> --}}
 
             </ul>
         </nav>
 
-
-
-
-
         <div class="sidebar-footer">
-            <div class="sidebar-user" role="button" tabindex="0"
-                aria-label="Perfil de {{ auth()->user()->name ?? 'Administrador' }}">
-                <div class="sidebar-user-avatar" aria-hidden="true" style="overflow:hidden;padding:0;">
+
+            <div class="sidebar-user" role="button" tabindex="0">
+
+                <div class="sidebar-user-avatar" style="overflow:hidden;padding:0;">
 
                     @if (auth()->user()->avatar)
-                        <img src="{{ asset('storage/' . auth()->user()->avatar) }}" alt="Avatar"
-                            style="width:100%;height:100%;object-fit:cover;">
+
+                        <img src="{{ asset('storage/' . auth()->user()->avatar) }}"
+                             alt="Avatar"
+                             style="width:100%;height:100%;object-fit:cover;">
+
                     @else
+
                         {{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}
+
                     @endif
 
                 </div>
+
                 <div class="sidebar-user-info">
-                    <div class="sidebar-user-name">{{ auth()->user()->name ?? 'Administrador' }}</div>
-                    <div class="sidebar-user-role">{{ auth()->user()->role ?? 'Admin' }}</div>
+
+                    <div class="sidebar-user-name">
+                        {{ auth()->user()->name ?? 'Administrador' }}
+                    </div>
+
+                    <div class="sidebar-user-role">
+                        {{ auth()->user()->role ?? 'Admin' }}
+                    </div>
+
                 </div>
+
             </div>
+
         </div>
 
     </aside>
 @endpush
 
-{{-- ── Contenido de la vista hija ───────────────────── --}}
+{{-- ── Contenido ────────────────────────────────────── --}}
 @section('content')
     @yield('admin-content')
 @endsection
 
-{{-- ── JS del panel ─────────────────────────────────── --}}
+{{-- ── Scripts ──────────────────────────────────────── --}}
 @push('admin-scripts')
     <script>
         (function() {
+
             const toggle = document.getElementById('sidebarToggle');
             const sidebar = document.getElementById('admin-sidebar');
             const main = document.getElementById('main-content');
             const overlay = document.getElementById('sidebarOverlay');
+
             const isMobile = () => window.innerWidth < 992;
+
             let collapsed = false;
 
             if (!toggle || !sidebar) return;
 
             toggle.addEventListener('click', () => {
+
                 if (isMobile()) {
+
                     const open = sidebar.classList.toggle('open');
+
                     overlay.classList.toggle('active', open);
-                    toggle.setAttribute('aria-expanded', String(open));
+
                 } else {
+
                     collapsed = !collapsed;
+
                     sidebar.classList.toggle('collapsed', collapsed);
+
                     main.classList.toggle('sidebar-collapsed', collapsed);
-                    document.body.classList.toggle('sidebar-is-collapsed', collapsed); // ← añadir
-                    toggle.setAttribute('aria-expanded', String(!collapsed));
+
+                    document.body.classList.toggle('sidebar-is-collapsed', collapsed);
+
                 }
+
             });
 
             overlay.addEventListener('click', () => {
+
                 sidebar.classList.remove('open');
+
                 overlay.classList.remove('active');
-                toggle.setAttribute('aria-expanded', 'false');
+
             });
 
             document.addEventListener('keydown', e => {
+
                 if (e.key === 'Escape' && sidebar.classList.contains('open')) {
+
                     overlay.click();
+
                 }
+
             });
 
             window.addEventListener('resize', () => {
+
                 if (!isMobile()) {
+
                     sidebar.classList.remove('open');
+
                     overlay.classList.remove('active');
+
                 }
+
             });
+
         })();
     </script>
 @endpush

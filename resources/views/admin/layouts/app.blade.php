@@ -36,7 +36,7 @@
     @stack('admin-scripts')
 
     {{-- Panel de accesibilidad flotante --}}
-    <x-accessibility-panel />
+    
 
 </body>
 
