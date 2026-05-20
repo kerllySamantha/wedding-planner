@@ -1,21 +1,21 @@
 {{--
-    ACCESIBILIDAD aplicada:
-    - role="navigation" + aria-label únicos
-    - navbar-toggler: aria-controls, aria-expanded correctos
-    - nav-link con aria-current para página activa
-    - btn con aria-label descriptivo
-    - Tamaño táctil mínimo 44px cubierto por CSS
+ACCESIBILIDAD aplicada:
+- role="navigation" + aria-label únicos
+- navbar-toggler: aria-controls, aria-expanded correctos
+- nav-link con aria-current para página activa
+- btn con aria-label descriptivo
+- Tamaño táctil mínimo 44px cubierto por CSS
 
-    ADMIN:
-    - Si la ruta es admin/* se renderiza la navbar del panel de administración
-    - Si no, se renderiza la navbar pública original
+ADMIN:
+- Si la ruta es admin/* se renderiza la navbar del panel de administración
+- Si no, se renderiza la navbar pública original
 --}}
 
 @if (request()->is('admin*'))
 
     {{-- ══════════════════════════════════════════════
-         NAVBAR ADMIN
-         Comparte ancho izquierdo con el aside (#admin-sidebar)
+    NAVBAR ADMIN
+    Comparte ancho izquierdo con el aside (#admin-sidebar)
     ══════════════════════════════════════════════ --}}
     <nav class="admin-navbar" aria-label="Navegación del panel de administración">
 
@@ -26,9 +26,11 @@
                 <i class="bi bi-layout-sidebar" aria-hidden="true"></i>
             </button>
 
-            <a href="#" target="_blank" class="admin-brand-link" aria-label="Mi Fichaje Fácil — ir al inicio">
-                <img src="/img/logos/logo-mifichajefacil.png" class="admin-brand-logo" height="38" width="auto"
-                    alt="Mi Fichaje Fácil">
+            <a href="#" class="admin-brand-link" aria-label="Página principal">
+
+                <img src="{{ asset('build/assets/images/logo-sinfondo.png') }}" class="admin-brand-logo" height="38"
+                    width="auto" alt="Sueños de Boda">
+
             </a>
         </div>
 
@@ -59,7 +61,7 @@
                 <span class="nav-badge" aria-hidden="true"></span>
             </button> --}}
 
- 
+
             <div class="nav-divider" aria-hidden="true"></div>
 
             <a class="nav-icon-btn" href="#" target="_blank" aria-label="Ver sitio público">
@@ -75,29 +77,32 @@
 
             <div class="sidebar-user-avatar" aria-hidden="true" style="overflow:hidden;padding:0;">
 
-                    @if (auth()->user()->avatar)
-                        <img src="{{ asset('storage/' . auth()->user()->avatar) }}" alt="Avatar"
-                            style="width:100%;height:100%;object-fit:cover;">
-                    @else
-                        {{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}
-                    @endif
+                @if (auth()->user()->avatar)
+                    <img src="{{ asset('storage/' . auth()->user()->avatar) }}" alt="Avatar"
+                        style="width:100%;height:100%;object-fit:cover;">
+                @else
+                    {{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}
+                @endif
 
-                </div>
+            </div>
 
         </div>
     </nav>
 @else
     {{-- ══════════════════════════════════════════════
-         NAVBAR PÚBLICA (original)
+    NAVBAR PÚBLICA (original)
     ══════════════════════════════════════════════ --}}
     <nav class="navbar navbar-expand-lg navbar-light py-3 fixed-top shadow-sm" aria-label="Navegación principal">
 
         <div class="container-fluid mx-4">
 
             {{-- Logo --}}
-            <a class="navbar-brand" href="#hero" aria-label="Mi Fichaje Fácil — ir al inicio">
-                <img src="/img/logos/logo-mifichajefacil.png" class="logo-navbar" height="70" width="auto"
-                    alt="Mi Fichaje Fácil">
+
+            <a href="#" class="admin-brand-link navbar-brand" aria-label="Sueños de Boda">
+
+                <img src="{{ asset('build/assets/images/logo-sinfondo.png') }}" class="admin-brand-logo" height="38"
+                    width="auto" alt="Sueños de Boda">
+
             </a>
 
             {{-- Botón menú móvil --}}
@@ -112,7 +117,7 @@
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center" role="list">
 
                     <li class="nav-item" role="listitem">
-                        <a href="#caracteristicas" class="nav-link fw-semibold" >
+                        <a href="#caracteristicas" class="nav-link fw-semibold">
                             Características
                         </a>
                     </li>
@@ -130,7 +135,7 @@
 
                     </li>
 
-                    
+
 
 
 
@@ -138,7 +143,7 @@
 
             </div>
 
-            
+
 
         </div>
 
