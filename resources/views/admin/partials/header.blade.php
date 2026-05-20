@@ -26,7 +26,7 @@
                 <i class="bi bi-layout-sidebar" aria-hidden="true"></i>
             </button>
 
-            <a href="{{ route('home') }}" target="_blank" class="admin-brand-link" aria-label="Mi Fichaje Fácil — ir al inicio">
+            <a href="#" target="_blank" class="admin-brand-link" aria-label="Mi Fichaje Fácil — ir al inicio">
                 <img src="/img/logos/logo-mifichajefacil.png" class="admin-brand-logo" height="38" width="auto"
                     alt="Mi Fichaje Fácil">
             </a>
@@ -37,7 +37,7 @@
             <nav aria-label="Ruta de navegación">
                 <ol class="admin-breadcrumb" role="list">
                     <li role="listitem">
-                        <a href="{{ route('home') }}">Inicio</a>
+                        <a href="#">Inicio</a>
                     </li>
                     @hasSection('breadcrumb')
                         <li role="listitem" aria-hidden="true">/</li>
@@ -62,7 +62,7 @@
  
             <div class="nav-divider" aria-hidden="true"></div>
 
-            <a class="nav-icon-btn" href="{{ route('home') }}" target="_blank" aria-label="Ver sitio público">
+            <a class="nav-icon-btn" href="#" target="_blank" aria-label="Ver sitio público">
                 <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>
             </a>
 
@@ -135,11 +135,6 @@
 
 
                 </ul>
-
-                <div class="d-grid d-lg-block ms-lg-3 mt-2 mt-lg-0 align-items-lg-center">
-                    <x-accessible-button label="Solicitar Demo" href="#demo" variant="primary"
-                        aria-label="Solicitar demo gratuita de Mi Fichaje Fácil" />
-                </div>
 
             </div>
 
