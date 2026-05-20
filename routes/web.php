@@ -100,9 +100,9 @@ Route::middleware('auth')->group(function () {
     |--------------------------------------------------------------------------
     */
 
-    // Route::get('/dashboard', function () {
-    //     return view('dashboard');
-    // })->middleware(['verified'])->name('dashboard');
+    Route::get('/dashboard', function () {
+        return redirect()->route('admin.dashboard');
+    })->name('dashboard');
 });
 
 /*
