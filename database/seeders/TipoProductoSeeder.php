@@ -40,7 +40,6 @@ class TipoProductoSeeder extends Seeder
         $esServicio = [6, 3, 12, 1, 13, 18, 9, 2, 19];
 
         foreach ($tipos as $idCategoria => $nombres) {
-            // Determinamos la modalidad basándonos en si el ID está en la lista de servicios
             $modalidad = in_array($idCategoria, $esServicio) ? 'servicio' : 'producto';
 
             foreach ($nombres as $nombre) {

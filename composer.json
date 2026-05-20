@@ -13,7 +13,8 @@
         "laravel/reverb": "^1.6",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.10",
-        "spatie/laravel-permission": "^6.24"
+        "spatie/laravel-permission": "^6.24",
+        "twbs/bootstrap": "5.3.8"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
