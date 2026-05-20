@@ -1391,7 +1391,13 @@
             });
 
             window.addEventListener('resize', () => {
-                if (!isMobile()) {
+                if (isMobile()) {
+                    // Evita que el estado "collapsed" oculte textos en menú móvil
+                    collapsed = false;
+                    sidebar.classList.remove('collapsed');
+                    main.classList.remove('sidebar-collapsed');
+                    document.body.classList.remove('sidebar-is-collapsed');
+                } else {
                     sidebar.classList.remove('open');
                     overlay.classList.remove('active');
                 }
