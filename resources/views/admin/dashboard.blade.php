@@ -6,14 +6,14 @@
 @include('admin.partials.crud-styles')
 
 @section('admin-content')
-    <div class="page-header">
+    <div class="page-header dashboard-header">
         <h1>Panel de administracion</h1>
         <p>Accesos directos para gestionar empresas, tipos de producto y perfiles de usuario.</p>
     </div>
 
     @include('admin.partials.flash')
 
-    <div class="stats-grid">
+    <div class="stats-grid dashboard-stats">
         <div class="admin-card stat-card">
             <div>
                 <div class="stat-card-label">Empresas</div>
@@ -45,13 +45,13 @@
         </div>
     </div>
 
-    <div class="admin-card">
-        <div class="crud-toolbar">
+    <div class="admin-card dashboard-quick-actions">
+        <div class="crud-toolbar dashboard-toolbar">
             <div>
                 <h2 class="h5 mb-1">Acciones rapidas</h2>
                 <p class="muted mb-0">Cada acceso lleva al CRUD correspondiente del panel admin.</p>
             </div>
-            <div class="crud-actions">
+            <div class="crud-actions dashboard-actions">
                 <a href="{{ route('admin.empresas.index') }}" class="btn btn-primary">Gestionar empresas</a>
                 <a href="{{ route('admin.tipos-producto.index') }}" class="btn btn-outline-primary">Tipos de producto</a>
                 <a href="{{ route('admin.perfiles-usuario.index') }}" class="btn btn-outline-primary">Perfiles de usuario</a>
@@ -59,10 +59,10 @@
         </div>
     </div>
 
-    <div class="row g-4">
+    <div class="row g-4 dashboard-tables">
         <div class="col-12 col-xl-6">
             <div class="admin-card h-100">
-                <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="d-flex justify-content-between align-items-start mb-3">
                     <div>
                         <h2 class="h5 mb-1">Ultimas empresas</h2>
                         <p class="muted mb-0">Registros mas recientes dados de alta.</p>
@@ -100,7 +100,7 @@
 
         <div class="col-12 col-xl-6">
             <div class="admin-card h-100">
-                <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="d-flex justify-content-between align-items-start mb-3">
                     <div>
                         <h2 class="h5 mb-1">Ultimos perfiles</h2>
                         <p class="muted mb-0">Usuarios finales creados desde el panel.</p>
