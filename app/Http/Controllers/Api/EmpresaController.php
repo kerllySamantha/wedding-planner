@@ -51,30 +51,24 @@ class EmpresaController extends Controller
                 }
 
                 if ($request->hasFile('fotos')) {
-                    $validated['fotos'] = json_encode(
-                        collect($request->file('fotos'))
-                            ->values()
-                            ->map(function ($foto, $index) use ($user) {
-                                $numero = $index + 1;
-                                $extension = $foto->getClientOriginalExtension();
+                    $validated['fotos'] = collect($request->file('fotos'))
+                        ->values()
+                        ->map(function ($foto, $index) use ($user) {
+                            $numero = $index + 1;
+                            $extension = $foto->getClientOriginalExtension();
 
-                                $path = $foto->storeAs(
-                                    "imagenes/empresa_{$user->id}",
-                                    "imagen_{$numero}.{$extension}",
-                                    'public'
-                                );
+                            $path = $foto->storeAs(
+                                "imagenes/empresa_{$user->id}",
+                                "imagen_{$numero}.{$extension}",
+                                'public'
+                            );
 
-                                return [
-                                    'path' => $path,
-                                    'url' => asset("storage/{$path}"),
-                                ];
-                            })
-                            ->toArray()
-                    );
-                }
-
-                if (isset($validated['fotos'])) {
-                    $validated['fotos'] = json_encode($validated['fotos']);
+                            return [
+                                'path' => $path,
+                                'url' => asset("storage/{$path}"),
+                            ];
+                        })
+                        ->toArray();
                 }
 
                 $empresa = $user->empresa()->create(
@@ -183,7 +177,7 @@ class EmpresaController extends Controller
         ]);
 
         if (array_key_exists('fotos', $validated)) {
-            $empresaData['fotos'] = json_encode($validated['fotos'] ?? []);
+            $empresaData['fotos'] = $validated['fotos'] ?? [];
         }
 
         $empresa->update($empresaData);

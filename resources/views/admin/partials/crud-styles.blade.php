@@ -86,10 +86,33 @@
                 display: grid;
                 grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
                 gap: 1rem;
+                align-items: start;
             }
 
             .form-grid .full-span {
                 grid-column: 1 / -1;
+            }
+
+            .form-grid > div {
+                display: flex;
+                flex-direction: column;
+                gap: .45rem;
+            }
+
+            .form-label {
+                margin-bottom: 0;
+                font-weight: 600;
+                color: #1b3a5c;
+            }
+
+            .crud-toolbar .page-header p {
+                margin-bottom: 0;
+            }
+
+            .admin-card form .d-flex.justify-content-end {
+                margin-top: .5rem;
+                padding-top: 1rem;
+                border-top: 1px solid #d6e4f0;
             }
 
             .detail-grid {

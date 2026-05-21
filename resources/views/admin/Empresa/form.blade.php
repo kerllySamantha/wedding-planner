@@ -7,6 +7,14 @@
 
 @php
     $usuario = $empresa->usuario;
+    $fotosEmpresa = $empresa->fotos;
+
+    if (is_string($fotosEmpresa)) {
+        $decoded = json_decode($fotosEmpresa, true);
+        $fotosEmpresa = is_array($decoded) ? $decoded : [];
+    }
+
+    $fotosEmpresa = is_array($fotosEmpresa) ? $fotosEmpresa : [];
 @endphp
 
 @section('admin-content')
@@ -130,9 +138,9 @@
                             Si subes nuevas fotos, se sustituira la galeria actual completa.
                         </div>
 
-                        @if (! empty($empresa->fotos))
+                        @if (! empty($fotosEmpresa))
                             <div class="thumb-list">
-                                @foreach ($empresa->fotos as $foto)
+                                @foreach ($fotosEmpresa as $foto)
                                     <img src="{{ is_array($foto) ? ($foto['url'] ?? asset('storage/' . ($foto['path'] ?? ''))) : asset('storage/' . $foto) }}"
                                         alt="Foto de empresa">
                                 @endforeach
