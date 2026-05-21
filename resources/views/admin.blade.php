@@ -890,14 +890,39 @@
 
         @media (max-width: 991px) {
 
-            .admin-sidebar {
+            .admin-sidebar,
+            .admin-sidebar.collapsed {
                 transform: translateX(-100%);
-
                 width: var(--sidebar-width) !important;
             }
 
-            .admin-sidebar.open {
+            .admin-sidebar.open,
+            .admin-sidebar.collapsed.open {
                 transform: translateX(0);
+            }
+
+            /* En móvil nunca ocultamos textos por estado collapsed */
+            .admin-sidebar.collapsed .nav-label,
+            .admin-sidebar.collapsed .sidebar-section-title,
+            .admin-sidebar.collapsed .sidebar-user-info,
+            .admin-sidebar.collapsed .nav-badge-pill,
+            .admin-sidebar.collapsed .sidebar-chevron {
+                display: inline !important;
+                opacity: 1 !important;
+                visibility: visible !important;
+            }
+
+            .admin-sidebar.collapsed .sidebar-nav-item,
+            .admin-sidebar.collapsed .sidebar-nav-item.sidebar-nav-group {
+                max-width: none !important;
+            }
+
+            .admin-sidebar.collapsed .sidebar-nav-item>a,
+            .admin-sidebar.collapsed .sidebar-group-trigger,
+            .admin-sidebar.collapsed .sidebar-subnav li a {
+                justify-content: flex-start !important;
+                padding-inline: 16px !important;
+                gap: 12px !important;
             }
 
             body.is-admin #main-content {
