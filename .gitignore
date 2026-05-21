@@ -22,3 +22,8 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+!public/build/
+!public/build/asses/
+!public/build/asses/css/
+!public/build/asses/css/admin-panel.css
