@@ -3,8 +3,6 @@
 @section('title', $isEdit ? 'Editar perfil de usuario' : 'Nuevo perfil de usuario')
 @section('breadcrumb', 'Perfiles de usuario')
 
-@include('admin.partials.crud-styles')
-
 @php
     $usuario = $perfilUsuario->user;
 @endphp

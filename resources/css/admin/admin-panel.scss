@@ -1255,3 +1255,139 @@ body.is-admin #main-content {
 .stat-card {
     height: 100%; /* ← la card ocupa todo el alto disponible */
 }
+
+/* Dashboard: secciones por bloque, alturas consistentes y look menos plano */
+.dashboard-section {
+  margin-bottom: 1.5rem;
+}
+
+.dashboard-stats .stat-card {
+  min-height: 132px;
+  border-top: 4px solid transparent;
+}
+
+.dashboard-stats .stat-card--empresas {
+  border-top-color: #2b7fe8;
+}
+
+.dashboard-stats .stat-card--tipos {
+  border-top-color: #32a071;
+}
+
+.dashboard-stats .stat-card--perfiles {
+  border-top-color: #7b5cd6;
+}
+
+.dashboard-section--actions {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+}
+
+.dashboard-section--tables .dashboard-panel {
+  min-height: 430px;
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-section--tables .table-responsive {
+  margin-top: .25rem;
+}
+
+.dashboard-panel--empresas .h5::before,
+.dashboard-panel--perfiles .h5::before {
+  content: "";
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: .5rem;
+}
+
+.dashboard-panel--empresas .h5::before {
+  background: #2b7fe8;
+}
+
+.dashboard-panel--perfiles .h5::before {
+  background: #7b5cd6;
+}
+
+/* Ajuste visual más marcado para evitar look "plano/blanco" del dashboard */
+.dashboard-shell {
+  background: linear-gradient(180deg, #f5f8fc 0%, #eef3f9 100%);
+  border: 1px solid #cfdbeb;
+  border-radius: 18px;
+  padding: 1.1rem;
+}
+
+.dashboard-header {
+  background: linear-gradient(135deg, #ffffff 0%, #f4f8ff 100%);
+  border: 1px solid #cfe0f5;
+  border-left: 5px solid #1a6dd4;
+  box-shadow: 0 8px 20px rgba(10, 46, 78, 0.06);
+}
+
+.dashboard-header p {
+  color: #3f6688;
+}
+
+.dashboard-stats {
+  gap: 1.25rem;
+}
+
+.dashboard-stats .stat-card {
+  min-height: 150px;
+  padding: 1.15rem 1.2rem;
+  border-width: 1px;
+}
+
+.dashboard-stats .stat-card .stat-card-label {
+  font-size: .8rem;
+  letter-spacing: .08em;
+}
+
+.dashboard-stats .stat-card .stat-card-value {
+  font-size: 2.15rem;
+  line-height: 1.05;
+  margin-top: .25rem;
+}
+
+.dashboard-stats .stat-card .stat-card-icon {
+  width: 62px;
+  height: 62px;
+  background: linear-gradient(180deg, #eef4fb 0%, #e7f0fb 100%);
+  border: 1px solid #cddff2;
+}
+
+.dashboard-quick-actions {
+  padding: 1.5rem;
+  border: 1px solid #cfe0f5;
+  background: linear-gradient(180deg, #ffffff 0%, #f6faff 100%);
+}
+
+.dashboard-toolbar {
+  gap: 1rem;
+}
+
+.dashboard-actions {
+  gap: .75rem;
+}
+
+.dashboard-actions .btn {
+  min-width: 220px;
+}
+
+.dashboard-section--tables .dashboard-panel {
+  min-height: 440px;
+  padding: 1.25rem;
+  border: 1px solid #d3e0ef;
+  background: #ffffff;
+}
+
+@media (max-width: 992px) {
+  .dashboard-shell {
+    padding: 1rem;
+  }
+
+  .dashboard-actions .btn {
+    min-width: 100%;
+  }
+}

@@ -3,8 +3,6 @@
 @section('title', $isEdit ? 'Editar empresa' : 'Nueva empresa')
 @section('breadcrumb', 'Empresas')
 
-@include('admin.partials.crud-styles')
-
 @php
     $usuario = $empresa->usuario;
     $fotosEmpresa = $empresa->fotos;
