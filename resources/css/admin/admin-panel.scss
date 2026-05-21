@@ -1110,3 +1110,50 @@ body.is-admin #main-content {
                     padding-right: 1rem;
                 }
             }
+
+/* Dashboard polish - professional look */
+.dashboard-header {
+  padding: 1.2rem 1.35rem;
+  border: 1px solid #d6e4f0;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #ffffff 0%, #f5f9ff 100%);
+  box-shadow: 0 10px 24px rgba(12, 49, 79, 0.06);
+}
+
+.dashboard-header h1 {
+  font-family: var(--font-brand);
+  font-weight: 700;
+  letter-spacing: .01em;
+}
+
+.dashboard-stats .stat-card {
+  border: 1px solid #d6e4f0;
+  background: linear-gradient(160deg, #ffffff 0%, #f8fbff 100%);
+  box-shadow: 0 12px 26px rgba(15, 53, 85, 0.08);
+}
+
+.dashboard-stats .stat-card:hover {
+  transform: translateY(-2px);
+  transition: transform .2s ease, box-shadow .2s ease;
+  box-shadow: 0 16px 34px rgba(15, 53, 85, 0.12);
+}
+
+.dashboard-quick-actions {
+  border: 1px solid #d6e4f0;
+  background: #ffffff;
+  box-shadow: 0 10px 24px rgba(12, 49, 79, 0.06);
+}
+
+.dashboard-actions .btn-outline-primary,
+.dashboard-actions .btn-outline-secondary {
+  border-width: 2px;
+}
+
+.dashboard-tables .admin-card {
+  border: 1px solid #d6e4f0;
+  box-shadow: 0 10px 24px rgba(12, 49, 79, 0.06);
+}
+
+.dashboard-tables .table thead th {
+  background: #f5f9ff;
+}
