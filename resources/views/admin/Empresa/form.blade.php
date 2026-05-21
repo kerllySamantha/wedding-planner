@@ -1,7 +1,4 @@
 @extends('admin.admin')
-@push('styles')
-    <link rel="stylesheet" href="{{ asset('css/admin/dashboard.css') }}">
-@endpush
 @section('title', $isEdit ? 'Editar empresa' : 'Nueva empresa')
 @section('breadcrumb', 'Empresas')
 

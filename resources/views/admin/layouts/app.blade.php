@@ -5,8 +5,7 @@
     @include('partials.head')
     @stack('admin-styles')
     @stack('styles')
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link rel="stylesheet" href="{{ asset('css/admin-panel.css') }}">
+    @vite(['resources/css/app.css', 'resources/css/admin/admin-panel.scss', 'resources/js/app.js'])
 </head>
 
 <body class="{{ request()->is('admin*') ? 'is-admin' : '' }}">
