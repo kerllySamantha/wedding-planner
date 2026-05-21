@@ -4,7 +4,7 @@
 <head>
     @include('partials.head')
     @stack('admin-styles')
-    @vite(['resources/css/admin/admin-panel.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
 <body class="{{ request()->is('admin*') ? 'is-admin' : '' }}">
