@@ -3,7 +3,7 @@
 
 <head>
     @include('partials.head')
-    {{-- @stack('admin-styles') --}}
+    @stack('admin-styles')
     <link rel="stylesheet" href="{{ asset('build/assets/css/admin/admin-styles.css') }}">
 </head>
 

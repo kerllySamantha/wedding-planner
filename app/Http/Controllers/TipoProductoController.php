@@ -2,63 +2,114 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Categoria;
+use App\Models\ItemPresupuesto;
+use App\Models\TipoProducto;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\View\View;
 
 class TipoProductoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(): View
     {
-        //
+        $tiposProducto = TipoProducto::with('categoria')
+            ->withCount('productos')
+            ->orderBy('nombre')
+            ->paginate(15);
+
+        return view('admin.TipoProducto.index', compact('tiposProducto'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function create(): View
     {
-        //
+        return view('admin.TipoProducto.form', [
+            'tipoProducto' => new TipoProducto(),
+            'categorias' => $this->getCategorias(),
+            'isEdit' => false,
+        ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
-        //
+        $validated = $request->validate($this->rules());
+
+        TipoProducto::create($validated);
+
+        return redirect()
+            ->route('admin.tipos-producto.index')
+            ->with('success', 'Tipo de producto creado correctamente.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(TipoProducto $tipoProducto): View
     {
-        //
+        $tipoProducto->load('categoria')
+            ->loadCount(['productos', 'presupuestos']);
+
+        return view('admin.TipoProducto.show', compact('tipoProducto'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function edit(TipoProducto $tipoProducto): View
     {
-        //
+        $tipoProducto->load('categoria');
+
+        return view('admin.TipoProducto.form', [
+            'tipoProducto' => $tipoProducto,
+            'categorias' => $this->getCategorias(),
+            'isEdit' => true,
+        ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, TipoProducto $tipoProducto): RedirectResponse
     {
-        //
+        $validated = $request->validate($this->rules($tipoProducto->id));
+
+        $tipoProducto->update($validated);
+
+        return redirect()
+            ->route('admin.tipos-producto.index')
+            ->with('success', 'Tipo de producto actualizado correctamente.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(TipoProducto $tipoProducto): RedirectResponse
     {
-        //
+        if (
+            $tipoProducto->productos()->exists() ||
+            $tipoProducto->presupuestos()->exists() ||
+            ItemPresupuesto::where('tipo_producto_id', $tipoProducto->id)->exists()
+        ) {
+            return redirect()
+                ->route('admin.tipos-producto.index')
+                ->with('error', 'No se puede eliminar un tipo de producto que ya esta en uso.');
+        }
+
+        $tipoProducto->delete();
+
+        return redirect()
+            ->route('admin.tipos-producto.index')
+            ->with('success', 'Tipo de producto eliminado correctamente.');
+    }
+
+    private function rules(?int $tipoProductoId = null): array
+    {
+        return [
+            'categoria_id' => ['required', 'exists:categorias,id'],
+            'nombre' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('tipo_productos', 'nombre')
+                    ->ignore($tipoProductoId)
+                    ->where(fn ($query) => $query->where('categoria_id', request('categoria_id'))),
+            ],
+            'descripcion' => ['nullable', 'string'],
+            'modalidad' => ['required', Rule::in(['producto', 'servicio', 'dia'])],
+        ];
+    }
+
+    private function getCategorias()
+    {
+        return Categoria::orderBy('nombre')->get();
     }
 }

@@ -2,15 +2,20 @@
 
 use App\Helpers\Helper;
 use App\Http\Controllers\AuthenticationController;
+use App\Http\Controllers\EmpresaController;
+use App\Http\Controllers\PerfilUsuarioController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\TipoProductoController;
 use App\Mail\EnvioEmail;
+use App\Models\Empresa as EmpresaModel;
+use App\Models\PerfilUsuario as PerfilUsuarioModel;
+use App\Models\TipoProducto as TipoProductoModel;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| PÁGINA DE INICIO
+| PAGINA DE INICIO
 |--------------------------------------------------------------------------
 */
 
@@ -25,8 +30,9 @@ Route::get('/', function () {
 */
 
 Route::get('/test-reverb', function () {
-    broadcast(new \App\Events\TestEvent("Hola Angular"));
-    return "OK";
+    broadcast(new \App\Events\TestEvent('Hola Angular'));
+
+    return 'OK';
 });
 
 Route::get('/test-helper', function () {
@@ -35,22 +41,23 @@ Route::get('/test-helper', function () {
 
 Route::get('/test-mail', function () {
     Mail::to('prueba@example.com')->send(new EnvioEmail());
+
     return 'Correo enviado';
 });
 
 Route::get('/test-webp', function () {
     $path = storage_path('app/public/imagenes/usuario_4/imagen_5.webp');
+
     return response()->file($path);
 });
 
 /*
 |--------------------------------------------------------------------------
-| AUTH — Solo para invitados (no autenticados)
+| AUTH - Solo para invitados
 |--------------------------------------------------------------------------
 */
 
 Route::middleware('guest')->group(function () {
-
     Route::get('/login', [AuthenticationController::class, 'showLogin'])
         ->name('login');
 
@@ -60,30 +67,17 @@ Route::middleware('guest')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| AUTH — Solo para autenticados
+| AUTH - Solo para autenticados
 |--------------------------------------------------------------------------
 */
 
 Route::middleware('auth')->group(function () {
-
     Route::post('/logout', [AuthenticationController::class, 'logout'])
         ->name('logout');
-
-    /*
-    |--------------------------------------------------------------------------
-    | DASHBOARD — Redirige según rol
-    |--------------------------------------------------------------------------
-    */
 
     Route::get('/dashboard', function () {
         return redirect()->route('admin.dashboard');
     })->name('dashboard');
-
-    /*
-    |--------------------------------------------------------------------------
-    | PERFIL
-    |--------------------------------------------------------------------------
-    */
 
     Route::get('/profile', [ProfileController::class, 'edit'])
         ->name('profile.edit');
@@ -105,28 +99,40 @@ Route::prefix('admin')
     ->middleware(['auth', 'role:admin'])
     ->name('admin.')
     ->group(function () {
-
         Route::get('/dashboard', function () {
-            return view('admin.admin');
+            return view('admin.dashboard', [
+                'stats' => [
+                    'empresas' => EmpresaModel::count(),
+                    'tiposProducto' => TipoProductoModel::count(),
+                    'perfilesUsuario' => PerfilUsuarioModel::count(),
+                ],
+                'ultimasEmpresas' => EmpresaModel::with('usuario')
+                    ->latest()
+                    ->take(5)
+                    ->get(),
+                'ultimosPerfiles' => PerfilUsuarioModel::with('user')
+                    ->latest()
+                    ->take(5)
+                    ->get(),
+            ]);
         })->name('dashboard');
 
-        /*
-        |--------------------------------------------------------------------------
-        | GESTIÓN WEB
-        |--------------------------------------------------------------------------
-        */
+        Route::middleware('permission:gestionar usuarios')->group(function () {
+            Route::resource('perfiles-usuario', PerfilUsuarioController::class)
+                ->parameters(['perfiles-usuario' => 'perfilUsuario']);
+        });
 
-        Route::middleware('permission:gestionar web')
-            ->group(function () {
+        Route::middleware('permission:gestionar empresas')->group(function () {
+            Route::resource('empresas', EmpresaController::class);
 
-                Route::resource('users', UserController::class)
-                    ->only(['index', 'create', 'store', 'edit', 'update']);
-            });
+            Route::resource('tipos-producto', TipoProductoController::class)
+                ->parameters(['tipos-producto' => 'tipoProducto']);
+        });
     });
 
 /*
 |--------------------------------------------------------------------------
-| RUTAS DE AUTENTICACIÓN BREEZE
+| RUTAS DE AUTENTICACION BREEZE
 |--------------------------------------------------------------------------
 */
 

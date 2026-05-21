@@ -2,63 +2,246 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Empresa;
+use App\Models\Poblacion;
+use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
+use Illuminate\View\View;
 
 class EmpresaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(): View
     {
-        //
+        $empresas = Empresa::with(['usuario', 'poblacion.provincia'])
+            ->withCount('productos')
+            ->orderBy('nombre_empresa')
+            ->paginate(12);
+
+        return view('admin.Empresa.index', compact('empresas'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function create(): View
     {
-        //
+        return view('admin.Empresa.form', [
+            'empresa' => new Empresa(),
+            'poblaciones' => $this->getPoblaciones(),
+            'isEdit' => false,
+        ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
-        //
+        $validated = $request->validate($this->rules());
+
+        DB::transaction(function () use ($request, $validated): void {
+            $user = User::create([
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'password' => Hash::make($validated['password']),
+            ]);
+
+            $user->assignRole('empresa');
+
+            $payload = $this->empresaPayload($request, $validated, $user->id);
+            $payload['user_id'] = $user->id;
+
+            Empresa::create($payload);
+        });
+
+        return redirect()
+            ->route('admin.empresas.index')
+            ->with('success', 'Empresa creada correctamente.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(Empresa $empresa): View
     {
-        //
+        $empresa->load(['usuario', 'poblacion.provincia'])
+            ->loadCount(['productos', 'reservas', 'pedirPresupuestos']);
+
+        return view('admin.Empresa.show', compact('empresa'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function edit(Empresa $empresa): View
     {
-        //
+        $empresa->load(['usuario', 'poblacion.provincia']);
+
+        return view('admin.Empresa.form', [
+            'empresa' => $empresa,
+            'poblaciones' => $this->getPoblaciones(),
+            'isEdit' => true,
+        ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Empresa $empresa): RedirectResponse
     {
-        //
+        $empresa->load('usuario');
+
+        $validated = $request->validate(
+            $this->rules($empresa->id, $empresa->user_id)
+        );
+
+        DB::transaction(function () use ($empresa, $request, $validated): void {
+            $empresa->usuario?->update([
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+            ]);
+
+            if (! empty($validated['password'])) {
+                $empresa->usuario?->update([
+                    'password' => Hash::make($validated['password']),
+                ]);
+            }
+
+            $empresa->usuario?->syncRoles(['empresa']);
+
+            $payload = $this->empresaPayload(
+                $request,
+                $validated,
+                $empresa->user_id,
+                $empresa
+            );
+
+            $empresa->update($payload);
+        });
+
+        return redirect()
+            ->route('admin.empresas.index')
+            ->with('success', 'Empresa actualizada correctamente.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(Empresa $empresa): RedirectResponse
     {
-        //
+        if ($empresa->reservas()->exists() || $empresa->pedirPresupuestos()->exists()) {
+            return redirect()
+                ->route('admin.empresas.index')
+                ->with('error', 'No se puede eliminar una empresa con reservas o solicitudes de presupuesto asociadas.');
+        }
+
+        DB::transaction(function () use ($empresa): void {
+            $this->deleteEmpresaFiles($empresa);
+            $empresa->productos()->delete();
+
+            $user = $empresa->usuario;
+            $empresa->delete();
+            $user?->delete();
+        });
+
+        return redirect()
+            ->route('admin.empresas.index')
+            ->with('success', 'Empresa eliminada correctamente.');
+    }
+
+    private function rules(?int $empresaId = null, ?int $userId = null): array
+    {
+        $passwordRules = $empresaId === null
+            ? ['required', 'string', 'confirmed', 'min:8']
+            : ['nullable', 'string', 'confirmed', 'min:8'];
+
+        return [
+            'name' => ['required', 'string', 'max:255'],
+            'email' => [
+                'required',
+                'email',
+                'max:255',
+                Rule::unique('users', 'email')->ignore($userId),
+            ],
+            'password' => $passwordRules,
+            'nombre_empresa' => ['required', 'string', 'max:255'],
+            'direccion' => ['required', 'string', 'max:255'],
+            'telefono' => ['required', 'string', 'max:20'],
+            'descripcion' => ['nullable', 'string'],
+            'tipo_servicio' => ['required', 'string', 'max:255'],
+            'poblacion_id' => ['required', 'exists:poblaciones,id'],
+            'logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'fotos' => ['nullable', 'array'],
+            'fotos.*' => ['image', 'mimes:jpg,jpeg,png,webp', 'max:3072'],
+        ];
+    }
+
+    private function getPoblaciones()
+    {
+        return Poblacion::with('provincia')
+            ->orderBy('nombre')
+            ->get();
+    }
+
+    private function empresaPayload(
+        Request $request,
+        array $validated,
+        int $userId,
+        ?Empresa $empresa = null
+    ): array {
+        $payload = [
+            'nombre_empresa' => $validated['nombre_empresa'],
+            'direccion' => $validated['direccion'],
+            'telefono' => $validated['telefono'],
+            'descripcion' => $validated['descripcion'] ?? null,
+            'tipo_servicio' => $validated['tipo_servicio'],
+            'poblacion_id' => $validated['poblacion_id'],
+        ];
+
+        if ($request->hasFile('logo')) {
+            if ($empresa?->logo) {
+                Storage::disk('public')->delete($empresa->logo);
+            }
+
+            $payload['logo'] = $request->file('logo')->store('logos', 'public');
+        } elseif ($empresa !== null) {
+            $payload['logo'] = $empresa->logo;
+        }
+
+        if ($request->hasFile('fotos')) {
+            if ($empresa !== null) {
+                $this->deleteGalleryFiles($empresa);
+            }
+
+            $payload['fotos'] = collect($request->file('fotos'))
+                ->values()
+                ->map(function ($foto, int $index) use ($userId): array {
+                    $extension = $foto->getClientOriginalExtension();
+                    $path = $foto->storeAs(
+                        "imagenes/empresa_{$userId}",
+                        'imagen_' . ($index + 1) . '.' . $extension,
+                        'public'
+                    );
+
+                    return [
+                        'path' => $path,
+                        'url' => asset('storage/' . $path),
+                    ];
+                })
+                ->all();
+        } elseif ($empresa !== null) {
+            $payload['fotos'] = $empresa->fotos;
+        }
+
+        return $payload;
+    }
+
+    private function deleteEmpresaFiles(Empresa $empresa): void
+    {
+        if ($empresa->logo) {
+            Storage::disk('public')->delete($empresa->logo);
+        }
+
+        $this->deleteGalleryFiles($empresa);
+    }
+
+    private function deleteGalleryFiles(Empresa $empresa): void
+    {
+        $fotos = is_array($empresa->fotos) ? $empresa->fotos : [];
+
+        foreach ($fotos as $foto) {
+            $path = is_array($foto) ? ($foto['path'] ?? null) : $foto;
+
+            if ($path) {
+                Storage::disk('public')->delete($path);
+            }
+        }
     }
 }
