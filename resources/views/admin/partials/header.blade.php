@@ -7,7 +7,7 @@
             </button>
 
             <a href="{{ route('admin.dashboard') }}" class="admin-brand-link" aria-label="Pagina principal del panel">
-                <img src="{{ asset('build/assets/images/logo-sinfondo.png') }}" class="admin-brand-logo" height="38"
+                <img src="{{ asset('/resources/images/logo-sinfondo.png') }}" class="admin-brand-logo" height="38"
                     width="auto" alt="Suenos de Boda">
             </a>
         </div>
@@ -54,7 +54,7 @@
     <nav class="navbar navbar-expand-lg navbar-light py-3 fixed-top shadow-sm" aria-label="Navegacion principal">
         <div class="container-fluid mx-4">
             <a href="{{ url('/') }}" class="admin-brand-link navbar-brand" aria-label="Suenos de Boda">
-                <img src="{{ asset('build/assets/images/logo-sinfondo.png') }}" class="admin-brand-logo" height="38"
+                <img src="{{ asset('/resources/images/logo-sinfondo.png') }}" class="admin-brand-logo" height="38"
                     width="auto" alt="Suenos de Boda">
             </a>
 
