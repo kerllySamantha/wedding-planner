@@ -1,0 +1,247 @@
+// ─────────────────────────────────────────────
+// _empresa-form.scss
+// Estilos para el formulario de crear/editar empresa
+// Requiere Bootstrap 5 como base
+// ─────────────────────────────────────────────
+
+// Tokens locales — ajusta según tu design system
+$ec-border-color:   rgba(0, 0, 0, 0.1);
+$ec-border-radius:  0.5rem;
+$ec-radius-lg:      0.75rem;
+$ec-label-size:     0.7rem;
+$ec-icon-size:      2rem;
+$ec-thumb-size:     3.5rem;
+
+// ─── Toolbar ────────────────────────────────
+.ec-toolbar {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+
+    @media (max-width: 576px) {
+        flex-direction: column;
+    }
+}
+
+.ec-page-title {
+    font-size: 1.25rem;
+    font-weight: 500;
+    margin: 0 0 0.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    &__icon {
+        font-size: 1.1rem;
+        opacity: 0.6;
+    }
+}
+
+.ec-page-subtitle {
+    font-size: 0.8rem;
+    color: var(--bs-secondary-color, #6c757d);
+    margin: 0;
+}
+
+// ─── Card de sección ────────────────────────
+.ec-card {
+    background: var(--bs-body-bg, #fff);
+    border: 1px solid $ec-border-color;
+    border-radius: $ec-radius-lg;
+    padding: 1.25rem 1.5rem;
+
+    &__header {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        padding-bottom: 1rem;
+        margin-bottom: 1.25rem;
+        border-bottom: 1px solid $ec-border-color;
+    }
+
+    &__icon {
+        width: $ec-icon-size;
+        height: $ec-icon-size;
+        border-radius: $ec-border-radius;
+        background: var(--bs-secondary-bg, #f8f9fa);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 1rem;
+        color: var(--bs-secondary-color, #6c757d);
+    }
+
+    &__title {
+        font-size: 0.875rem;
+        font-weight: 500;
+        margin: 0 0 0.15rem;
+    }
+
+    &__subtitle {
+        font-size: 0.75rem;
+        color: var(--bs-secondary-color, #6c757d);
+        margin: 0;
+    }
+}
+
+// ─── Grid de campos ─────────────────────────
+.ec-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+
+    @media (max-width: 640px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+// ─── Campo individual ───────────────────────
+.ec-field {
+    display: flex;
+    flex-direction: column;
+
+    &--full {
+        grid-column: 1 / -1;
+    }
+}
+
+// ─── Label ──────────────────────────────────
+.ec-label {
+    font-size: $ec-label-size;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--bs-secondary-color, #6c757d);
+    margin-bottom: 0.35rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+// ─── Badge "opcional" ───────────────────────
+.ec-badge-optional {
+    font-size: 0.65rem;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    padding: 0.1rem 0.5rem;
+    border-radius: 20px;
+    background: var(--bs-secondary-bg, #f8f9fa);
+    color: var(--bs-secondary-color, #6c757d);
+    border: 1px solid $ec-border-color;
+}
+
+// ─── Zona de upload ─────────────────────────
+.ec-upload {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    padding: 1.25rem 1rem;
+    border: 1.5px dashed $ec-border-color;
+    border-radius: $ec-border-radius;
+    background: var(--bs-secondary-bg, #f8f9fa);
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+    position: relative;
+    text-align: center;
+
+    &:hover {
+        border-color: var(--bs-primary, #0d6efd);
+        background: var(--bs-primary-bg-subtle, #e9f0ff);
+    }
+
+    input[type='file'] {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        cursor: pointer;
+        width: 100%;
+        height: 100%;
+    }
+
+    i {
+        font-size: 1.5rem;
+        color: var(--bs-secondary-color, #6c757d);
+    }
+
+    span {
+        font-size: 0.8rem;
+        color: var(--bs-body-color, #212529);
+        font-weight: 500;
+    }
+
+    small {
+        font-size: 0.7rem;
+        color: var(--bs-secondary-color, #6c757d);
+    }
+}
+
+// ─── Hint / aviso ───────────────────────────
+.ec-hint {
+    font-size: 0.72rem;
+    color: var(--bs-secondary-color, #6c757d);
+    display: flex;
+    align-items: flex-start;
+    gap: 0.3rem;
+    margin: 0;
+
+    i {
+        flex-shrink: 0;
+        margin-top: 0.05rem;
+    }
+}
+
+// ─── Thumbnails ─────────────────────────────
+.ec-thumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.ec-thumb {
+    width: $ec-thumb-size;
+    height: $ec-thumb-size;
+    border-radius: $ec-border-radius;
+    border: 1px solid $ec-border-color;
+    overflow: hidden;
+    background: var(--bs-secondary-bg, #f8f9fa);
+    flex-shrink: 0;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+}
+
+// ─── Footer de acciones ─────────────────────
+.ec-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    background: var(--bs-body-bg, #fff);
+    border: 1px solid $ec-border-color;
+    border-radius: $ec-radius-lg;
+
+    @media (max-width: 576px) {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    &__hint {
+        font-size: 0.75rem;
+        color: var(--bs-secondary-color, #6c757d);
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        margin: 0;
+    }
+}
