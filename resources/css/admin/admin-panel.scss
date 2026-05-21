@@ -1242,3 +1242,16 @@ body.is-admin #main-content {
     justify-content: flex-start;
   }
 }
+
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    align-items: stretch; /* ← todas las filas se estiran igual */
+}
+
+.stat-card {
+    height: 100%; /* ← la card ocupa todo el alto disponible */
+}

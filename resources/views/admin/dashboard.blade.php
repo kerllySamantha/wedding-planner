@@ -3,7 +3,6 @@
 @section('title', 'Dashboard admin')
 @section('breadcrumb', 'Dashboard')
 
-@include('admin.partials.crud-styles')
 
 @section('admin-content')
     <div class="page-header dashboard-header">
