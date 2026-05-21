@@ -1012,4 +1012,75 @@ body.is-admin #main-content {
   .text-end .d-inline-flex {
     justify-content: flex-start;
   }
+}
+.dashboard-shell {
+  background: #f4f7fb;
+  border: 1px solid #d5e0ed;
+  border-radius: 22px;
+  padding: 1.25rem;
+}
+
+.dashboard-header {
+  background: #ffffff;
+  border-left: 6px solid #1a6dd4;
+}
+
+.dashboard-header p {
+  color: #4f7394;
+}
+
+.dashboard-stats {
+  gap: 1.25rem;
+}
+
+.dashboard-stats .stat-card {
+  min-height: 160px;
+  padding: 1.3rem 1.35rem;
+}
+
+.dashboard-stats .stat-card .stat-card-label {
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+}
+
+.dashboard-stats .stat-card .stat-card-value {
+  font-size: 2.25rem;
+  line-height: 1.05;
+}
+
+.dashboard-stats .stat-card .stat-card-icon {
+  width: 68px;
+  height: 68px;
+  background: #eef4fb;
+  border: 1px solid #d7e4f4;
+}
+
+.dashboard-quick-actions {
+  padding: 1.45rem 1.5rem;
+}
+
+.dashboard-toolbar {
+  gap: 1rem;
+}
+
+.dashboard-actions {
+  gap: 0.75rem;
+}
+
+.dashboard-actions .btn {
+  min-width: 240px;
+}
+
+.dashboard-section--tables .dashboard-panel {
+  min-height: 480px;
+  padding: 1.4rem;
+}
+
+@media (max-width: 992px) {
+  .dashboard-shell {
+    padding: 1rem;
+  }
+  .dashboard-actions .btn {
+    min-width: 100%;
+  }
 }/*# sourceMappingURL=admin-panel.css.map */

@@ -5,14 +5,15 @@
 
 
 @section('admin-content')
-    <div class="page-header dashboard-header">
-        <h1>Panel de administracion</h1>
-        <p>Accesos directos para gestionar empresas, tipos de producto y perfiles de usuario.</p>
-    </div>
+    <section class="dashboard-shell">
+        <div class="page-header dashboard-header">
+            <h1>Panel de administracion</h1>
+            <p>Accesos directos para gestionar empresas, tipos de producto y perfiles de usuario.</p>
+        </div>
 
     @include('admin.partials.flash')
 
-    <div class="stats-grid dashboard-stats dashboard-section dashboard-section--stats">
+        <div class="stats-grid dashboard-stats dashboard-section dashboard-section--stats">
         <div class="admin-card stat-card stat-card--empresas">
             <div>
                 <div class="stat-card-label">Empresas</div>
@@ -42,9 +43,9 @@
                 <i class="bi bi-people"></i>
             </div>
         </div>
-    </div>
+        </div>
 
-    <div class="admin-card dashboard-quick-actions dashboard-section dashboard-section--actions">
+        <div class="admin-card dashboard-quick-actions dashboard-section dashboard-section--actions">
         <div class="crud-toolbar dashboard-toolbar">
             <div>
                 <h2 class="h5 mb-1">Acciones rapidas</h2>
@@ -56,9 +57,9 @@
                 <a href="{{ route('admin.perfiles-usuario.index') }}" class="btn btn-outline-primary">Perfiles de usuario</a>
             </div>
         </div>
-    </div>
+        </div>
 
-    <div class="row g-4 dashboard-tables dashboard-section dashboard-section--tables">
+        <div class="row g-4 dashboard-tables dashboard-section dashboard-section--tables">
         <div class="col-12 col-xl-6">
             <div class="admin-card h-100 dashboard-panel dashboard-panel--empresas">
                 <div class="d-flex justify-content-between align-items-start mb-3">
@@ -134,5 +135,6 @@
                 @endif
             </div>
         </div>
-    </div>
+        </div>
+    </section>
 @endsection
