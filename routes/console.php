@@ -13,3 +13,4 @@ Schedule::command('recordatorio:boda-proxima')->dailyAt('09:00');
 Schedule::command('recordatorio:presupuestos-pendientes')->dailyAt('10:00');
 Schedule::command('recordatorio:tareas-pendientes')->dailyAt('11:00');
 Schedule::command('reservas:expirar-holds')->everyFiveMinutes();
+Schedule::command('email:send-reminder')->everyMinute();
