@@ -24,7 +24,7 @@
             <div class="empty-state">No hay perfiles de usuario registrados.</div>
         @else
             <div class="table-responsive">
-                <table class="table align-middle mb-0">
+                <table class="table table-admin align-middle mb-0">
                     <thead>
                         <tr>
                             <th>Usuario</th>
@@ -51,16 +51,16 @@
                                 </td>
                                 <td>{{ $perfil->fecha_boda ? \Illuminate\Support\Carbon::parse($perfil->fecha_boda)->format('d/m/Y') : '-' }}</td>
                                 <td class="text-end">
-                                    <div class="d-inline-flex gap-2">
+                                    <div class="table-actions">
                                         <a href="{{ route('admin.perfiles-usuario.show', $perfil) }}"
-                                            class="btn btn-sm btn-outline-secondary">Ver</a>
+                                            class="btn btn-sm btn-outline-secondary btn-icon" title="Ver" aria-label="Ver"><i class="bi bi-eye"></i></a>
                                         <a href="{{ route('admin.perfiles-usuario.edit', $perfil) }}"
-                                            class="btn btn-sm btn-outline-primary">Editar</a>
+                                            class="btn btn-sm btn-outline-primary btn-icon" title="Editar" aria-label="Editar"><i class="bi bi-pencil"></i></a>
                                         <form action="{{ route('admin.perfiles-usuario.destroy', $perfil) }}" method="POST"
                                             onsubmit="return confirm('Se eliminara este perfil de usuario. Continuar?');">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+                                            <button type="submit" class="btn btn-sm btn-outline-danger btn-icon" title="Eliminar" aria-label="Eliminar"><i class="bi bi-trash"></i></button>
                                         </form>
                                     </div>
                                 </td>

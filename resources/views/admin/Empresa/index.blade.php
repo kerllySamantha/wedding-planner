@@ -25,7 +25,7 @@
             <div class="empty-state">No hay empresas registradas todavia.</div>
         @else
             <div class="table-responsive">
-                <table class="table align-middle mb-0">
+                <table class="table table-admin align-middle mb-0">
                     <thead>
                         <tr>
                             <th>Empresa</th>
@@ -52,16 +52,16 @@
                                 </td>
                                 <td>{{ $empresa->productos_count }}</td>
                                 <td class="text-end">
-                                    <div class="d-inline-flex gap-2">
+                                    <div class="table-actions">
                                         <a href="{{ route('admin.empresas.show', $empresa) }}"
-                                            class="btn btn-sm btn-outline-secondary">Ver</a>
+                                            class="btn btn-sm btn-outline-secondary btn-icon" title="Ver" aria-label="Ver"><i class="bi bi-eye"></i></a>
                                         <a href="{{ route('admin.empresas.edit', $empresa) }}"
-                                            class="btn btn-sm btn-outline-primary">Editar</a>
+                                            class="btn btn-sm btn-outline-primary btn-icon" title="Editar" aria-label="Editar"><i class="bi bi-pencil"></i></a>
                                         <form action="{{ route('admin.empresas.destroy', $empresa) }}" method="POST"
                                             onsubmit="return confirm('Se eliminara la empresa y su usuario asociado. Continuar?');">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+                                            <button type="submit" class="btn btn-sm btn-outline-danger btn-icon" title="Eliminar" aria-label="Eliminar"><i class="bi bi-trash"></i></button>
                                         </form>
                                     </div>
                                 </td>
