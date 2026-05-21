@@ -3,8 +3,6 @@
 @section('title', 'Tipos de producto')
 @section('breadcrumb', 'Tipos de producto')
 
-@include('admin.partials.crud-styles')
-
 @section('admin-content')
     <div class="crud-toolbar">
         <div class="page-header mb-0">

@@ -3,8 +3,6 @@
 @section('title', 'Perfiles de usuario')
 @section('breadcrumb', 'Perfiles de usuario')
 
-@include('admin.partials.crud-styles')
-
 @section('admin-content')
     <div class="crud-toolbar">
         <div class="page-header mb-0">
