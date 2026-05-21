@@ -796,3 +796,96 @@ body.is-admin #main-content {
     .dashboard-stats { grid-template-columns: 1fr; }
     .crud-actions { width: 100%; }
 }
+
+/* Admin refinement v2: stronger color system + fixed top spacing */
+:root {
+  --admin-primary: #1459b8;
+  --admin-primary-soft: #e7f1ff;
+  --admin-secondary: #7b2ff7;
+  --admin-surface: #ffffff;
+  --admin-surface-alt: #f5f9ff;
+  --admin-border: #d9e6f5;
+  --admin-text: #17324a;
+  --admin-muted: #6383a0;
+}
+
+body.is-admin #main-content {
+  padding-top: calc(var(--navbar-height) + 1.35rem);
+  background: linear-gradient(180deg, #edf4ff 0%, #f8fbff 260px, #f2f7fd 100%);
+}
+
+.page-header {
+  background: linear-gradient(120deg, #0f3f7a 0%, #1f67c8 58%, #6f3fe6 100%);
+  border-radius: 16px;
+  padding: 1.1rem 1.25rem;
+  box-shadow: 0 12px 26px rgba(17, 63, 126, 0.24);
+}
+
+.page-header h1,
+.page-header p {
+  color: #f4f9ff;
+}
+
+.page-header p {
+  opacity: .9;
+}
+
+.crud-toolbar {
+  background: rgba(255,255,255,.92);
+  backdrop-filter: blur(4px);
+  border: 1px solid var(--admin-border);
+  box-shadow: 0 12px 22px rgba(18, 72, 135, .08);
+}
+
+.admin-card {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  box-shadow: 0 16px 30px rgba(10, 44, 84, 0.08);
+}
+
+.btn-primary {
+  background: linear-gradient(120deg, var(--admin-primary), #2f7be0);
+  border: 0;
+}
+
+.btn-outline-primary {
+  border-color: #2b6cc8;
+  color: #1e5cb3;
+}
+
+.btn-outline-primary:hover {
+  background: var(--admin-primary-soft);
+  color: #13488f;
+}
+
+.table thead th {
+  background: #f0f6ff;
+  color: #456887;
+}
+
+.table tbody tr:nth-child(even) {
+  background: #fbfdff;
+}
+
+.table tbody tr:hover {
+  background: #eef5ff;
+}
+
+.stat-card--empresas .stat-card-icon { background: linear-gradient(135deg, #e4f2ff, #cfe4ff); color: #1459b8; }
+.stat-card--tipos .stat-card-icon { background: linear-gradient(135deg, #efe6ff, #dfd1ff); color: #6d34dc; }
+.stat-card--perfiles .stat-card-icon { background: linear-gradient(135deg, #e5fbf6, #cbf5eb); color: #0f8a6a; }
+
+.empty-state {
+  background: linear-gradient(180deg, #f7fbff, #f1f7ff);
+  border-color: #bfd7f3;
+}
+
+@media (max-width: 991px) {
+  body.is-admin #main-content {
+    padding-top: calc(var(--navbar-height) + 1rem);
+  }
+
+  .page-header {
+    padding: .95rem 1rem;
+  }
+}
