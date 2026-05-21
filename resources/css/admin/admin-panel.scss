@@ -1157,3 +1157,88 @@ body.is-admin #main-content {
 .dashboard-tables .table thead th {
   background: #f5f9ff;
 }
+
+
+/* Admin UI refinement: stronger hierarchy, spacing and button consistency */
+.admin-card {
+  border-radius: 16px;
+  box-shadow: 0 10px 24px rgba(12, 49, 79, 0.06);
+}
+
+.crud-toolbar {
+  align-items: center;
+  margin-bottom: 1.75rem;
+}
+
+.crud-toolbar .page-header {
+  margin-bottom: 0;
+}
+
+.crud-actions {
+  align-items: center;
+}
+
+.crud-actions .btn,
+.dashboard-actions .btn {
+  min-height: 44px;
+  border-radius: 12px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .45rem;
+  box-shadow: 0 6px 14px rgba(12, 49, 79, 0.08);
+}
+
+.crud-actions .btn-primary,
+.dashboard-actions .btn-primary {
+  border-color: #1a6dd4;
+  background: linear-gradient(135deg, #2b7fe8 0%, #1a6dd4 100%);
+}
+
+.crud-actions .btn-outline-primary,
+.dashboard-actions .btn-outline-primary,
+.btn.btn-sm.btn-outline-primary,
+.btn.btn-sm.btn-outline-secondary,
+.btn.btn-sm.btn-outline-danger {
+  border-width: 1.5px;
+  background: #fff;
+}
+
+.table-responsive {
+  border: 1px solid #e4edf6;
+  border-radius: 12px;
+}
+
+.table > :not(caption) > * > * {
+  padding-top: .9rem;
+  padding-bottom: .9rem;
+}
+
+.table tbody tr:hover {
+  background: #f8fbff;
+}
+
+.text-end .d-inline-flex {
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .crud-toolbar {
+    align-items: flex-start;
+  }
+
+  .crud-actions {
+    width: 100%;
+  }
+
+  .crud-actions .btn {
+    width: 100%;
+  }
+
+  .text-end .d-inline-flex {
+    justify-content: flex-start;
+  }
+}
