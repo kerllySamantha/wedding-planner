@@ -2,6 +2,7 @@
 @section('title', $isEdit ? 'Editar empresa' : 'Nueva empresa')
 @section('breadcrumb', 'Empresas')
 
+
 @php
     $usuario = $empresa->usuario;
     $fotosEmpresa = $empresa->fotos;
