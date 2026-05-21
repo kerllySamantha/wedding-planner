@@ -41,7 +41,7 @@
         action="{{ $isEdit ? route('admin.empresas.update', $empresa) : route('admin.empresas.store') }}"
         method="POST"
         enctype="multipart/form-data"
-        class="d-flex flex-column gap-3"
+        class="d-flex flex-column gap-3 admin-form"
     >
         @csrf
         @if ($isEdit)
