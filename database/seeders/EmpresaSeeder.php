@@ -45,8 +45,8 @@ class EmpresaSeeder extends Seeder
                             'url' => "$url_servidor/storage/imagenes/usuario_4/imagen_3.webp",
                         ],
                         [
-                            'path' => 'imagenes/usuario_4/imagen_3.webp',
-                            'url' => "$url_servidor/storage/imagenes/usuario_4/imagen_3.webp",
+                            'path' => 'imagenes/usuario_4/imagen_4.webp',
+                            'url' => "$url_servidor/storage/imagenes/usuario_4/imagen_4.webp",
                         ],
                     ]
                 )
@@ -156,7 +156,7 @@ class EmpresaSeeder extends Seeder
                         ],
 
                         [
-                            'path' => 'imagenes/empresa_5/imagen_5.webp',
+                            'path' => 'imagenes/empresa_5/imagen_4.webp',
                             'url' => "$url_servidor/storage/imagenes/empresa_5/imagen_4.webp",
                         ],
 

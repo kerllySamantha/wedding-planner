@@ -34,10 +34,10 @@ class ReseniaSeeder extends Seeder
                         "path" => "imagenes/usuario_2/imagen_3.jpg",
                         "url" => $url_servidor."/storage/imagenes/usuario_2/imagen_3.jpg"
                     ],
-                    // [
-                    //     "path" => "imagenes/usuario_2/imagen_4.jpg",
-                    //     "url" => $url_servidor."/storage/imagenes/usuario_2/imagen_4.jpg"
-                    // ],
+                    [
+                        "path" => "imagenes/usuario_2/imagen_4.jpg",
+                        "url" => $url_servidor."/storage/imagenes/usuario_2/imagen_4.jpg"
+                    ],
 
 
                 ]),
