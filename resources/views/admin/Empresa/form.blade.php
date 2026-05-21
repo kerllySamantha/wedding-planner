@@ -1,7 +1,9 @@
 @extends('admin.admin')
 @section('title', $isEdit ? 'Editar empresa' : 'Nueva empresa')
 @section('breadcrumb', 'Empresas')
-
+@push('styles')
+    @vite('resources/css/empresa/empresa.css')
+@endpush
 
 @php
     $usuario = $empresa->usuario;

@@ -4,7 +4,9 @@ import laravel from 'laravel-vite-plugin';
 export default defineConfig({
     plugins: [
         laravel({
-            input: ['resources/css/app.css', 'resources/css/admin/admin-styles.css', 'resources/js/app.js', 'resources/css/empresa/empresa.css'],
+            input: ['resources/css/app.css', 
+                'resources/css/admin/admin-styles.css', 'resources/js/app.js',
+                 'resources/css/empresa/empresa.css', 'resources/images/logo-sinfondo.png'],
             refresh: true,
         }),
     ],
