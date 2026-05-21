@@ -12,8 +12,8 @@
 
     @include('admin.partials.flash')
 
-    <div class="stats-grid dashboard-stats">
-        <div class="admin-card stat-card">
+    <div class="stats-grid dashboard-stats dashboard-section dashboard-section--stats">
+        <div class="admin-card stat-card stat-card--empresas">
             <div>
                 <div class="stat-card-label">Empresas</div>
                 <div class="stat-card-value">{{ $stats['empresas'] }}</div>
@@ -23,7 +23,7 @@
             </div>
         </div>
 
-        <div class="admin-card stat-card">
+        <div class="admin-card stat-card stat-card--tipos">
             <div>
                 <div class="stat-card-label">Tipos de producto</div>
                 <div class="stat-card-value">{{ $stats['tiposProducto'] }}</div>
@@ -33,7 +33,7 @@
             </div>
         </div>
 
-        <div class="admin-card stat-card">
+        <div class="admin-card stat-card stat-card--perfiles">
             <div>
                 <div class="stat-card-label">Perfiles de usuario</div>
                 <div class="stat-card-value">{{ $stats['perfilesUsuario'] }}</div>
@@ -44,7 +44,7 @@
         </div>
     </div>
 
-    <div class="admin-card dashboard-quick-actions">
+    <div class="admin-card dashboard-quick-actions dashboard-section dashboard-section--actions">
         <div class="crud-toolbar dashboard-toolbar">
             <div>
                 <h2 class="h5 mb-1">Acciones rapidas</h2>
@@ -58,9 +58,9 @@
         </div>
     </div>
 
-    <div class="row g-4 dashboard-tables">
+    <div class="row g-4 dashboard-tables dashboard-section dashboard-section--tables">
         <div class="col-12 col-xl-6">
-            <div class="admin-card h-100">
+            <div class="admin-card h-100 dashboard-panel dashboard-panel--empresas">
                 <div class="d-flex justify-content-between align-items-start mb-3">
                     <div>
                         <h2 class="h5 mb-1">Ultimas empresas</h2>
@@ -98,7 +98,7 @@
         </div>
 
         <div class="col-12 col-xl-6">
-            <div class="admin-card h-100">
+            <div class="admin-card h-100 dashboard-panel dashboard-panel--perfiles">
                 <div class="d-flex justify-content-between align-items-start mb-3">
                     <div>
                         <h2 class="h5 mb-1">Ultimos perfiles</h2>

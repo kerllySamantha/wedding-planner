@@ -1255,3 +1255,57 @@ body.is-admin #main-content {
 .stat-card {
     height: 100%; /* ← la card ocupa todo el alto disponible */
 }
+
+/* Dashboard: secciones por bloque, alturas consistentes y look menos plano */
+.dashboard-section {
+  margin-bottom: 1.5rem;
+}
+
+.dashboard-stats .stat-card {
+  min-height: 132px;
+  border-top: 4px solid transparent;
+}
+
+.dashboard-stats .stat-card--empresas {
+  border-top-color: #2b7fe8;
+}
+
+.dashboard-stats .stat-card--tipos {
+  border-top-color: #32a071;
+}
+
+.dashboard-stats .stat-card--perfiles {
+  border-top-color: #7b5cd6;
+}
+
+.dashboard-section--actions {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+}
+
+.dashboard-section--tables .dashboard-panel {
+  min-height: 430px;
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-section--tables .table-responsive {
+  margin-top: .25rem;
+}
+
+.dashboard-panel--empresas .h5::before,
+.dashboard-panel--perfiles .h5::before {
+  content: "";
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: .5rem;
+}
+
+.dashboard-panel--empresas .h5::before {
+  background: #2b7fe8;
+}
+
+.dashboard-panel--perfiles .h5::before {
+  background: #7b5cd6;
+}
