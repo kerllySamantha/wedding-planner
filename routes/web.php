@@ -8,23 +8,15 @@ use App\Mail\EnvioEmail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 
+/*
+|--------------------------------------------------------------------------
+| PÁGINA DE INICIO
+|--------------------------------------------------------------------------
+*/
+
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('login');
 });
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-// Route::middleware('auth')->group(function () {
-//     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-//     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-//     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-// });
-
-
-
-
 
 /*
 |--------------------------------------------------------------------------
@@ -42,44 +34,50 @@ Route::get('/test-helper', function () {
 });
 
 Route::get('/test-mail', function () {
-
     Mail::to('prueba@example.com')->send(new EnvioEmail());
-
     return 'Correo enviado';
 });
 
 Route::get('/test-webp', function () {
-
     $path = storage_path('app/public/imagenes/usuario_4/imagen_5.webp');
-
     return response()->file($path);
 });
 
 /*
 |--------------------------------------------------------------------------
-| AUTH
+| AUTH — Solo para invitados (no autenticados)
 |--------------------------------------------------------------------------
 */
 
 Route::middleware('guest')->group(function () {
 
-    Route::get(
-        '/login',
-        [AuthenticationController::class, 'showLogin']
-    )->name('login');
+    Route::get('/login', [AuthenticationController::class, 'showLogin'])
+        ->name('login');
 
-    Route::post(
-        '/login',
-        [AuthenticationController::class, 'login']
-    )->name('login.post');
+    Route::post('/login', [AuthenticationController::class, 'login'])
+        ->name('login.post');
 });
+
+/*
+|--------------------------------------------------------------------------
+| AUTH — Solo para autenticados
+|--------------------------------------------------------------------------
+*/
 
 Route::middleware('auth')->group(function () {
 
-    Route::post(
-        '/logout',
-        [AuthenticationController::class, 'logout']
-    )->name('logout');
+    Route::post('/logout', [AuthenticationController::class, 'logout'])
+        ->name('logout');
+
+    /*
+    |--------------------------------------------------------------------------
+    | DASHBOARD — Redirige según rol
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/dashboard', function () {
+        return redirect()->route('admin.dashboard');
+    })->name('dashboard');
 
     /*
     |--------------------------------------------------------------------------
@@ -87,30 +85,14 @@ Route::middleware('auth')->group(function () {
     |--------------------------------------------------------------------------
     */
 
-    Route::get(
-        '/profile',
-        [ProfileController::class, 'edit']
-    )->name('profile.edit');
+    Route::get('/profile', [ProfileController::class, 'edit'])
+        ->name('profile.edit');
 
-    Route::patch(
-        '/profile',
-        [ProfileController::class, 'update']
-    )->name('profile.update');
+    Route::patch('/profile', [ProfileController::class, 'update'])
+        ->name('profile.update');
 
-    Route::delete(
-        '/profile',
-        [ProfileController::class, 'destroy']
-    )->name('profile.destroy');
-
-    /*
-    |--------------------------------------------------------------------------
-    | DASHBOARD
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get('/dashboard', function () {
-        return redirect()->route('admin.dashboard');
-    })->name('dashboard');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])
+        ->name('profile.destroy');
 });
 
 /*
@@ -124,31 +106,9 @@ Route::prefix('admin')
     ->name('admin.')
     ->group(function () {
 
-        /*
-        |--------------------------------------------------------------------------
-        | DASHBOARD
-        |--------------------------------------------------------------------------
-        */
-
         Route::get('/dashboard', function () {
             return view('admin.admin');
         })->name('dashboard');
-
-        /*
-        |--------------------------------------------------------------------------
-        | PERFIL ADMIN
-        |--------------------------------------------------------------------------
-        */
-
-        // Route::get(
-        //     'perfil',
-        //     [UserController::class, 'profile']
-        // )->name('profile');
-
-        // Route::put(
-        //     'perfil',
-        //     [UserController::class, 'updateProfile']
-        // )->name('profile.update');
 
         /*
         |--------------------------------------------------------------------------
@@ -159,16 +119,8 @@ Route::prefix('admin')
         Route::middleware('permission:gestionar web')
             ->group(function () {
 
-                Route::resource(
-                    'users',
-                    UserController::class
-                )->only([
-                    'index',
-                    'create',
-                    'store',
-                    'edit',
-                    'update'
-                ]);
+                Route::resource('users', UserController::class)
+                    ->only(['index', 'create', 'store', 'edit', 'update']);
             });
     });
 
@@ -178,5 +130,4 @@ Route::prefix('admin')
 |--------------------------------------------------------------------------
 */
 
-
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

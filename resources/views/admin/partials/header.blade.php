@@ -70,6 +70,8 @@ ADMIN:
 
             <form action="{{ route('logout') }}" method="POST" class="d-inline">
                 @csrf
+                {{-- Fuerza token fresco --}}
+                <input type="hidden" name="_token" value="{{ csrf_token() }}">
                 <button type="submit" class="nav-icon-btn" aria-label="Cerrar sesión">
                     <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
                 </button>
