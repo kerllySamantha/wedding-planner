@@ -23,13 +23,13 @@
     <div class="ec-toolbar">
         <div>
             <h1 class="ec-page-title">
-                <i class="ti ti-building ec-page-title__icon" aria-hidden="true"></i>
+                <i class="bi bi-building-gear ec-page-title__icon" aria-hidden="true"></i>
                 {{ $isEdit ? 'Editar empresa' : 'Nueva empresa' }}
             </h1>
             <p class="ec-page-subtitle">Gestiona la cuenta asociada, los datos de servicio y los archivos visuales.</p>
         </div>
         <a href="{{ route('admin.empresas.index') }}" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2">
-            <i class="ti ti-arrow-left" aria-hidden="true"></i>
+            <i class="bi bi-arrow-left-short" aria-hidden="true"></i>
             Volver al listado
         </a>
     </div>
@@ -125,7 +125,7 @@
         {{-- SECCIÓN: DATOS DE EMPRESA --}}
         <div class="ec-card">
             <div class="ec-card__header">
-                <span class="ec-card__icon"><i class="bi bi-building-gear" aria-hidden="true"></i></span>
+                <span class="ec-card__icon"><i class="bi bi-building" aria-hidden="true"></i></span>
                 <div>
                     <h2 class="ec-card__title">Datos de empresa</h2>
                     <p class="ec-card__subtitle">Información pública visible en el directorio</p>
@@ -248,7 +248,7 @@
                     <label class="ec-label">Logo</label>
                     <label for="logo" class="ec-upload">
                         <input type="file" id="logo" name="logo" accept=".jpg,.jpeg,.png,.webp">
-                        <i class="ti ti-cloud-upload" aria-hidden="true"></i>
+                        <i class="bi bi-cloud-plus" aria-hidden="true"></i>
                         <span>Haz clic para subir el logo</span>
                         <small>.jpg, .jpeg, .png, .webp</small>
                     </label>
@@ -267,24 +267,33 @@
                     <label class="ec-label">Galería</label>
                     <label for="fotos" class="ec-upload">
                         <input type="file" id="fotos" name="fotos[]" multiple accept=".jpg,.jpeg,.png,.webp">
-                        <i class="ti ti-photo-plus" aria-hidden="true"></i>
+                        <i class="bi bi-plus-circle-fill" aria-hidden="true"></i>
                         <span>Haz clic para subir fotos</span>
-                        <small>Múltiples archivos permitidos</small>
+                        <small>Múltiples archivos · máx. 3 MB por foto</small>
                     </label>
 
                     <p class="ec-hint mt-2">
-                        <i class="ti ti-info-circle" aria-hidden="true"></i>
-                        Si subes nuevas fotos, se reemplazará la galería actual completa.
+                        <i class="bi bi-info-circle" aria-hidden="true"></i>
+                        Las nuevas fotos se añadirán a la galería existente.
                     </p>
 
                     @if (! empty($fotosEmpresa))
                         <div class="ec-thumbs mt-2">
-                            @foreach ($fotosEmpresa as $foto)
-                                <div class="ec-thumb">
+                            @foreach ($fotosEmpresa as $index => $foto)
+                                <div class="ec-thumb ec-thumb--deletable">
                                     <img
                                         src="{{ is_array($foto) ? ($foto['url'] ?? asset('storage/' . ($foto['path'] ?? ''))) : asset('storage/' . $foto) }}"
                                         alt="Foto de empresa"
                                     >
+                                    @if ($isEdit)
+                                        <button
+                                            type="button"
+                                            class="ec-thumb__delete"
+                                            data-delete-url="{{ route('admin.empresas.fotos.destroy', [$empresa->id, $index]) }}"
+                                            aria-label="Eliminar foto"
+                                            title="Eliminar foto"
+                                        ><i class="bi bi-x" aria-hidden="true"></i></button>
+                                    @endif
                                 </div>
                             @endforeach
                         </div>
@@ -296,19 +305,72 @@
         {{-- FOOTER ACTIONS --}}
         <div class="ec-footer">
             <p class="ec-footer__hint">
-                <i class="ti ti-device-floppy" aria-hidden="true"></i>
+                <i class="bi bi-floppy" aria-hidden="true"></i>
                 Los cambios se guardarán al confirmar
             </p>
             <div class="d-flex gap-2">
                 <a href="{{ route('admin.empresas.index') }}" class="btn btn-outline-secondary btn-sm">Cancelar</a>
                 <button type="submit" class="btn btn-primary btn-sm">
-                    <i class="ti ti-check" aria-hidden="true"></i>
+                    <i class="bi bi-check2-circle" aria-hidden="true"></i>
                     {{ $isEdit ? 'Guardar cambios' : 'Crear empresa' }}
                 </button>
             </div>
         </div>
 
     </form>
+
+@if ($isEdit)
+    {{-- Modal de confirmación para eliminar foto --}}
+    <div class="modal fade" id="confirmDeleteFotoModal" tabindex="-1" aria-labelledby="confirmDeleteFotoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-semibold" id="confirmDeleteFotoModalLabel">
+                        <i class="bi bi-camera-video-off text-danger me-1" aria-hidden="true"></i>
+                        Eliminar foto
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-0 text-secondary">¿Seguro que quieres eliminar esta foto? La imagen se borrará definitivamente.</p>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+                    <form id="deleteFotoForm" method="POST" style="display:inline">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            <i class="bi bi-trash me-1" aria-hidden="true"></i>
+                            Eliminar
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+@endif
+
+{{-- Lightbox: visor de imagen a tamaño completo --}}
+<div class="modal fade" id="imagenLightbox" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0" style="background:rgba(0,0,0,0.88);">
+            <button
+                type="button"
+                class="btn-close btn-close-white ms-auto mt-2 me-2"
+                data-bs-dismiss="modal"
+                aria-label="Cerrar"
+            ></button>
+            <div class="modal-body p-3 text-center">
+                <img
+                    id="imagenLightboxImg"
+                    src=""
+                    alt=""
+                    style="max-width:100%;max-height:75vh;border-radius:0.5rem;object-fit:contain;"
+                >
+            </div>
+        </div>
+    </div>
+</div>
 
 @endsection
 
@@ -325,13 +387,11 @@
             const zone   = this.closest('.ec-upload');
             const field  = this.closest('.ec-field');
 
-            // Marcar zona como seleccionada
             zone.classList.add('ec-upload--selected');
             zone.querySelector('span').textContent = file.name;
             const icon = zone.querySelector('i');
-            if (icon) { icon.className = 'ti ti-circle-check'; }
+            if (icon) { icon.className = 'bi bi-check-circle'; }
 
-            // Crear/actualizar contenedor de preview
             let preview = field.querySelector('.ec-preview-new');
             if (!preview) {
                 preview = document.createElement('div');
@@ -342,7 +402,7 @@
             const reader = new FileReader();
             reader.onload = (ev) => {
                 preview.innerHTML =
-                    '<p class="ec-hint mb-2"><i class="ti ti-sparkles" aria-hidden="true"></i> Nueva imagen seleccionada</p>' +
+                    '<p class="ec-hint mb-2"><i class="bi bi-stars" aria-hidden="true"></i> Nueva imagen seleccionada</p>' +
                     '<div class="ec-thumbs">' +
                         '<div class="ec-thumb ec-thumb--lg">' +
                             '<img src="' + ev.target.result + '" alt="Vista previa del logo">' +
@@ -353,25 +413,61 @@
         });
     }
 
-    // ── Preview de galería ───────────────────────────────────────────
+    // ── Lightbox: clic en miniatura para ver a tamaño completo ───────
+    const lightboxModal = document.getElementById('imagenLightbox');
+    const lightboxImg   = document.getElementById('imagenLightboxImg');
+    let bsLightbox = null;
+    if (lightboxModal && lightboxImg) {
+        bsLightbox = new bootstrap.Modal(lightboxModal);
+        document.addEventListener('click', function (e) {
+            if (e.target.tagName === 'IMG' && e.target.closest('.ec-thumbs')) {
+                lightboxImg.src = e.target.src;
+                lightboxImg.alt = e.target.alt || '';
+                bsLightbox.show();
+            }
+        });
+    }
+
+    // ── Eliminar foto individual (fotos ya guardadas) ────────────────
+    const deleteModal = document.getElementById('confirmDeleteFotoModal');
+    const deleteFotoForm = document.getElementById('deleteFotoForm');
+    if (deleteModal && deleteFotoForm) {
+        const bsModal = new bootstrap.Modal(deleteModal);
+        document.querySelectorAll('.ec-thumb__delete[data-delete-url]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                deleteFotoForm.action = this.dataset.deleteUrl;
+                bsModal.show();
+            });
+        });
+    }
+
+    // ── Preview de galería con X por archivo ─────────────────────────
     const fotosInput = document.getElementById('fotos');
     if (fotosInput) {
-        fotosInput.addEventListener('change', function () {
-            const files = Array.from(this.files);
-            if (!files.length) return;
+        let allFiles = [];
+        const zone  = fotosInput.closest('.ec-upload');
+        const field = fotosInput.closest('.ec-field');
 
-            const zone  = this.closest('.ec-upload');
-            const field = this.closest('.ec-field');
+        function drawGalleryPreview() {
+            const count = allFiles.length;
+            const plural = count !== 1;
 
-            // Marcar zona como seleccionada
+            if (count === 0) {
+                zone.classList.remove('ec-upload--selected');
+                zone.querySelector('span').textContent = 'Haz clic para subir fotos';
+                const iconEl = zone.querySelector('i');
+                if (iconEl) { iconEl.className = 'bi bi-file-image'; }
+                const old = field.querySelector('.ec-preview-new');
+                if (old) old.remove();
+                return;
+            }
+
             zone.classList.add('ec-upload--selected');
-            const plural = files.length !== 1;
             zone.querySelector('span').textContent =
-                files.length + ' archivo' + (plural ? 's' : '') + ' seleccionado' + (plural ? 's' : '');
-            const icon = zone.querySelector('i');
-            if (icon) { icon.className = 'ti ti-circle-check'; }
+                count + ' archivo' + (plural ? 's' : '') + ' seleccionado' + (plural ? 's' : '');
+            const iconEl = zone.querySelector('i');
+            if (iconEl) { iconEl.className = 'bi bi-check-circle'; }
 
-            // Crear/actualizar contenedor de preview
             let preview = field.querySelector('.ec-preview-new');
             if (!preview) {
                 preview = document.createElement('div');
@@ -380,23 +476,70 @@
             }
 
             preview.innerHTML =
-                '<p class="ec-hint mb-2"><i class="ti ti-sparkles" aria-hidden="true"></i> ' +
-                files.length + ' foto' + (plural ? 's' : '') + ' nueva' + (plural ? 's' : '') + ' seleccionada' + (plural ? 's' : '') +
-                '</p>' +
-                '<div class="ec-thumbs" id="fotos-preview-grid"></div>';
+                '<p class="ec-hint mb-2"><i class="bi bi-stars" aria-hidden="true"></i> ' +
+                count + ' foto' + (plural ? 's' : '') + ' nueva' + (plural ? 's' : '') + ' seleccionada' + (plural ? 's' : '') +
+                '</p><div class="ec-thumbs"></div>';
 
-            const grid = preview.querySelector('#fotos-preview-grid');
+            const grid = preview.querySelector('.ec-thumbs');
+            allFiles.forEach(function (file, idx) {
+                const url = URL.createObjectURL(file);
+                const thumb = document.createElement('div');
+                thumb.className = 'ec-thumb ec-thumb--lg ec-thumb--deletable';
+                thumb.innerHTML =
+                    '<img src="' + url + '" alt="' + file.name + '">' +
+                    '<button type="button" class="ec-thumb__delete" aria-label="Quitar foto">' +
+                        '<i class="bi bi-x" aria-hidden="true"></i>' +
+                    '</button>';
 
-            files.forEach(function (file) {
-                const reader = new FileReader();
-                reader.onload = function (ev) {
-                    const thumb = document.createElement('div');
-                    thumb.className = 'ec-thumb ec-thumb--lg';
-                    thumb.innerHTML = '<img src="' + ev.target.result + '" alt="' + file.name + '">';
-                    grid.appendChild(thumb);
-                };
-                reader.readAsDataURL(file);
+                thumb.querySelector('.ec-thumb__delete').addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    allFiles.splice(idx, 1);
+                    if (typeof DataTransfer !== 'undefined') {
+                        const dt = new DataTransfer();
+                        allFiles.forEach(function (f) { dt.items.add(f); });
+                        fotosInput.files = dt.files;
+                    }
+                    drawGalleryPreview();
+                });
+
+                grid.appendChild(thumb);
             });
+        }
+
+        fotosInput.addEventListener('change', function () {
+            const newFiles = Array.from(this.files);
+            if (!newFiles.length) return;
+
+            const maxBytes = 3072 * 1024;
+            const oversized = newFiles.filter(function (f) { return f.size > maxBytes; });
+
+            if (oversized.length) {
+                const names = oversized.map(function (f) { return f.name; }).join(', ');
+                let errEl = field.querySelector('.ec-size-error');
+                if (!errEl) {
+                    errEl = document.createElement('p');
+                    errEl.className = 'ec-size-error text-danger small mt-1';
+                    field.appendChild(errEl);
+                }
+                errEl.textContent = 'Las siguientes fotos superan el límite de 3 MB y no se añadirán: ' + names;
+            } else {
+                const errEl = field.querySelector('.ec-size-error');
+                if (errEl) errEl.remove();
+            }
+
+            newFiles.forEach(function (f) {
+                if (f.size <= maxBytes && !allFiles.some(function (x) { return x.name === f.name && x.size === f.size; })) {
+                    allFiles.push(f);
+                }
+            });
+
+            if (typeof DataTransfer !== 'undefined') {
+                const dt = new DataTransfer();
+                allFiles.forEach(function (f) { dt.items.add(f); });
+                fotosInput.files = dt.files;
+            }
+
+            drawGalleryPreview();
         });
     }
 })();
