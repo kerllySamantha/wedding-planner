@@ -964,3 +964,85 @@ body.is-admin #main-content {
 .table-actions form {
   margin: 0;
 }
+
+/* ─── FIX: section-titles no ocupan espacio cuando sidebar está colapsado ─── */
+.admin-sidebar.collapsed .sidebar-section-title {
+  height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* ─── FIX: logo no desborda del navbar-brand-area cuando colapsa ─── */
+.navbar-brand-area {
+  overflow: hidden;
+}
+
+.admin-brand-link {
+  transition: opacity 0.22s ease, width 0.22s ease;
+  white-space: nowrap;
+}
+
+body.is-admin.sidebar-is-collapsed .admin-brand-link {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* ─── RESPONSIVE: tableta (768px – 991px) ─── */
+@media (max-width: 991px) {
+  .navbar-page-info {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+  }
+  .admin-breadcrumb {
+    flex-wrap: nowrap;
+    overflow: hidden;
+  }
+  .admin-breadcrumb [aria-current="page"] {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+/* ─── RESPONSIVE: móvil pequeño (< 576px) ─── */
+@media (max-width: 575px) {
+  body.is-admin #main-content {
+    padding: calc(var(--navbar-height) + 0.875rem) 0.875rem 1.25rem !important;
+  }
+
+  .navbar-page-info {
+    display: none;
+  }
+
+  .navbar-brand-area {
+    padding: 0 0.75rem;
+    gap: 6px;
+  }
+
+  .admin-brand-logo {
+    height: 30px;
+  }
+
+  .page-header {
+    padding: 0.875rem !important;
+  }
+
+  .crud-toolbar {
+    padding: 0.75rem !important;
+    gap: 0.75rem;
+  }
+
+  .dashboard-stats {
+    grid-template-columns: 1fr !important;
+  }
+
+  .table thead th,
+  .table tbody td {
+    font-size: 0.8rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+}

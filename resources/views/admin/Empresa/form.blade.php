@@ -51,7 +51,7 @@
         {{-- SECCIÓN: USUARIO --}}
         <div class="ec-card">
             <div class="ec-card__header">
-                <span class="ec-card__icon"><i class="ti ti-user" aria-hidden="true"></i></span>
+                <span class="ec-card__icon"><i class="bi bi-person" aria-hidden="true"></i></span>
                 <div>
                     <h2 class="ec-card__title">Usuario de acceso</h2>
                     <p class="ec-card__subtitle">Credenciales para iniciar sesión en la plataforma</p>
@@ -125,7 +125,7 @@
         {{-- SECCIÓN: DATOS DE EMPRESA --}}
         <div class="ec-card">
             <div class="ec-card__header">
-                <span class="ec-card__icon"><i class="ti ti-building-store" aria-hidden="true"></i></span>
+                <span class="ec-card__icon"><i class="bi bi-building-gear" aria-hidden="true"></i></span>
                 <div>
                     <h2 class="ec-card__title">Datos de empresa</h2>
                     <p class="ec-card__subtitle">Información pública visible en el directorio</p>
@@ -235,7 +235,7 @@
         {{-- SECCIÓN: ARCHIVOS --}}
         <div class="ec-card">
             <div class="ec-card__header">
-                <span class="ec-card__icon"><i class="ti ti-photo" aria-hidden="true"></i></span>
+                <span class="ec-card__icon"><i class="bi bi-file-image" aria-hidden="true"></i></span>
                 <div>
                     <h2 class="ec-card__title">Archivos visuales</h2>
                     <p class="ec-card__subtitle">Logo e imágenes de galería de la empresa</p>
@@ -311,3 +311,94 @@
     </form>
 
 @endsection
+
+@push('admin-scripts')
+<script>
+(function () {
+    // ── Preview de logo ──────────────────────────────────────────────
+    const logoInput = document.getElementById('logo');
+    if (logoInput) {
+        logoInput.addEventListener('change', function () {
+            const file = this.files[0];
+            if (!file) return;
+
+            const zone   = this.closest('.ec-upload');
+            const field  = this.closest('.ec-field');
+
+            // Marcar zona como seleccionada
+            zone.classList.add('ec-upload--selected');
+            zone.querySelector('span').textContent = file.name;
+            const icon = zone.querySelector('i');
+            if (icon) { icon.className = 'ti ti-circle-check'; }
+
+            // Crear/actualizar contenedor de preview
+            let preview = field.querySelector('.ec-preview-new');
+            if (!preview) {
+                preview = document.createElement('div');
+                preview.className = 'ec-preview-new mt-2';
+                zone.after(preview);
+            }
+
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                preview.innerHTML =
+                    '<p class="ec-hint mb-2"><i class="ti ti-sparkles" aria-hidden="true"></i> Nueva imagen seleccionada</p>' +
+                    '<div class="ec-thumbs">' +
+                        '<div class="ec-thumb ec-thumb--lg">' +
+                            '<img src="' + ev.target.result + '" alt="Vista previa del logo">' +
+                        '</div>' +
+                    '</div>';
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    // ── Preview de galería ───────────────────────────────────────────
+    const fotosInput = document.getElementById('fotos');
+    if (fotosInput) {
+        fotosInput.addEventListener('change', function () {
+            const files = Array.from(this.files);
+            if (!files.length) return;
+
+            const zone  = this.closest('.ec-upload');
+            const field = this.closest('.ec-field');
+
+            // Marcar zona como seleccionada
+            zone.classList.add('ec-upload--selected');
+            const plural = files.length !== 1;
+            zone.querySelector('span').textContent =
+                files.length + ' archivo' + (plural ? 's' : '') + ' seleccionado' + (plural ? 's' : '');
+            const icon = zone.querySelector('i');
+            if (icon) { icon.className = 'ti ti-circle-check'; }
+
+            // Crear/actualizar contenedor de preview
+            let preview = field.querySelector('.ec-preview-new');
+            if (!preview) {
+                preview = document.createElement('div');
+                preview.className = 'ec-preview-new mt-2';
+                zone.after(preview);
+            }
+
+            preview.innerHTML =
+                '<p class="ec-hint mb-2"><i class="ti ti-sparkles" aria-hidden="true"></i> ' +
+                files.length + ' foto' + (plural ? 's' : '') + ' nueva' + (plural ? 's' : '') + ' seleccionada' + (plural ? 's' : '') +
+                '</p>' +
+                '<div class="ec-thumbs" id="fotos-preview-grid"></div>';
+
+            const grid = preview.querySelector('#fotos-preview-grid');
+
+            files.forEach(function (file) {
+                const reader = new FileReader();
+                reader.onload = function (ev) {
+                    const thumb = document.createElement('div');
+                    thumb.className = 'ec-thumb ec-thumb--lg';
+                    thumb.innerHTML = '<img src="' + ev.target.result + '" alt="' + file.name + '">';
+                    grid.appendChild(thumb);
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+    }
+})();
+</script>
+@endpush

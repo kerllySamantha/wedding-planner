@@ -31,7 +31,7 @@
                             <th>Empresa</th>
                             <th>Contacto</th>
                             <th>Ubicacion</th>
-                            <th>Productos</th>
+                            <!-- <th>Productos</th> -->
                             <th class="text-end">Acciones</th>
                         </tr>
                     </thead>
@@ -50,7 +50,7 @@
                                     <div>{{ $empresa->poblacion->nombre ?? 'Sin poblacion' }}</div>
                                     <div class="muted">{{ $empresa->poblacion->provincia->nombre ?? 'Sin provincia' }}</div>
                                 </td>
-                                <td>{{ $empresa->productos_count }}</td>
+                                <!-- <td>{{ $empresa->productos_count }}</td> -->
                                 <td class="text-end">
                                     <div class="table-actions">
                                         <a href="{{ route('admin.empresas.show', $empresa) }}"
