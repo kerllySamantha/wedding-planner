@@ -36,7 +36,7 @@ class EmpresaController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        $validated = $request->validate($this->rules());
+        $validated = $request->validate($this->rules(), $this->messages());
 
         DB::transaction(function () use ($request, $validated): void {
             $user = User::create([
@@ -82,7 +82,8 @@ class EmpresaController extends Controller
         $empresa->load('usuario');
 
         $validated = $request->validate(
-            $this->rules($empresa->id, $empresa->user_id)
+            $this->rules($empresa->id, $empresa->user_id),
+            $this->messages()
         );
 
         DB::transaction(function () use ($empresa, $request, $validated): void {
@@ -181,6 +182,18 @@ class EmpresaController extends Controller
             'logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
             'fotos' => ['nullable', 'array'],
             'fotos.*' => ['image', 'mimes:jpg,jpeg,png,webp', 'max:3072'],
+        ];
+    }
+
+    private function messages(): array
+    {
+        return [
+            'logo.image'    => 'El logo debe ser una imagen.',
+            'logo.mimes'    => 'El logo solo puede ser JPG, JPEG, PNG o WEBP.',
+            'logo.max'      => 'El logo no puede superar los 2 MB.',
+            'fotos.*.image' => 'Cada foto debe ser una imagen válida.',
+            'fotos.*.mimes' => 'Las fotos solo pueden ser JPG, JPEG, PNG o WEBP.',
+            'fotos.*.max'   => 'Cada foto no puede superar los 3 MB.',
         ];
     }
 

@@ -20,6 +20,8 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\SubirImagenController;
 use App\Http\Controllers\Api\TipoProductoController;
 use App\Http\Controllers\Api\ItemPresupuestoController;
+use App\Http\Controllers\Api\StripeController;
+use App\Http\Controllers\Api\WebhookController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Broadcast;
@@ -95,6 +97,10 @@ Route::get('/test-reverb', function () {
     broadcast(new \App\Events\TestEvent("Hola Angular"));
     return "OK";
 });
+
+Route::post('stripe/webhook', [WebhookController::class, 'handle']);
+Route::post('stripe/create-payment-intent', [StripeController::class, 'createPaymentIntent'])
+    ->middleware('auth:sanctum');
 
 
 // Route::apiResource('servicios', ServicioController::class)->only('index');
