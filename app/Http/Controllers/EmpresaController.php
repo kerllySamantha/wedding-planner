@@ -136,6 +136,27 @@ class EmpresaController extends Controller
             ->with('success', 'Empresa eliminada correctamente.');
     }
 
+    public function destroyFoto(Empresa $empresa, int $fotoIndex): RedirectResponse
+    {
+        $fotos = $this->parseFotos($empresa->fotos);
+
+        if (! array_key_exists($fotoIndex, $fotos)) {
+            return redirect()->back()->with('error', 'Foto no encontrada.');
+        }
+
+        $foto = $fotos[$fotoIndex];
+        $path = is_array($foto) ? ($foto['path'] ?? null) : $foto;
+
+        if ($path) {
+            Storage::disk('public')->delete($path);
+        }
+
+        array_splice($fotos, $fotoIndex, 1);
+        $empresa->update(['fotos' => array_values($fotos)]);
+
+        return redirect()->back()->with('success', 'Foto eliminada correctamente.');
+    }
+
     private function rules(?int $empresaId = null, ?int $userId = null): array
     {
         $passwordRules = $empresaId === null
@@ -196,17 +217,17 @@ class EmpresaController extends Controller
         }
 
         if ($request->hasFile('fotos')) {
-            if ($empresa !== null) {
-                $this->deleteGalleryFiles($empresa);
-            }
+            $existingFotos = $this->parseFotos($empresa?->fotos);
+            $existingCount = count($existingFotos);
 
-            $payload['fotos'] = collect($request->file('fotos'))
+            $newFotos = collect($request->file('fotos'))
                 ->values()
-                ->map(function ($foto, int $index) use ($userId): array {
+                ->map(function ($foto, int $index) use ($userId, $existingCount): array {
                     $extension = $foto->getClientOriginalExtension();
+                    $filename = 'imagen_' . ($existingCount + $index + 1) . '_' . uniqid() . '.' . $extension;
                     $path = $foto->storeAs(
                         "imagenes/empresa_{$userId}",
-                        'imagen_' . ($index + 1) . '.' . $extension,
+                        $filename,
                         'public'
                     );
 
@@ -216,11 +237,27 @@ class EmpresaController extends Controller
                     ];
                 })
                 ->all();
+
+            $payload['fotos'] = array_merge($existingFotos, $newFotos);
         } elseif ($empresa !== null) {
             $payload['fotos'] = $empresa->fotos;
         }
 
         return $payload;
+    }
+
+    private function parseFotos(mixed $fotos): array
+    {
+        if (is_array($fotos)) {
+            return $fotos;
+        }
+
+        if (is_string($fotos)) {
+            $decoded = json_decode($fotos, true);
+            return is_array($decoded) ? $decoded : [];
+        }
+
+        return [];
     }
 
     private function deleteEmpresaFiles(Empresa $empresa): void
@@ -234,7 +271,7 @@ class EmpresaController extends Controller
 
     private function deleteGalleryFiles(Empresa $empresa): void
     {
-        $fotos = is_array($empresa->fotos) ? $empresa->fotos : [];
+        $fotos = $this->parseFotos($empresa->fotos);
 
         foreach ($fotos as $foto) {
             $path = is_array($foto) ? ($foto['path'] ?? null) : $foto;

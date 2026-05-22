@@ -20,7 +20,7 @@
     <div class="admin-card">
         <form
             action="{{ $isEdit ? route('admin.tipos-producto.update', $tipoProducto) : route('admin.tipos-producto.store') }}"
-            method="POST" class="d-grid gap-4">
+            method="POST" class="d-grid gap-4 admin-form">
             @csrf
             @if ($isEdit)
                 @method('PUT')

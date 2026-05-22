@@ -21,10 +21,15 @@
 
     <div class="admin-card">
         @if ($tiposProducto->isEmpty())
-            <div class="empty-state">No hay tipos de producto registrados.</div>
+            <div class="empty-state">
+                <p class="mb-3">No hay tipos de producto registrados.</p>
+                <a href="{{ route('admin.tipos-producto.create') }}" class="btn btn-primary btn-sm">
+                    <i class="bi bi-plus-lg me-1"></i>Crear primer tipo
+                </a>
+            </div>
         @else
             <div class="table-responsive">
-                <table class="table align-middle mb-0">
+                <table class="table table-admin align-middle mb-0">
                     <thead>
                         <tr>
                             <th>Nombre</th>
@@ -47,17 +52,17 @@
                                 </td>
                                 <td>{{ $tipoProducto->productos_count }}</td>
                                 <td class="text-end">
-                                    <div class="d-inline-flex gap-2">
+                                    <div class="table-actions">
                                         <a href="{{ route('admin.tipos-producto.show', $tipoProducto) }}"
-                                            class="btn btn-sm btn-outline-secondary">Ver</a>
+                                            class="btn btn-sm btn-outline-secondary btn-icon" title="Ver" aria-label="Ver"><i class="bi bi-eye"></i><span class="visually-hidden">Ver</span></a>
                                         <a href="{{ route('admin.tipos-producto.edit', $tipoProducto) }}"
-                                            class="btn btn-sm btn-outline-primary">Editar</a>
+                                            class="btn btn-sm btn-outline-primary btn-icon" title="Editar" aria-label="Editar"><i class="bi bi-pencil"></i><span class="visually-hidden">Editar</span></a>
                                         <form action="{{ route('admin.tipos-producto.destroy', $tipoProducto) }}"
                                             method="POST"
                                             onsubmit="return confirm('Se eliminara este tipo de producto. Continuar?');">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+                                            <button type="submit" class="btn btn-sm btn-outline-danger btn-icon" title="Eliminar" aria-label="Eliminar"><i class="bi bi-trash"></i><span class="visually-hidden">Eliminar</span></button>
                                         </form>
                                     </div>
                                 </td>

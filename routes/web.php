@@ -125,6 +125,9 @@ Route::prefix('admin')
         Route::middleware('permission:gestionar empresas')->group(function () {
             Route::resource('empresas', EmpresaController::class);
 
+            Route::delete('empresas/{empresa}/fotos/{fotoIndex}', [EmpresaController::class, 'destroyFoto'])
+                ->name('empresas.fotos.destroy');
+
             Route::resource('tipos-producto', TipoProductoController::class)
                 ->parameters(['tipos-producto' => 'tipoProducto']);
         });

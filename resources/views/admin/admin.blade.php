@@ -109,10 +109,14 @@
                 return;
             }
 
+            // Estado inicial de aria-expanded según viewport
+            toggle.setAttribute('aria-expanded', isMobile() ? 'false' : 'true');
+
             toggle.addEventListener('click', () => {
                 if (isMobile()) {
                     const open = sidebar.classList.toggle('open');
                     overlay.classList.toggle('active', open);
+                    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
                     return;
                 }
 
@@ -120,11 +124,13 @@
                 sidebar.classList.toggle('collapsed', collapsed);
                 main.classList.toggle('sidebar-collapsed', collapsed);
                 document.body.classList.toggle('sidebar-is-collapsed', collapsed);
+                toggle.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
             });
 
             overlay.addEventListener('click', () => {
                 sidebar.classList.remove('open');
                 overlay.classList.remove('active');
+                toggle.setAttribute('aria-expanded', 'false');
             });
 
             document.addEventListener('keydown', (event) => {
@@ -134,9 +140,19 @@
             });
 
             window.addEventListener('resize', () => {
-                if (!isMobile()) {
+                if (isMobile()) {
+                    // Al pasar a móvil: limpiar estado colapsado de escritorio
+                    sidebar.classList.remove('collapsed');
+                    main.classList.remove('sidebar-collapsed');
+                    document.body.classList.remove('sidebar-is-collapsed');
+                    collapsed = false;
+                    const isOpen = sidebar.classList.contains('open');
+                    toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+                } else {
+                    // Al pasar a escritorio: cerrar sidebar móvil
                     sidebar.classList.remove('open');
                     overlay.classList.remove('active');
+                    toggle.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
                 }
             });
         })();

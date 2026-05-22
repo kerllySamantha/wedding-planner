@@ -24,7 +24,7 @@
     <div class="admin-card">
         <form
             action="{{ $isEdit ? route('admin.perfiles-usuario.update', $perfilUsuario) : route('admin.perfiles-usuario.store') }}"
-            method="POST" class="d-grid gap-4">
+            method="POST" class="d-grid gap-4 admin-form">
             @csrf
             @if ($isEdit)
                 @method('PUT')
