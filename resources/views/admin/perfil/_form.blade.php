@@ -1,182 +1,165 @@
-<div class="row g-4">
+<form action="{{ route('admin.profile.update') }}"
+    method="POST"
+    enctype="multipart/form-data"
+    class="d-flex flex-column gap-3 admin-form">
+    @csrf
+    @method('PUT')
 
-    {{-- Nombre --}}
-    <div class="col-md-6">
+    @php
+        $fotoActual = $user->fotoPerfil ?? null;
+        $inicialFoto = strtoupper(substr($user->name ?? 'U', 0, 1));
+        $rolActual = ucfirst($user->getRoleNames()->first() ?? 'Sin rol');
+    @endphp
 
-        <label class="form-label fw-bold">
+    <div class="text-center py-2">
+        <div class="foto-upload-wrapper" id="fotoUploadWrapper">
+            @if ($fotoActual)
+                <img src="{{ asset('storage/' . $fotoActual) }}"
+                    alt="Foto de perfil"
+                    id="fotoPreviewImg"
+                    class="foto-upload-img">
+            @else
+                <span id="fotoPreviewInicial" class="foto-upload-inicial">{{ $inicialFoto }}</span>
+            @endif
 
-            Nombre
-
-        </label>
-
-        <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"
-            value="{{ old('name', $user->name ?? '') }}">
-
-        @error('name')
-            <div class="invalid-feedback d-block">
-
-                {{ $message }}
-
-            </div>
-        @enderror
-
-    </div>
-
-    {{-- Email --}}
-    <div class="col-md-6">
-
-        <label class="form-label fw-bold">
-
-            Email
-
-        </label>
-
-        <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
-            value="{{ old('email', $user->email ?? '') }}">
-
-        @error('email')
-            <div class="invalid-feedback d-block">
-
-                {{ $message }}
-
-            </div>
-        @enderror
-
-    </div>
-
-    {{-- Password --}}
-    <div class="col-md-6">
-
-        <label class="form-label fw-bold">
-
-            Contraseña
-
-        </label>
-
-        <div class="input-group">
-
-            <input type="text" name="password" id="password"
-                class="form-control @error('password') is-invalid @enderror">
-
-            <button type="button" class="btn btn-outline-secondary" id="generatePasswordBtn">
-
-                <i class="bi bi-magic"></i>
-
-                Generar
-
-            </button>
-
-        </div>
-
-        @isset($user)
-            <small class="text-muted d-block">
-
-                Déjalo vacío para mantener la actual
-
-            </small>
-        @endisset
-
-        @error('password')
-            <div class="invalid-feedback d-block">
-
-                {{ $message }}
-
-            </div>
-        @enderror
-
-    </div>
-
-    {{-- Rol --}}
-    <div class="col-md-6">
-
-        <label class="form-label fw-bold">
-
-            Rol
-
-        </label>
-
-        <select name="role" class="form-select @error('role') is-invalid @enderror">
-
-           @foreach ($roles as $role)
-            <option value="{{ $role }}"
-            {{ old('role', $user->getRoleNames()->first()) === $role ? 'selected' : '' }}>
-            {{ ucfirst($role) }}
-        </option>
-         @endforeach
-
-        </select>
-
-        @error('role')
-            <div class="invalid-feedback d-block">
-
-                {{ $message }}
-
-            </div>
-        @enderror
-
-    </div>
-
-    {{-- Estado --}}
-    <div class="col-12">
-
-        <div class="form-check">
-
-            <input type="hidden" name="is_active" value="0">
-
-            <input type="checkbox" name="is_active" value="1" class="form-check-input" id="is_active"
-                {{ old('is_active', $user->is_active ?? true) ? 'checked' : '' }}>
-
-            <label for="is_active" class="form-check-label">
-
-                Usuario activo
-
+            <label for="fotoPerfil" class="foto-upload-btn" title="Cambiar foto">
+                <i class="bi bi-camera-fill"></i>
             </label>
-
         </div>
 
+        <p class="mt-2 mb-0" style="font-size:.78rem;color:#3d5f80">
+            {{ $fotoActual ? 'Haz clic en la foto para cambiarla' : 'Sube una foto de perfil' }}
+        </p>
+
+        <input type="file" id="fotoPerfil" name="fotoPerfil" accept="image/*" class="d-none">
+
+        @error('fotoPerfil')
+            <div class="text-danger mt-1" style="font-size:.82rem">{{ $message }}</div>
+        @enderror
     </div>
 
-</div>
+    <div class="ec-card">
+        <div class="ec-card__header">
+            <span class="ec-card__icon">
+                <i class="bi bi-person-circle"></i>
+            </span>
+            <div>
+                <h2 class="ec-card__title">Cuenta</h2>
+                <p class="ec-card__subtitle">Datos principales del usuario que usa este panel</p>
+            </div>
+        </div>
 
+        <div class="form-grid">
+            <div>
+                <label for="name" class="form-label fw-semibold">
+                    <i class="bi bi-person text-muted me-1"></i>Nombre
+                </label>
+                <input type="text" id="name" name="name"
+                    class="form-control @error('name') is-invalid @enderror"
+                    value="{{ old('name', $user->name ?? '') }}"
+                    placeholder="Nombre completo"
+                    required>
+                @error('name')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div>
+                <label for="email" class="form-label fw-semibold">
+                    <i class="bi bi-envelope text-muted me-1"></i>Email
+                </label>
+                <input type="email" id="email" name="email"
+                    class="form-control @error('email') is-invalid @enderror"
+                    value="{{ old('email', $user->email ?? '') }}"
+                    placeholder="correo@ejemplo.com"
+                    required>
+                @error('email')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div>
+                <label class="form-label fw-semibold">
+                    <i class="bi bi-shield-check text-muted me-1"></i>Rol actual
+                </label>
+                <div class="form-control d-flex align-items-center" style="background:rgba(255,255,255,.4)">
+                    {{ $rolActual }}
+                </div>
+            </div>
+
+            <!-- <div>
+                <label class="form-label fw-semibold">
+                    <i class="bi bi-patch-check text-muted me-1"></i>Estado del correo
+                </label>
+                <div class="form-control d-flex align-items-center" style="background:rgba(255,255,255,.4)">
+                    {{ $user->email_verified_at ? 'Verificado' : 'Pendiente de verificacion' }}
+                </div>
+            </div> -->
+        </div>
+    </div>
+
+    <div class="ec-card">
+        <div class="ec-card__header">
+            <span class="ec-card__icon">
+                <i class="bi bi-lock"></i>
+            </span>
+            <div>
+                <h2 class="ec-card__title">Seguridad</h2>
+                <p class="ec-card__subtitle">Actualiza tu contraseña cuando necesites reforzar el acceso</p>
+            </div>
+        </div>
+
+        <div class="form-grid">
+            @include('admin.partials.password-input', [
+                'pwId' => 'password',
+                'pwLabel' => 'Nueva contraseña',
+                'pwRequired' => false,
+                'pwHint' => 'Dejala vacia para mantener la actual.',
+            ])
+
+            @include('admin.partials.password-input', [
+                'pwId' => 'password_confirmation',
+                'pwLabel' => 'Confirmar contraseña',
+                'pwRequired' => false,
+            ])
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-end gap-2">
+        <a href="{{ route('admin.profile.show') }}" class="btn btn-outline-secondary">Cancelar</a>
+        <button type="submit" class="btn btn-primary d-inline-flex align-items-center gap-1">
+            <i class="bi bi-floppy"></i>
+            Guardar cambios
+        </button>
+    </div>
+</form>
+
+@push('admin-scripts')
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('fotoPerfil').addEventListener('change', function (e) {
+        const file = e.target.files[0];
+        if (!file) return;
 
-        const button = document.getElementById('generatePasswordBtn');
+        const reader = new FileReader();
+        reader.onload = function (ev) {
+            const wrapper = document.getElementById('fotoUploadWrapper');
+            let img = wrapper.querySelector('img#fotoPreviewImg');
 
-        const input = document.getElementById('password');
+            if (!img) {
+                const span = wrapper.querySelector('span#fotoPreviewInicial');
+                if (span) span.remove();
 
-        if (!button || !input) {
-            return;
-        }
-
-        button.addEventListener('click', function() {
-
-            const upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-            const lower = 'abcdefghijklmnopqrstuvwxyz';
-            const numbers = '0123456789';
-            const symbols = '@#$%&*!?';
-            const all = upper + lower + numbers + symbols;
-
-            let password = '';
-
-            password += upper[Math.floor(Math.random() * upper.length)];
-            password += lower[Math.floor(Math.random() * lower.length)];
-            password += numbers[Math.floor(Math.random() * numbers.length)];
-            password += symbols[Math.floor(Math.random() * symbols.length)];
-
-            for (let i = 4; i < 12; i++) {
-
-                password += all.charAt(
-                    Math.floor(Math.random() * all.length)
-                );
+                img = document.createElement('img');
+                img.id = 'fotoPreviewImg';
+                img.alt = 'Foto de perfil';
+                img.className = 'foto-upload-img';
+                wrapper.insertBefore(img, wrapper.querySelector('label'));
             }
 
-            password = password
-                .split('')
-                .sort(() => Math.random() - 0.5)
-                .join('');
+            img.src = ev.target.result;
+        };
 
-            input.value = password;
-        });
+        reader.readAsDataURL(file);
     });
 </script>
+@endpush

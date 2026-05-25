@@ -1,51 +1,24 @@
 @extends('admin.admin')
 
-@section('title', isset($user) ? 'Editar usuario' : 'Crear usuario')
-@section('breadcrumb', isset($user) ? 'Editar usuario' : 'Crear usuario')
+@section('title', 'Mi perfil')
+@section('breadcrumb', 'Mi perfil')
 
 @section('admin-content')
+    <div class="crud-toolbar">
+        <div class="page-header mb-0">
+            <h1>Editar perfil</h1>
+            <p>Actualiza tu informacion de acceso y la imagen con la que te identificas en el panel.</p>
+        </div>
 
-    <div class="page-header">
-
-        <h1>
-
-            {{ isset($user) ? 'Editar usuario' : 'Crear usuario' }}
-
-        </h1>
-
+        <div class="crud-actions">
+            <a href="{{ route('admin.profile.show') }}"
+                class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center gap-1">
+                <i class="bi bi-arrow-left"></i> Volver al perfil
+            </a>
+        </div>
     </div>
 
-    <div class="admin-card">
+    @include('admin.partials.flash')
 
-        <form
-            action="{{ route('admin.profile.update') }}"
-            method="POST">
-
-            @csrf
-            @method('PUT')
-
-            @include('admin.perfil._form')
-
-            <div class="mt-4 d-flex flex-column flex-sm-row gap-2">
-
-                <button type="submit"
-                    class="btn btn-primary d-inline-flex align-items-center justify-content-center gap-2 fw-semibold py-2 px-4"
-                    style="border-radius: 10px; letter-spacing: 0.3px; transition: all 0.2s ease; white-space: nowrap;">
-                    <i class="bi bi-floppy-fill fs-5"></i>
-                    Guardar cambios
-                </button>
-
-                <a href="{{ route('admin.profile.show') }}"
-                    class="btn btn-light d-inline-flex align-items-center justify-content-center gap-2 fw-semibold py-2 px-4"
-                    style="border-radius: 10px; letter-spacing: 0.3px; transition: all 0.2s ease; white-space: nowrap;">
-                    <i class="bi bi-x-circle fs-5"></i>
-                    Cancelar
-                </a>
-
-            </div>
-
-        </form>
-
-    </div>
-
+    @include('admin.perfil._form')
 @endsection

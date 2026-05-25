@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
@@ -20,8 +21,7 @@ class ProfileController extends Controller
 
     public function edit(Request $request): View
     {
-        // dd($request->user()->getRoleNames());
-        return view('admin.perfil.edit', ['user' => $request->user(), 'roles' => $request->user()->getRoleNames()]);
+        return view('admin.perfil.edit', ['user' => $request->user(), 'isEdit' => true]);
     }
 
     public function update(Request $request): RedirectResponse
@@ -32,6 +32,7 @@ class ProfileController extends Controller
             'name'     => ['required', 'string', 'max:255'],
             'email'    => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+            'fotoPerfil' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,gif',  'max:5120'],
         ]);
 
         $user->name  = $validated['name'];
@@ -43,6 +44,14 @@ class ProfileController extends Controller
 
         if (! empty($validated['password'])) {
             $user->password = Hash::make($validated['password']);
+        }
+
+        if ($request->hasFile('fotoPerfil')) {
+            if ($user->fotoPerfil) {
+                Storage::disk('public')->delete($user->fotoPerfil);
+            }
+
+            $user->fotoPerfil = $request->file('fotoPerfil')->store('perfiles', 'public');
         }
 
         $user->save();

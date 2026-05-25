@@ -61,10 +61,10 @@
                                 <td>
                                     <div class="d-flex align-items-center gap-3">
                                         <span class="entity-icon-chip">
-                                            @if($categoria->icono && str_starts_with($categoria->icono, 'http'))
-                                                <img src="{{ $categoria->icono }}" alt="{{ $categoria->nombre }}" style="width:1.4rem;height:1.4rem;object-fit:contain;">
+                                            @if ($categoria->iconPreviewUrl())
+                                                <img src="{{ $categoria->iconPreviewUrl() }}" alt="{{ $categoria->nombre }}" class="entity-icon-chip__image">
                                             @else
-                                                <i class="{{ $categoria->icono ?: 'bi bi-grid-1x2' }}"></i>
+                                                <i class="{{ $categoria->iconPreviewClass() }}"></i>
                                             @endif
                                         </span>
                                         <div>
@@ -77,12 +77,12 @@
                                 </td>
                                 <td><span class="soft-chip">{{ $categoria->slug ?: 'Sin slug' }}</span></td>
                                 <td>
-                                    @if($categoria->icono && str_starts_with($categoria->icono, 'http'))
-                                        <img src="{{ $categoria->icono }}" alt="icono" class="categoria-icon-thumb">
-                                    @elseif($categoria->icono)
-                                        <i class="{{ $categoria->icono }} fs-5 text-primary"></i>
+                                    @if ($categoria->iconPreviewUrl())
+                                        <img src="{{ $categoria->iconPreviewUrl() }}" alt="icono" class="categoria-icon-thumb">
+                                    @elseif ($categoria->isBootstrapIcon())
+                                        <i class="{{ $categoria->iconPreviewClass() }} fs-5 text-primary"></i>
                                     @else
-                                        <span class="muted">—</span>
+                                        <span class="muted">-</span>
                                     @endif
                                 </td>
                                 <td>{{ $categoria->tipos_count }}</td>

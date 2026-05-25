@@ -836,7 +836,6 @@ body.is-admin #main-content {
 
 body.is-admin #main-content {
   padding-top: calc(var(--navbar-height) + 1.35rem);
-  background: linear-gradient(180deg, #edf4ff 0%, #f8fbff 260px, #f2f7fd 100%);
 }
 
 .page-header {
@@ -1391,12 +1390,7 @@ body.is-admin .ec-card__icon {
 /* ═══════════════════════════════════════════════════════════
    TEMA — Imagen poli-8 + cards blancas sólidas
    ═══════════════════════════════════════════════════════════ */
-/* Fondo: imagen visible con overlay azulado suave */
-body.is-admin #main-content {
-  background: linear-gradient(135deg, rgba(10, 20, 60, 0.42) 0%, rgba(8, 18, 55, 0.36) 50%, rgba(14, 10, 50, 0.4) 100%), url("../../images/fondo-poli-1.jpg") center/cover no-repeat fixed;
-  padding-top: calc(var(--navbar-height) + 1.35rem);
-}
-
+/* Fondo movido a body.is-admin para cubrir siempre el viewport completo */
 /* Page header / welcome banner */
 .page-header {
   background: linear-gradient(118deg, #1a2c7a 0%, #2244b8 55%, #5c1eb8 100%);
@@ -1479,6 +1473,13 @@ body.is-admin .table thead th {
   font-size: 1.1rem;
 }
 
+.entity-icon-chip__image {
+  width: 1.45rem;
+  height: 1.45rem;
+  object-fit: contain;
+  display: block;
+}
+
 .categoria-icon-thumb {
   width: 2.2rem;
   height: 2.2rem;
@@ -1513,19 +1514,87 @@ body.is-admin .table thead th {
   align-items: center;
 }
 
+.category-icon-editor {
+  display: grid;
+  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.category-icon-preview-card {
+  padding: 1rem;
+  border-radius: 18px;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.88) 0%, rgba(236, 246, 255, 0.86) 58%, rgba(255, 239, 246, 0.82) 100%);
+  border: 1px solid rgba(188, 212, 240, 0.75);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78);
+}
+
+.category-icon-preview-visual {
+  width: 100%;
+  min-height: 170px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at top, rgba(103, 183, 255, 0.2), transparent 58%), linear-gradient(155deg, rgba(247, 251, 255, 0.96) 0%, rgba(254, 243, 248, 0.92) 100%);
+  border: 1px dashed rgba(150, 186, 228, 0.68);
+  overflow: hidden;
+}
+
+.category-icon-preview-visual img {
+  width: 100%;
+  height: 170px;
+  object-fit: contain;
+  padding: 1rem;
+}
+
+.category-icon-preview-visual i,
+.category-icon-preview-glyph {
+  font-size: 3rem;
+  color: #2d67b9;
+}
+
+.category-icon-preview-copy {
+  margin-top: 0.85rem;
+  display: grid;
+  gap: 0.2rem;
+}
+
+.category-icon-preview-copy strong {
+  color: #16314b;
+  font-size: 0.94rem;
+}
+
+.category-icon-preview-copy span {
+  color: #6783a0;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  word-break: break-word;
+}
+
+.category-icon-editor__fields {
+  min-width: 0;
+}
+
 @media (max-width: 991px) {
   .entity-kpis {
     grid-template-columns: 1fr;
   }
+  .category-icon-editor {
+    grid-template-columns: 1fr;
+  }
+}
+body.is-admin {
+  background: linear-gradient(135deg, rgba(180, 210, 245, 0.3) 0%, rgba(220, 195, 230, 0.22) 50%, rgba(195, 185, 235, 0.28) 100%), url("../../images/fondo-poli-1.jpg") center/cover no-repeat fixed;
+  min-height: 100vh;
 }
 body.is-admin #main-content {
-  background: linear-gradient(135deg, rgba(180, 210, 245, 0.3) 0%, rgba(220, 195, 230, 0.22) 50%, rgba(195, 185, 235, 0.28) 100%), url("../../images/fondo-poli-1.jpg") center/cover no-repeat fixed;
+  background: transparent;
   padding-top: calc(var(--navbar-height) + 1.35rem);
 }
 @media (max-width: 991px) {
   body.is-admin #main-content {
     padding-top: calc(var(--navbar-height) + 1rem);
-    background-attachment: scroll;
   }
 }
 body.is-admin .admin-card {

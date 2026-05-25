@@ -28,6 +28,7 @@ class CategoriaRequest extends FormRequest
             'nombre' => 'required|string|max:255',
             'descripcion' => 'nullable|string|max:1000',
             'icono' => 'nullable|string|max:255',
+            'icono_file' => 'nullable|file|mimes:jpg,jpeg,png,webp,svg|max:5120',
             'slug' => 'nullable|string|max:255|unique:categorias,slug,' . $categoriaId,
         ];
     }
