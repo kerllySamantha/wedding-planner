@@ -2,6 +2,8 @@
 
 @php
     $gestionEmpresasActiva = request()->routeIs('admin.empresas.*') || request()->routeIs('admin.tipos-producto.*');
+    $gestionUsuariosActiva = request()->routeIs('admin.profile.*') || request()->routeIs('admin.perfiles-usuario.*');
+
     $rolActual = auth()->user()?->getRoleNames()->implode(', ') ?: 'Admin';
 @endphp
 
@@ -54,15 +56,43 @@
                         </ul>
                     </details>
                 </li>
+                <li class="sidebar-nav-item sidebar-nav-group">
+                    <details {{ $gestionUsuariosActiva ? 'open' : '' }}>
+                        <summary class="sidebar-group-trigger {{ $gestionUsuariosActiva ? 'active' : '' }}">
+                            <i class="bi bi-people-fill" aria-hidden="true"></i>
+                            <span class="nav-label">Gestión de usuarios</span>
+                            <i class="bi bi-chevron-down sidebar-chevron" aria-hidden="true"></i>
+                        </summary>
 
-                <li class="sidebar-nav-item">
-                    <a href="{{ route('admin.perfiles-usuario.index') }}"
-                        class="{{ request()->routeIs('admin.perfiles-usuario.*') ? 'active' : '' }}"
-                        aria-current="{{ request()->routeIs('admin.perfiles-usuario.*') ? 'page' : 'false' }}">
-                        <i class="bi bi-people" aria-hidden="true"></i>
-                        <span class="nav-label">Perfiles de usuario</span>
-                    </a>
+                        <ul class="sidebar-subnav" role="list">
+                            <li>
+                                <a href="{{ route('admin.profile.show') }}"
+                                    class="{{ request()->routeIs('admin.profile.*') ? 'active' : '' }}"
+                                    aria-current="{{ request()->routeIs('admin.profile.*') ? 'page' : 'false' }}">
+                                    <i class="bi bi-person-circle" aria-hidden="true"></i>
+                                    <span class="nav-label">Mi Perfil</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('admin.perfiles-usuario.index') }}"
+                                    class="{{ request()->routeIs('admin.perfiles-usuario.*') ? 'active' : '' }}"
+                                    aria-current="{{ request()->routeIs('admin.perfiles-usuario.*') ? 'page' : 'false' }}">
+                                    <i class="bi bi-people" aria-hidden="true"></i>
+                                    <span class="nav-label">Perfiles de usuarios</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </details>
                 </li>
+
+                <!-- <li class="sidebar-nav-item">
+                        <a href="{{ route('admin.perfiles-usuario.index') }}"
+                            class="{{ request()->routeIs('admin.perfiles-usuario.*') ? 'active' : '' }}"
+                            aria-current="{{ request()->routeIs('admin.perfiles-usuario.*') ? 'page' : 'false' }}">
+                            <i class="bi bi-people" aria-hidden="true"></i>
+                            <span class="nav-label">Perfiles de usuario</span>
+                        </a>
+                    </li> -->
             </ul>
         </nav>
 
@@ -70,8 +100,7 @@
             <div class="sidebar-user" role="button" tabindex="0">
                 <div class="sidebar-user-avatar" style="overflow:hidden;padding:0;">
                     @if (auth()->user()->avatar)
-                        <img src="{{ asset('storage/' . auth()->user()->avatar) }}"
-                            alt="Avatar"
+                        <img src="{{ asset('storage/' . auth()->user()->avatar) }}" alt="Avatar"
                             style="width:100%;height:100%;object-fit:cover;">
                     @else
                         {{ strtoupper(substr(auth()->user()->name ?? 'A', 0, 1)) }}
@@ -97,7 +126,7 @@
 
 @push('admin-scripts')
     <script>
-        (function() {
+        (function () {
             const toggle = document.getElementById('sidebarToggle');
             const sidebar = document.getElementById('admin-sidebar');
             const main = document.getElementById('main-content');

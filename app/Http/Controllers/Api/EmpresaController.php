@@ -26,7 +26,7 @@ class EmpresaController extends Controller
             ->withAvg('resenias', 'puntuacion')
             ->withCount('resenias')
             ->orderBy('nombre_empresa')
-            ->paginate(10);
+            ->paginate(8);
 
         return new EmpresaCollection($empresas);
     }

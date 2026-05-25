@@ -79,14 +79,9 @@ Route::middleware('auth')->group(function () {
         return redirect()->route('admin.dashboard');
     })->name('dashboard');
 
-    Route::get('/profile', [ProfileController::class, 'edit'])
-        ->name('profile.edit');
-
-    Route::patch('/profile', [ProfileController::class, 'update'])
-        ->name('profile.update');
-
-    Route::delete('/profile', [ProfileController::class, 'destroy'])
-        ->name('profile.destroy');
+    Route::get('/profile/edit', [ProfileController::class, 'editBreeze'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'updateBreeze'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 /*
@@ -130,6 +125,10 @@ Route::prefix('admin')
 
             Route::resource('tipos-producto', TipoProductoController::class)
                 ->parameters(['tipos-producto' => 'tipoProducto']);
+
+            Route::get('mi-perfil', [ProfileController::class, 'show'])->name('profile.show');
+            Route::get('mi-perfil/editar', [ProfileController::class, 'edit'])->name('profile.edit');
+            Route::put('mi-perfil', [ProfileController::class, 'update'])->name('profile.update');
         });
     });
 

@@ -22,12 +22,12 @@ class EmpresaController extends Controller
             ->orderBy('nombre_empresa')
             ->paginate(12);
 
-        return view('admin.Empresa.index', compact('empresas'));
+        return view('admin.empresa.index', compact('empresas'));
     }
 
     public function create(): View
     {
-        return view('admin.Empresa.form', [
+        return view('admin.empresa.form', [
             'empresa' => new Empresa(),
             'poblaciones' => $this->getPoblaciones(),
             'isEdit' => false,
@@ -63,14 +63,14 @@ class EmpresaController extends Controller
         $empresa->load(['usuario', 'poblacion.provincia'])
             ->loadCount(['productos', 'reservas', 'pedirPresupuestos']);
 
-        return view('admin.Empresa.show', compact('empresa'));
+        return view('admin.empresa.show', compact('empresa'));
     }
 
     public function edit(Empresa $empresa): View
     {
         $empresa->load(['usuario', 'poblacion.provincia']);
 
-        return view('admin.Empresa.form', [
+        return view('admin.empresa.form', [
             'empresa' => $empresa,
             'poblaciones' => $this->getPoblaciones(),
             'isEdit' => true,

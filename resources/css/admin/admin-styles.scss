@@ -831,16 +831,19 @@ body.is-admin #main-content {
 }
 
 .crud-toolbar {
-  background: rgba(255,255,255,.92);
-  backdrop-filter: blur(4px);
-  border: 1px solid var(--admin-border);
-  box-shadow: 0 12px 22px rgba(18, 72, 135, .08);
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 4px 16px rgba(18, 72, 135, 0.07), inset 0 1px 0 rgba(255,255,255,0.95);
 }
 
 .admin-card {
-  background: var(--admin-surface);
-  border: 1px solid var(--admin-border);
-  box-shadow: 0 16px 30px rgba(10, 44, 84, 0.08);
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  box-shadow: 0 4px 24px rgba(14, 47, 100, 0.09), inset 0 1px 0 rgba(255,255,255,0.9);
 }
 
 .btn-primary {
@@ -987,6 +990,268 @@ body.is-admin.sidebar-is-collapsed .admin-brand-link {
   width: 0;
   overflow: hidden;
   pointer-events: none;
+}
+
+/* ─── User Avatar (initials) ─── */
+.pu-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+  letter-spacing: -.02em;
+  width: 2.2rem;
+  height: 2.2rem;
+  font-size: .8rem;
+  background: var(--pu-avatar-bg, var(--admin-primary));
+  user-select: none;
+}
+
+.pu-avatar--lg {
+  width: 4rem;
+  height: 4rem;
+  font-size: 1.35rem;
+}
+
+/* ─── Wedding date badge ─── */
+.wedding-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .25rem;
+  font-size: .73rem;
+  font-weight: 600;
+  padding: .22rem .6rem;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.wedding-badge--upcoming { background: var(--admin-primary-soft); color: var(--admin-primary); }
+.wedding-badge--soon     { background: #fff3cd; color: #8a5a00; }
+.wedding-badge--today    { background: linear-gradient(120deg,#e7f1ff,#ede0ff); color: #4c1bb8; border: 1px solid rgba(123,47,247,.15); }
+.wedding-badge--past     { background: var(--admin-surface-alt); color: var(--admin-muted); }
+
+/* ─── Form Grid ─── */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+.form-grid > .full-span {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 767px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ─── Password strength ─── */
+.password-strength {
+  margin-top: .4rem;
+}
+
+.password-strength .req-item {
+  display: inline-flex;
+  align-items: center;
+  gap: .2rem;
+  font-size: .78rem;
+  white-space: nowrap;
+}
+
+.password-strength .req-item i {
+  font-size: .8rem;
+}
+
+/* ─── Profile Hero card ─── */
+.profile-hero {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(
+    140deg,
+    rgba(20, 89, 184, 0.07) 0%,
+    rgba(255, 255, 255, 0.84) 45%,
+    rgba(123, 47, 247, 0.05) 100%
+  );
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 20px;
+  box-shadow:
+    0 8px 32px rgba(14, 47, 100, 0.11),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  padding: 2rem 2rem 1.75rem;
+}
+
+.profile-hero::before {
+  content: '';
+  position: absolute;
+  top: -60px;
+  right: -60px;
+  width: 220px;
+  height: 220px;
+  background: radial-gradient(circle, rgba(20, 89, 184, 0.13), transparent 68%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.profile-hero::after {
+  content: '';
+  position: absolute;
+  bottom: -40px;
+  left: 25%;
+  width: 150px;
+  height: 150px;
+  background: radial-gradient(circle, rgba(123, 47, 247, 0.09), transparent 65%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.profile-hero__avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--admin-primary), var(--admin-secondary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.65rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -.02em;
+  box-shadow: 0 4px 18px rgba(20, 89, 184, 0.32);
+  flex-shrink: 0;
+  user-select: none;
+  border: 3px solid rgba(255, 255, 255, 0.85);
+  position: relative;
+  z-index: 1;
+}
+
+.profile-hero__name {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--admin-text);
+  line-height: 1.2;
+  margin: 0 0 .2rem;
+}
+
+.profile-hero__email {
+  font-size: .85rem;
+  color: var(--admin-muted);
+  margin: 0 0 .6rem;
+}
+
+.profile-hero__role {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  padding: .22rem .7rem;
+  border-radius: 20px;
+  background: var(--admin-primary-soft);
+  color: var(--admin-primary);
+  border: 1px solid rgba(20, 89, 184, 0.15);
+}
+
+.profile-hero__divider {
+  border: none;
+  border-top: 1px solid rgba(217, 230, 245, 0.55);
+  margin: 1.5rem 0 1.25rem;
+  position: relative;
+  z-index: 1;
+}
+
+.profile-hero__fields {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 640px) {
+  .profile-hero__fields {
+    grid-template-columns: 1fr;
+  }
+}
+
+.profile-hero__field-label {
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--admin-muted);
+  margin-bottom: .25rem;
+}
+
+.profile-hero__field-value {
+  font-size: .92rem;
+  font-weight: 500;
+  color: var(--admin-text);
+}
+
+/* ─── ec-card glass override (admin context) ─── */
+body.is-admin .ec-card {
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  box-shadow: 0 4px 24px rgba(14, 47, 100, 0.08), inset 0 1px 0 rgba(255,255,255,0.9);
+  border-radius: 14px;
+}
+
+body.is-admin .ec-card__header {
+  border-bottom-color: rgba(217, 230, 245, 0.5);
+}
+
+body.is-admin .ec-card__icon {
+  background: var(--admin-primary-soft);
+  color: var(--admin-primary);
+}
+
+/* ─── Password field overlay toggle ─── */
+.pw-field {
+  position: relative;
+}
+
+.pw-field .form-control {
+  padding-right: 2.75rem;
+}
+
+.pw-field .form-control.is-invalid {
+  background-image: none;
+  padding-right: 2.75rem;
+}
+
+.pw-field__toggle {
+  position: absolute;
+  right: .6rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--admin-muted);
+  padding: .25rem;
+  line-height: 1;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: color .15s;
+  z-index: 5;
+}
+
+.pw-field__toggle:hover  { color: var(--admin-primary); }
+.pw-field__toggle:focus  { outline: none; }
+
+/* cuando hay error, alinear el toggle con el campo real (sin el mensaje de error) */
+.pw-field:has(.is-invalid) .pw-field__toggle {
+  top: calc(44px / 2);
+  transform: translateY(-50%);
 }
 
 /* ─── RESPONSIVE: tableta (768px – 991px) ─── */
