@@ -29,6 +29,7 @@ class UserRequest extends FormRequest
             //     'required',
             //     'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&]).{8,}$/'
             // ],
+             'fotoPerfil' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:5120'],
             'password' => ['required', Password::min(8)
                 ->letters()
                 ->mixedCase()

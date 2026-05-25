@@ -107,8 +107,8 @@
         <div class="sidebar-footer">
             <div class="sidebar-user" role="button" tabindex="0">
                 <div class="sidebar-user-avatar" style="overflow:hidden;padding:0;">
-                    @if (auth()->user()->avatar)
-                        <img src="{{ asset('storage/' . auth()->user()->avatar) }}" alt="Avatar"
+                    @if (auth()->user()->fotoPerfil)
+                        <img src="{{ asset('storage/' . auth()->user()->fotoPerfil) }}" alt="Avatar"
                             style="width:100%;height:100%;object-fit:cover;">
                     @else
                         {{ strtoupper(substr(auth()->user()->name ?? 'A', 0, 1)) }}

@@ -59,20 +59,32 @@
                         @foreach ($categorias as $categoria)
                             <tr>
                                 <td>
-                                    <div class="d-flex align-items-start gap-3">
+                                    <div class="d-flex align-items-center gap-3">
                                         <span class="entity-icon-chip">
-                                            <i class="{{ $categoria->icono ?: 'bi bi-grid-1x2' }}"></i>
+                                            @if($categoria->icono && str_starts_with($categoria->icono, 'http'))
+                                                <img src="{{ $categoria->icono }}" alt="{{ $categoria->nombre }}" style="width:1.4rem;height:1.4rem;object-fit:contain;">
+                                            @else
+                                                <i class="{{ $categoria->icono ?: 'bi bi-grid-1x2' }}"></i>
+                                            @endif
                                         </span>
                                         <div>
                                             <div class="fw-semibold">{{ $categoria->nombre }}</div>
                                             <div class="muted">
-                                                {{ \Illuminate\Support\Str::limit($categoria->descripcion, 78) ?: 'Sin descripcion registrada.' }}
+                                                {{ \Illuminate\Support\Str::limit($categoria->descripcion, 60) ?: 'Sin descripcion.' }}
                                             </div>
                                         </div>
                                     </div>
                                 </td>
                                 <td><span class="soft-chip">{{ $categoria->slug ?: 'Sin slug' }}</span></td>
-                                <td class="fw-semibold">{{ $categoria->icono ?: 'Sin icono' }}</td>
+                                <td>
+                                    @if($categoria->icono && str_starts_with($categoria->icono, 'http'))
+                                        <img src="{{ $categoria->icono }}" alt="icono" class="categoria-icon-thumb">
+                                    @elseif($categoria->icono)
+                                        <i class="{{ $categoria->icono }} fs-5 text-primary"></i>
+                                    @else
+                                        <span class="muted">—</span>
+                                    @endif
+                                </td>
                                 <td>{{ $categoria->tipos_count }}</td>
                                 <td>{{ optional($categoria->updated_at)->format('d/m/Y') ?: 'Sin fecha' }}</td>
                                 <td class="text-end">

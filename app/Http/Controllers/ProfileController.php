@@ -20,7 +20,8 @@ class ProfileController extends Controller
 
     public function edit(Request $request): View
     {
-        return view('admin.perfil.edit', ['user' => $request->user()]);
+        // dd($request->user()->getRoleNames());
+        return view('admin.perfil.edit', ['user' => $request->user(), 'roles' => $request->user()->getRoleNames()]);
     }
 
     public function update(Request $request): RedirectResponse

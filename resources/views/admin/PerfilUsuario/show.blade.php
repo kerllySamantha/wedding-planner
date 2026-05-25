@@ -44,7 +44,14 @@
         <div class="ec-card">
             <div class="d-flex align-items-center gap-4 flex-wrap">
 
-                <span class="pu-avatar pu-avatar--lg" style="--pu-avatar-bg:{{ $bg }}">{{ $inits }}</span>
+                @if ($perfilUsuario->user?->fotoPerfil)
+                    <img src="{{ asset('storage/' . $perfilUsuario->user->fotoPerfil) }}"
+                         alt="{{ $name }}"
+                         class="pu-avatar pu-avatar--lg"
+                         style="object-fit:cover;">
+                @else
+                    <span class="pu-avatar pu-avatar--lg" style="--pu-avatar-bg:{{ $bg }}">{{ $inits }}</span>
+                @endif
 
                 <div class="flex-grow-1 min-width-0">
                     <h2 class="fw-bold mb-1" style="font-size:1.2rem;color:var(--admin-text);line-height:1.2">

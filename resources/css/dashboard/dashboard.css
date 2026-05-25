@@ -1,11 +1,11 @@
 .dashboard-tables .admin-card, .dashboard-quick-actions, .stat-card {
-  background: rgba(255, 255, 255, 0.6) !important;
+  background: rgba(255, 255, 255, 0.62) !important;
   backdrop-filter: blur(18px) !important;
   -webkit-backdrop-filter: blur(18px) !important;
   border: 1px solid rgba(200, 220, 245, 0.7) !important;
   border-radius: 16px !important;
   box-shadow: 0 6px 28px rgba(30, 70, 160, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
-  color: #1a2d42;
+  color: #0b1e33;
 }
 
 .dashboard-shell {
@@ -65,16 +65,16 @@
   transition: background 0.18s ease, transform 0.18s ease;
 }
 .stat-card:hover {
-  background: rgba(255, 255, 255, 0.74) !important;
+  background: rgba(255, 255, 255, 0.78) !important;
   transform: translateY(-2px);
 }
 
 .stat-card-label {
   font-size: 0.72rem;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #6a8aaa;
+  color: #1e4070;
   margin-bottom: 0.3rem;
 }
 
@@ -82,7 +82,7 @@
   font-size: 2rem;
   font-weight: 700;
   line-height: 1;
-  color: #1a2d42;
+  color: #0b1e33;
   letter-spacing: -0.02em;
 }
 
@@ -126,15 +126,29 @@
   gap: 1rem !important;
   width: 100% !important;
 }
+
+body.is-admin .dashboard-quick-actions .crud-toolbar {
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+}
+body.is-admin .dashboard-quick-actions .crud-toolbar h1, body.is-admin .dashboard-quick-actions .crud-toolbar p {
+  color: inherit !important;
+}
+
 .dashboard-quick-actions .h5 {
   font-size: 0.95rem;
   font-weight: 700;
-  color: #1a2d42;
+  color: #071629;
   margin-bottom: 0.15rem !important;
 }
 .dashboard-quick-actions .muted {
   font-size: 0.82rem;
-  color: #6a8aaa !important;
+  color: #3d5f80 !important;
 }
 .dashboard-quick-actions .crud-actions {
   display: flex;
@@ -183,17 +197,18 @@
 }
 
 .dashboard-tables .admin-card {
+  background: rgba(255, 255, 255, 0.72) !important;
   padding: 1.2rem 1.35rem;
 }
 .dashboard-tables .h5 {
   font-size: 0.95rem;
   font-weight: 700;
-  color: #1a2d42;
+  color: #071629;
   margin-bottom: 0.15rem !important;
 }
 .dashboard-tables .muted {
   font-size: 0.8rem;
-  color: #6a8aaa !important;
+  color: #3d5f80 !important;
 }
 .dashboard-tables .btn-outline-secondary {
   background: rgba(255, 255, 255, 0.28) !important;
@@ -223,16 +238,16 @@
   box-shadow: none !important;
 }
 .dashboard-tables .table thead tr {
-  background: rgba(190, 215, 250, 0.3) !important;
+  background: rgba(30, 80, 160, 0.12) !important;
 }
 .dashboard-tables .table thead th {
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #3a5c82;
-  padding: 0.65rem 0.85rem;
-  border-bottom: 1px solid rgba(150, 195, 240, 0.45) !important;
+  color: #1e4a8a;
+  padding: 0.7rem 0.85rem;
+  border-bottom: 2px solid rgba(80, 140, 220, 0.4) !important;
   white-space: nowrap;
 }
 .dashboard-tables .table thead th:first-child {
@@ -243,35 +258,44 @@
 }
 .dashboard-tables .table tbody td {
   padding: 0.72rem 0.85rem;
-  border-bottom: 1px solid rgba(150, 195, 240, 0.25) !important;
+  border-bottom: 1px solid rgba(100, 160, 230, 0.35) !important;
   vertical-align: middle;
-  color: #1a2d42;
+  color: #0b1e33;
+}
+.dashboard-tables .table tbody tr:nth-child(even) td {
+  background: rgba(200, 220, 255, 0.12);
 }
 .dashboard-tables .table tbody tr:last-child td {
   border-bottom: none !important;
 }
 .dashboard-tables .table tbody tr:hover {
-  background: rgba(170, 205, 255, 0.18) !important;
+  background: rgba(60, 130, 235, 0.22) !important;
 }
 .dashboard-tables .table tbody tr:hover td {
   color: #091523;
+  background: transparent;
+  border-bottom-color: rgba(60, 130, 235, 0.5) !important;
+}
+.dashboard-tables .table tbody tr:hover td:first-child {
+  border-left: 3px solid rgba(30, 80, 200, 0.7);
+  padding-left: 0.6rem;
 }
 .dashboard-tables .table .fw-semibold {
   font-size: 0.88rem;
   font-weight: 600;
-  color: #1a2d42;
+  color: #0b1e33;
   line-height: 1.3;
 }
 .dashboard-tables .table .muted {
   font-size: 0.76rem;
-  color: #6a8aaa !important;
+  color: #3d5f80 !important;
   line-height: 1.3;
 }
 .dashboard-tables .empty-state {
   background: rgba(200, 225, 255, 0.2) !important;
   border: 1px dashed rgba(140, 190, 240, 0.5) !important;
   border-radius: 10px;
-  color: #6a8aaa;
+  color: #3d5f80;
   text-align: center;
   padding: 1.5rem;
   font-size: 0.88rem;

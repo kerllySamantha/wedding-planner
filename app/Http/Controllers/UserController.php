@@ -17,7 +17,7 @@ class UserController extends Controller
      */
     public function profile()
     {
-        /** @var \App\Models\User $user */
+        /** @var \User $user */
         $user = Auth::user();
 
         return view(

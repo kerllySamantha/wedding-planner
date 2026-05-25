@@ -3,10 +3,10 @@
 // ═══════════════════════════════════════════════════════════
 
 // ── Tokens ─────────────────────────────────────────────────
-$d-text:        #1a2d42;
-$d-muted:       #6a8aaa;
-$d-card:        rgba(255, 255, 255, 0.60);
-$d-card-hover:  rgba(255, 255, 255, 0.74);
+$d-text:        #0b1e33;
+$d-muted:       #3d5f80;
+$d-card:        rgba(255, 255, 255, 0.62);
+$d-card-hover:  rgba(255, 255, 255, 0.78);
 $d-border:      rgba(200, 220, 245, 0.70);
 $d-inner-line:  rgba(160, 200, 240, 0.35);
 $d-blur:        blur(18px);
@@ -91,10 +91,10 @@ $d-shadow:      0 6px 28px rgba(30, 70, 160, 0.14),
 
 .stat-card-label {
   font-size: .72rem;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: .08em;
   text-transform: uppercase;
-  color: $d-muted;
+  color: #1e4070;
   margin-bottom: .3rem;
 }
 
@@ -139,7 +139,6 @@ $d-shadow:      0 6px 28px rgba(30, 70, 160, 0.14),
   @extend %glass-card;
   padding: 1.2rem 1.5rem;
 
-  // Resetear crud-toolbar anidado
   .crud-toolbar {
     all: unset !important;
     display: flex !important;
@@ -149,11 +148,26 @@ $d-shadow:      0 6px 28px rgba(30, 70, 160, 0.14),
     gap: 1rem !important;
     width: 100% !important;
   }
+}
+
+// Especificidad 0,3,1 — gana sobre body.is-admin .crud-toolbar (0,2,1) de admin-styles
+body.is-admin .dashboard-quick-actions .crud-toolbar {
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  h1, p { color: inherit !important; }
+}
+
+.dashboard-quick-actions {
 
   .h5 {
     font-size: .95rem;
     font-weight: 700;
-    color: $d-text;
+    color: #071629;
     margin-bottom: .15rem !important;
   }
 
@@ -209,16 +223,17 @@ $d-shadow:      0 6px 28px rgba(30, 70, 160, 0.14),
 // ── 4. Paneles de tabla ────────────────────────────────────
 .dashboard-tables {
 
-  // La card contenedora
+  // La card contenedora — más opaca que las stat-cards para que la tabla destaque
   .admin-card {
     @extend %glass-card;
+    background: rgba(255, 255, 255, 0.72) !important;
     padding: 1.2rem 1.35rem;
   }
 
   .h5 {
     font-size: .95rem;
     font-weight: 700;
-    color: $d-text;
+    color: #071629;
     margin-bottom: .15rem !important;
   }
 
@@ -261,9 +276,9 @@ $d-shadow:      0 6px 28px rgba(30, 70, 160, 0.14),
       box-shadow: none !important;
     }
 
-    // Cabecera con forma visible
+    // Cabecera sólida y legible
     thead tr {
-      background: rgba(190, 215, 250, 0.30) !important;
+      background: rgba(30, 80, 160, 0.12) !important;
     }
 
     thead th {
@@ -271,9 +286,9 @@ $d-shadow:      0 6px 28px rgba(30, 70, 160, 0.14),
       font-weight: 700;
       letter-spacing: .08em;
       text-transform: uppercase;
-      color: #3a5c82;
-      padding: .65rem .85rem;
-      border-bottom: 1px solid rgba(150, 195, 240, 0.45) !important;
+      color: #1e4a8a;
+      padding: .70rem .85rem;
+      border-bottom: 2px solid rgba(80, 140, 220, 0.40) !important;
       white-space: nowrap;
 
       &:first-child { border-radius: 10px 0 0 10px; }
@@ -284,9 +299,13 @@ $d-shadow:      0 6px 28px rgba(30, 70, 160, 0.14),
     tbody {
       td {
         padding: .72rem .85rem;
-        border-bottom: 1px solid rgba(150, 195, 240, 0.25) !important;
+        border-bottom: 1px solid rgba(100, 160, 230, 0.35) !important;
         vertical-align: middle;
         color: $d-text;
+      }
+
+      tr:nth-child(even) td {
+        background: rgba(200, 220, 255, 0.12);
       }
 
       tr:last-child td {
@@ -294,9 +313,18 @@ $d-shadow:      0 6px 28px rgba(30, 70, 160, 0.14),
       }
 
       tr:hover {
-        background: rgba(170, 205, 255, 0.18) !important;
+        background: rgba(60, 130, 235, 0.22) !important;
 
-        td { color: #091523; }
+        td {
+          color: #091523;
+          background: transparent;
+          border-bottom-color: rgba(60, 130, 235, 0.50) !important;
+        }
+
+        td:first-child {
+          border-left: 3px solid rgba(30, 80, 200, 0.70);
+          padding-left: .6rem;
+        }
       }
     }
 

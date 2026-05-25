@@ -97,14 +97,12 @@
 
         <select name="role" class="form-select @error('role') is-invalid @enderror">
 
-            @foreach ($roles as $role)
-                <option value="{{ $role->name }}"
-                    {{ old('role', isset($user) ? $user->roles->first()?->name : '') === $role->name ? 'selected' : '' }}>
-
-                    {{ ucfirst($role->name) }}
-
-                </option>
-            @endforeach
+           @foreach ($roles as $role)
+            <option value="{{ $role }}"
+            {{ old('role', $user->getRoleNames()->first()) === $role ? 'selected' : '' }}>
+            {{ ucfirst($role) }}
+        </option>
+         @endforeach
 
         </select>
 

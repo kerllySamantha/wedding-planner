@@ -1,69 +1,51 @@
 @extends('admin.admin')
 
-@section('title', 'Editar mi perfil')
-@section('breadcrumb', 'Editar perfil personal')
+@section('title', isset($user) ? 'Editar usuario' : 'Crear usuario')
+@section('breadcrumb', isset($user) ? 'Editar usuario' : 'Crear usuario')
 
 @section('admin-content')
-    <div class="crud-toolbar">
-        <div class="page-header mb-0">
-            <h1>Editar mi perfil</h1>
-            <p>Actualiza tu nombre, email o contraseña.</p>
-        </div>
-        <div class="crud-actions">
-            <a href="{{ route('admin.profile.show') }}" class="btn btn-outline-secondary">Volver</a>
-        </div>
+
+    <div class="page-header">
+
+        <h1>
+
+            {{ isset($user) ? 'Editar usuario' : 'Crear usuario' }}
+
+        </h1>
+
     </div>
 
-    @include('admin.partials.flash')
-
     <div class="admin-card">
-        <form action="{{ route('admin.profile.update') }}" method="POST" class="d-grid gap-4 admin-form">
+
+        <form
+            action="{{ route('admin.profile.update') }}"
+            method="POST">
+
             @csrf
             @method('PUT')
 
-            <div class="form-grid">
+            @include('admin.perfil._form')
 
-                <div>
-                    <label for="name" class="form-label fw-semibold">Nombre</label>
-                    <input type="text" id="name" name="name"
-                        class="form-control @error('name') is-invalid @enderror"
-                        value="{{ old('name', $user->name) }}"
-                        required>
-                    @error('name')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
+            <div class="mt-4 d-flex flex-column flex-sm-row gap-2">
 
-                <div>
-                    <label for="email" class="form-label fw-semibold">Email</label>
-                    <input type="email" id="email" name="email"
-                        class="form-control @error('email') is-invalid @enderror"
-                        value="{{ old('email', $user->email) }}"
-                        required>
-                    @error('email')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
+                <button type="submit"
+                    class="btn btn-primary d-inline-flex align-items-center justify-content-center gap-2 fw-semibold py-2 px-4"
+                    style="border-radius: 10px; letter-spacing: 0.3px; transition: all 0.2s ease; white-space: nowrap;">
+                    <i class="bi bi-floppy-fill fs-5"></i>
+                    Guardar cambios
+                </button>
 
-                @include('admin.partials.password-input', [
-                    'pwId'       => 'password',
-                    'pwLabel'    => 'Nueva contraseña',
-                    'pwRequired' => false,
-                    'pwHint'     => 'Déjala vacía para mantener la actual.',
-                ])
-
-                @include('admin.partials.password-input', [
-                    'pwId'       => 'password_confirmation',
-                    'pwLabel'    => 'Confirmar contraseña',
-                    'pwRequired' => false,
-                ])
+                <a href="{{ route('admin.profile.show') }}"
+                    class="btn btn-light d-inline-flex align-items-center justify-content-center gap-2 fw-semibold py-2 px-4"
+                    style="border-radius: 10px; letter-spacing: 0.3px; transition: all 0.2s ease; white-space: nowrap;">
+                    <i class="bi bi-x-circle fs-5"></i>
+                    Cancelar
+                </a>
 
             </div>
 
-            <div class="d-flex justify-content-end gap-2">
-                <a href="{{ route('admin.profile.show') }}" class="btn btn-outline-secondary">Cancelar</a>
-                <button type="submit" class="btn btn-primary">Guardar cambios</button>
-            </div>
         </form>
+
     </div>
+
 @endsection
