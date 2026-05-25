@@ -1,7 +1,7 @@
 @extends('admin.layouts.app')
 
 @php
-    $gestionEmpresasActiva = request()->routeIs('admin.empresas.*') || request()->routeIs('admin.tipos-producto.*');
+    $gestionEmpresasActiva = request()->routeIs('admin.empresas.*') || request()->routeIs('admin.categorias.*') || request()->routeIs('admin.tipos-producto.*');
     $gestionUsuariosActiva = request()->routeIs('admin.profile.*') || request()->routeIs('admin.perfiles-usuario.*');
 
     $rolActual = auth()->user()?->getRoleNames()->implode(', ') ?: 'Admin';
@@ -43,6 +43,14 @@
                                     aria-current="{{ request()->routeIs('admin.empresas.*') ? 'page' : 'false' }}">
                                     <i class="bi bi-shop" aria-hidden="true"></i>
                                     <span class="nav-label">Empresas</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('admin.categorias.index') }}"
+                                    class="{{ request()->routeIs('admin.categorias.*') ? 'active' : '' }}"
+                                    aria-current="{{ request()->routeIs('admin.categorias.*') ? 'page' : 'false' }}">
+                                    <i class="bi bi-grid-1x2" aria-hidden="true"></i>
+                                    <span class="nav-label">Categorias</span>
                                 </a>
                             </li>
                             <li>

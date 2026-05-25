@@ -1,14 +1,17 @@
 @extends('admin.admin')
-
 @section('title', 'Dashboard admin')
 @section('breadcrumb', 'Dashboard')
+
+@push('admin-styles')
+    @vite(['resources/css/dashboard/dashboard.css'])
+@endpush
 
 
 @section('admin-content')
     <section class="dashboard-shell">
         <div class="page-header dashboard-header">
-            <h1>Panel de administracion</h1>
-            <p>Accesos directos para gestionar empresas, tipos de producto y perfiles de usuario.</p>
+            <h1>Bienvenido de nuevo, {{ auth()->user()->name ?? 'Admin' }}</h1>
+            <p>Aquí está tu resumen de actividad del panel de administración.</p>
         </div>
 
     @include('admin.partials.flash')

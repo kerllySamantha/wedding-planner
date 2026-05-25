@@ -2,6 +2,7 @@
 
 use App\Helpers\Helper;
 use App\Http\Controllers\AuthenticationController;
+use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\PerfilUsuarioController;
 use App\Http\Controllers\ProfileController;
@@ -119,6 +120,7 @@ Route::prefix('admin')
 
         Route::middleware('permission:gestionar empresas')->group(function () {
             Route::resource('empresas', EmpresaController::class);
+            Route::resource('categorias', CategoriaController::class);
 
             Route::delete('empresas/{empresa}/fotos/{fotoIndex}', [EmpresaController::class, 'destroyFoto'])
                 ->name('empresas.fotos.destroy');

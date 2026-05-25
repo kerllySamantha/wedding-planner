@@ -5,9 +5,18 @@ export default defineConfig({
     plugins: [
         laravel({
             input: [
-                'resources/css/app.css', 
-                'resources/css/admin/admin-styles.css', 'resources/js/app.js',
-                 'resources/css/empresa/empresa.css', 'resources/images/logo-sinfondo.png', 'resources/css/auth/auth.css'],
+                'resources/css/app.css',
+                'resources/css/admin/admin-styles.css',
+                'resources/js/app.js',
+                'resources/css/empresa/empresa.css',
+                'resources/images/logo-sinfondo.png',
+                'resources/css/auth/auth.css',
+                'resources/css/dashboard/dashboard.css',
+                'resources/images/fondo-poli-8.jpg',
+                'resources/images/fondo-poli-13.jpg',
+                'resources/images/fondo-poli-1.jpg'
+
+            ],
             refresh: true,
         }),
     ],
