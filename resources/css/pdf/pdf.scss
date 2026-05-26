@@ -1,0 +1,279 @@
+@page {
+    margin: 0;
+}
+
+$primary: #1459b8;
+$success: #0f766e;
+$danger:  #dc2626;
+$warning: #d97706;
+$text:    #1e293b;
+$muted:   #64748b;
+$border:  #e2e8f0;
+$soft:    #f8faff;
+$soft2:   #f0f4ff;
+
+body {
+    font-family: DejaVu Sans, Arial, sans-serif;
+    font-size: 11px;
+    color: $text;
+    background: white;
+    margin: 0;
+    padding: 0;
+}
+
+// ── Header ──────────────────────────────────────────
+.pdf-header {
+    background: $primary;
+    color: white;
+    padding: 28px 30px 22px;
+
+    h1 {
+        font-size: 22px;
+        font-weight: bold;
+        margin: 0 0 5px;
+    }
+
+    &__couple {
+        font-size: 13px;
+        margin: 0 0 6px;
+        opacity: 0.92;
+    }
+
+    &__meta {
+        font-size: 9px;
+        opacity: 0.80;
+        margin: 0;
+    }
+}
+
+// ── Content wrapper ─────────────────────────────────
+.pdf-content {
+    padding: 20px 24px 52px;
+}
+
+// ── KPI table ───────────────────────────────────────
+.kpi-table {
+    width: 100%;
+    border-spacing: 6px;
+    margin-bottom: 16px;
+
+    td {
+        background: $soft;
+        border: 1px solid $border;
+        border-radius: 8px;
+        padding: 12px 10px;
+        text-align: center;
+        width: 25%;
+    }
+
+    span {
+        display: block;
+        font-size: 9px;
+        color: $muted;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+    }
+
+    strong {
+        font-size: 16px;
+        font-weight: bold;
+    }
+}
+
+// ── Utility colors ───────────────────────────────────
+.text-blue   { color: $primary; }
+.text-green  { color: $success; }
+.text-red    { color: $danger;  }
+.text-right  { text-align: right; }
+.text-center { text-align: center; }
+
+// ── Progress box ─────────────────────────────────────
+.progress-box {
+    background: $soft;
+    border: 1px solid $border;
+    border-radius: 8px;
+    padding: 12px 16px 14px;
+    margin-bottom: 18px;
+
+    &__top {
+        font-size: 10px;
+        color: $muted;
+        margin-bottom: 8px;
+
+        strong {
+            float: right;
+            font-size: 12px;
+            color: $text;
+        }
+    }
+}
+
+.progress {
+    background: $border;
+    border-radius: 4px;
+    height: 8px;
+    width: 100%;
+
+    &__bar {
+        background: $primary;
+        height: 8px;
+        border-radius: 4px;
+    }
+}
+
+// ── Alert box ────────────────────────────────────────
+.alert-box {
+    background: #fff7ed;
+    border: 1px solid #fdba74;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 18px;
+
+    h2 {
+        font-size: 11px;
+        font-weight: bold;
+        color: #92400e;
+        margin: 0 0 8px;
+    }
+
+    p {
+        font-size: 10px;
+        color: #7c2d12;
+        margin: 0 0 4px;
+
+        span {
+            color: $danger;
+            font-weight: bold;
+        }
+    }
+}
+
+// ── Section title ────────────────────────────────────
+.section-title {
+    font-size: 13px;
+    font-weight: bold;
+    color: $text;
+    border-bottom: 2px solid $primary;
+    padding-bottom: 6px;
+    margin: 0 0 14px;
+}
+
+// ── Category card ────────────────────────────────────
+.category-card {
+    border: 1px solid $border;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    page-break-inside: avoid;
+    overflow: hidden;
+
+    &__header {
+        background: $soft2;
+        padding: 9px 14px;
+        border-bottom: 1px solid $border;
+        font-size: 10px;
+        color: $muted;
+
+        strong {
+            display: block;
+            font-size: 12px;
+            font-weight: bold;
+            color: $text;
+            margin-bottom: 3px;
+        }
+
+        b { color: $text; }
+    }
+}
+
+// ── Detail table ─────────────────────────────────────
+.detail-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 10px;
+
+    thead {
+        background: #e8edf6;
+
+        th {
+            padding: 7px 10px;
+            font-size: 9px;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: $primary;
+            border-bottom: 1px solid $border;
+        }
+    }
+
+    tbody {
+        tr {
+            border-bottom: 1px solid $border;
+
+            &:last-child  { border-bottom: none; }
+            &:nth-child(even) td { background: #f9fbff; }
+        }
+
+        td {
+            padding: 7px 10px;
+            vertical-align: top;
+            color: $text;
+        }
+    }
+}
+
+.concept-title {
+    display: block;
+    font-weight: bold;
+    color: $text;
+    margin-bottom: 2px;
+}
+
+.concept-items {
+    font-size: 9px;
+    color: $muted;
+    display: block;
+    margin-top: 2px;
+}
+
+// ── Badges ───────────────────────────────────────────
+.badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-size: 9px;
+    font-weight: bold;
+
+    &--success {
+        background: #dcfce7;
+        color: #15803d;
+        border: 1px solid #86efac;
+    }
+
+    &--info {
+        background: #dbeafe;
+        color: #1d4ed8;
+        border: 1px solid #93c5fd;
+    }
+
+    &--warning {
+        background: #fef3c7;
+        color: #92400e;
+        border: 1px solid #fcd34d;
+    }
+}
+
+// ── Footer ───────────────────────────────────────────
+.pdf-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: $soft;
+    border-top: 1px solid $border;
+    padding: 7px 24px;
+    font-size: 9px;
+    color: $muted;
+
+    span:last-child {
+        float: right;
+    }
+}

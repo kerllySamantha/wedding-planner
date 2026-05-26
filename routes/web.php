@@ -1,6 +1,7 @@
 <?php
 
 use App\Helpers\Helper;
+use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\AuthenticationController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\EmpresaController;
@@ -95,23 +96,8 @@ Route::prefix('admin')
     ->middleware(['auth', 'role:admin'])
     ->name('admin.')
     ->group(function () {
-        Route::get('/dashboard', function () {
-            return view('admin.dashboard', [
-                'stats' => [
-                    'empresas' => EmpresaModel::count(),
-                    'tiposProducto' => TipoProductoModel::count(),
-                    'perfilesUsuario' => PerfilUsuarioModel::count(),
-                ],
-                'ultimasEmpresas' => EmpresaModel::with('usuario')
-                    ->latest()
-                    ->take(5)
-                    ->get(),
-                'ultimosPerfiles' => PerfilUsuarioModel::with('user')
-                    ->latest()
-                    ->take(5)
-                    ->get(),
-            ]);
-        })->name('dashboard');
+        Route::get('/dashboard', [AdminDashboardController::class, 'index'])
+            ->name('dashboard');
 
         Route::middleware('permission:gestionar usuarios')->group(function () {
             Route::resource('perfiles-usuario', PerfilUsuarioController::class)

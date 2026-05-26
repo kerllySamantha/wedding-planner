@@ -7,6 +7,8 @@
 @endpush
 
 
+
+
 @section('admin-content')
     <section class="dashboard-shell">
         <div class="page-header dashboard-header">
@@ -60,6 +62,81 @@
                 <a href="{{ route('admin.perfiles-usuario.index') }}" class="btn btn-outline-primary">Perfiles de usuario</a>
             </div>
         </div>
+        </div>
+
+        {{-- ── GRÁFICOS ── --}}
+        <div class="dashboard-charts dashboard-section">
+            <div class="row g-4">
+
+                {{-- Doughnut: Usuarios por rol --}}
+                <div class="col-12 col-md-6">
+                    <div class="dashboard-chart-card">
+                        <div class="dashboard-chart-card__header">
+                            <span class="dashboard-chart-card__icon"><i class="bi bi-people-fill"></i></span>
+                            <div>
+                                <div class="dashboard-chart-card__title">Usuarios por rol</div>
+                                <div class="dashboard-chart-card__subtitle">Distribución de roles registrados</div>
+                            </div>
+                        </div>
+                        <div class="dashboard-chart-card__body" style="height:340px">
+                            <canvas id="usuariosPorRol"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Horizontal bar: Servicios por categoría --}}
+                <div class="col-12 col-md-6">
+                    <div class="dashboard-chart-card">
+                        <div class="dashboard-chart-card__header">
+                            <span class="dashboard-chart-card__icon"><i class="bi bi-grid-fill"></i></span>
+                            <div>
+                                <div class="dashboard-chart-card__title">Servicios por categoría</div>
+                                <div class="dashboard-chart-card__subtitle">Número de servicios en cada categoría</div>
+                            </div>
+                        </div>
+                        <div class="dashboard-chart-card__body" style="height:340px">
+                            <canvas id="serviciosPorCategoria"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row g-4 mt-4">
+
+                {{-- Line: Altas por mes — fila propia --}}
+                <div class="col-12">
+                    <div class="dashboard-chart-card">
+                        <div class="dashboard-chart-card__header">
+                            <span class="dashboard-chart-card__icon"><i class="bi bi-graph-up-arrow"></i></span>
+                            <div>
+                                <div class="dashboard-chart-card__title">Altas por mes</div>
+                                <div class="dashboard-chart-card__subtitle">Evolución mensual de usuarios y servicios registrados</div>
+                            </div>
+                        </div>
+                        <div class="dashboard-chart-card__body" style="height:360px">
+                            <canvas id="altasPorMes"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Horizontal bar: Top categorías — fila propia --}}
+                <div class="col-12">
+                    <div class="dashboard-chart-card">
+                        <div class="dashboard-chart-card__header">
+                            <span class="dashboard-chart-card__icon"><i class="bi bi-trophy-fill"></i></span>
+                            <div>
+                                <div class="dashboard-chart-card__title">Top categorías</div>
+                                <div class="dashboard-chart-card__subtitle">Las categorías más populares por número de servicios</div>
+                            </div>
+                        </div>
+                        <div class="dashboard-chart-card__body" style="height:340px">
+                            <canvas id="topCategorias"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
 
         <div class="row g-4 dashboard-tables dashboard-section dashboard-section--tables">
@@ -129,7 +206,7 @@
                                             <div class="fw-semibold">{{ $perfil->user->name ?? 'Sin usuario' }}</div>
                                             <div class="muted">{{ $perfil->user->email ?? 'Sin email' }}</div>
                                         </td>
-                                        <td>{{ $perfil->fecha_boda ? \Illuminate\Support\Carbon::parse($perfil->fecha_boda)->format('d/m/Y') : '-' }}</td>
+                                        <td>{{ $perfil->fecha_boda?->format('d/m/Y') ?? '-' }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -139,5 +216,20 @@
             </div>
         </div>
         </div>
+        
     </section>
 @endsection
+
+@push('admin-scripts')
+    <script>
+        window.dashboardData = @js([
+            'usuariosPorRol' => $usuariosPorRol,
+            'serviciosPorCategoria' => $serviciosPorCategoria,
+            'altasUsuariosPorMes' => $altasUsuariosPorMes,
+            'altasServiciosPorMes' => $altasServiciosPorMes,
+            'topCategorias' => $topCategorias,
+        ]);
+    </script>
+
+    @vite(['resources/js/dashboard.js'])
+@endpush

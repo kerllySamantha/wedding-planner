@@ -1030,7 +1030,9 @@ body.is-admin.sidebar-is-collapsed .admin-brand-link {
   height: 2.2rem;
   font-size: 0.8rem;
   background: var(--pu-avatar-bg, var(--admin-primary));
-  user-select: none;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
 }
 
 .pu-avatar--lg {
@@ -1050,7 +1052,8 @@ body.is-admin.sidebar-is-collapsed .admin-brand-link {
   width: 6rem;
   height: 6rem;
   border-radius: 50%;
-  object-fit: cover;
+  -o-object-fit: cover;
+     object-fit: cover;
   border: 3px solid rgba(180, 210, 245, 0.7);
   box-shadow: 0 4px 18px rgba(30, 70, 160, 0.14);
 }
@@ -1063,7 +1066,9 @@ body.is-admin.sidebar-is-collapsed .admin-brand-link {
   font-size: 2rem;
   font-weight: 700;
   letter-spacing: -0.02em;
-  user-select: none;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
 }
 .foto-upload-wrapper .foto-upload-btn {
   position: absolute;
@@ -1204,7 +1209,9 @@ body.is-admin.sidebar-is-collapsed .admin-brand-link {
   letter-spacing: -0.02em;
   box-shadow: 0 4px 18px rgba(20, 89, 184, 0.32);
   flex-shrink: 0;
-  user-select: none;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
   border: 3px solid rgba(255, 255, 255, 0.85);
   position: relative;
   z-index: 1;
@@ -1476,14 +1483,16 @@ body.is-admin .table thead th {
 .entity-icon-chip__image {
   width: 1.45rem;
   height: 1.45rem;
-  object-fit: contain;
+  -o-object-fit: contain;
+     object-fit: contain;
   display: block;
 }
 
 .categoria-icon-thumb {
   width: 2.2rem;
   height: 2.2rem;
-  object-fit: contain;
+  -o-object-fit: contain;
+     object-fit: contain;
   border-radius: 8px;
   background: white;
   padding: 3px;
@@ -1544,7 +1553,8 @@ body.is-admin .table thead th {
 .category-icon-preview-visual img {
   width: 100%;
   height: 170px;
-  object-fit: contain;
+  -o-object-fit: contain;
+     object-fit: contain;
   padding: 1rem;
 }
 
@@ -1840,6 +1850,9 @@ body.is-admin .admin-form .form-select {
   border-color: rgba(185, 215, 245, 0.7) !important;
   color: #0b1e33;
 }
+body.is-admin .admin-form .form-control::-moz-placeholder, body.is-admin .admin-form .form-select::-moz-placeholder {
+  color: #9ab4cc;
+}
 body.is-admin .admin-form .form-control::placeholder,
 body.is-admin .admin-form .form-select::placeholder {
   color: #9ab4cc;
@@ -1916,4 +1929,4 @@ body.is-admin .alert-warning {
   background: rgba(255, 250, 225, 0.85);
   border-color: #f5dfa0;
   color: #7a5200;
-}
+}/*# sourceMappingURL=admin-styles.css.map */

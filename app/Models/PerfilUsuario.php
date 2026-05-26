@@ -12,6 +12,10 @@ class PerfilUsuario extends Model
 
     protected $fillable = ['usuario_id', 'direccion', 'telefono', 'fecha_boda', 'poblacion_id'];
 
+    protected $casts = [
+    'fecha_boda' => 'date',
+];
+
     
     public function user(){
         return $this->belongsTo(User::class, 'usuario_id');

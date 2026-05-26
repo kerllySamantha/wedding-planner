@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\NotificacionController;
 use App\Http\Controllers\Api\PoblacionController;
 use App\Http\Controllers\Api\PresupuestoController;
+use App\Http\Controllers\Api\PresupuestoPdfController;
 use App\Http\Controllers\Api\ProvinciaController;
 use App\Http\Controllers\Api\ReseniaController;
 use App\Http\Controllers\Api\BodaController;
@@ -40,6 +41,7 @@ Route::get('provincias/poblacion/{id}', [ProvinciaController::class, 'getByProvi
 Route::get('categorias/tipo/{id}', [CategoriaController::class, 'getByCategoria']);
 Route::get('/detalles/presupuesto/{id}', [ItemPresupuestoController::class, 'getByPresupuesto']);
 Route::get('/presupuestos/boda/{id}', [PresupuestoController::class, 'getPresupuestoByBoda']);
+Route::get('/presupuestos/boda/{id}/pdf', [PresupuestoPdfController::class, 'generarPorBoda']);
 Route::prefix('reservas')->group(function () {
     Route::get('calendario/empresa/{id}', [ReservaController::class, 'getCalendario']);
     Route::get('empresa/{id}', [ReservaController::class, 'getReservaEmpresa']);

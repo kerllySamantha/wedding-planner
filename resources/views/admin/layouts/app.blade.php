@@ -35,7 +35,7 @@
 
     @include('partials.scripts')
     @stack('admin-scripts')
-
+    
 
 </body>
 

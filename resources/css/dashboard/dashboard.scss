@@ -220,7 +220,65 @@ body.is-admin .dashboard-quick-actions .crud-toolbar {
   }
 }
 
-// ── 4. Paneles de tabla ────────────────────────────────────
+// ── 4. Tarjetas de gráfico ─────────────────────────────────
+.dashboard-chart-card {
+  @extend %glass-card;
+  padding: 1.4rem 1.5rem 1.6rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: .85rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: .9rem;
+    border-bottom: 1px solid $d-inner-line;
+  }
+
+  &__icon {
+    width: 2.4rem;
+    height: 2.4rem;
+    min-width: 2.4rem;
+    border-radius: 10px;
+    background: rgba(20, 89, 184, 0.12);
+    border: 1px solid rgba(20, 89, 184, 0.20);
+    color: #1459b8;
+    display: grid;
+    place-items: center;
+    font-size: 1rem;
+  }
+
+  &__title {
+    font-size: .85rem;
+    font-weight: 700;
+    color: #0b1e33;
+    line-height: 1.2;
+    margin-bottom: .15rem;
+  }
+
+  &__subtitle {
+    font-size: .74rem;
+    color: $d-muted;
+    line-height: 1.3;
+  }
+
+  &__body {
+    position: relative;
+    width: 100%;
+    padding-top: .5rem;
+
+    canvas {
+      position: absolute;
+      inset: 0;
+      width: 100% !important;
+      height: 100% !important;
+    }
+  }
+}
+
+// ── 5. Paneles de tabla ────────────────────────────────────
 .dashboard-tables {
 
   // La card contenedora — más opaca que las stat-cards para que la tabla destaque
