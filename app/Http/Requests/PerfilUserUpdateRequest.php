@@ -32,6 +32,7 @@ class PerfilUserUpdateRequest extends FormRequest
             // Usuario
             'name' => 'required|string|max:255',
             'fotoPerfil' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:5120'],
+            'foto_perfil' => ['nullable', 'string'],
 
             'email' => [
                 'required',

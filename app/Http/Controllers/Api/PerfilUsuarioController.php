@@ -105,6 +105,10 @@ class PerfilUsuarioController extends Controller
                 $user->password = bcrypt($request->password);
             }
 
+            if ($request->filled('foto_perfil')) {
+                $user->fotoPerfil = $request->input('foto_perfil');
+            }
+
             $user->syncRoles([$request->rol]);
             $user->save();
 

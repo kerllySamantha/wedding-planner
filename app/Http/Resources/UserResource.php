@@ -19,6 +19,9 @@ class UserResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'rol' => $this->getRoleNames()->first(),
+            'fotoPerfil' => $this->fotoPerfil
+                ? asset('storage/' . $this->fotoPerfil)
+                : null,
         ];
     }
 }

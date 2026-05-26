@@ -34,12 +34,15 @@
         {{-- ── FOTO DE PERFIL ── --}}
         @php
             $fotoActual = $isEdit ? ($perfilUsuario->user?->fotoPerfil ?? null) : null;
+            $fotoUrl = $fotoActual
+                ? (str_starts_with($fotoActual, 'http') ? $fotoActual : asset('storage/' . $fotoActual))
+                : null;
             $inicialFoto = strtoupper(substr($isEdit ? ($perfilUsuario->user?->name ?? 'U') : 'U', 0, 1));
         @endphp
         <div class="text-center py-2">
             <div class="foto-upload-wrapper" id="fotoUploadWrapper">
-                @if ($fotoActual)
-                    <img src="{{ asset('storage/' . $fotoActual) }}"
+                @if ($fotoUrl)
+                    <img src="{{ $fotoUrl }}"
                          alt="Foto de perfil"
                          id="fotoPreviewImg"
                          class="foto-upload-img">
@@ -151,7 +154,7 @@
                     </label>
                     <input type="date" id="fecha_boda" name="fecha_boda"
                         class="form-control @error('fecha_boda') is-invalid @enderror"
-                        value="{{ old('fecha_boda', $perfilUsuario->fecha_boda) }}"
+                        value="{{ old('fecha_boda', $perfilUsuario->fecha_boda?->format('Y-m-d')) }}"
                         required>
                     @error('fecha_boda')
                         <div class="invalid-feedback">{{ $message }}</div>

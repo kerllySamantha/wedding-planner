@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
 class UserRequest extends FormRequest
@@ -20,27 +21,44 @@ class UserRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
-    {
-        return [
-            'name' => 'required|string',
-            'email' => 'required|email',
-            // 'password' => [
-            //     'required',
-            //     'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&]).{8,}$/'
-            // ],
-             'fotoPerfil' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:5120'],
-            'password' => ['required', Password::min(8)
+ public function rules(): array
+{
+    $userId = $this->route('user') ?? $this->route('id');
+
+    return [
+        'name' => ['required', 'string', 'max:255'],
+
+        'email' => [
+            'required',
+            'email',
+            'max:255',
+            Rule::unique('users', 'email')->ignore($userId),
+        ],
+
+        'fotoPerfil' => [
+            'nullable',
+            'image',
+            'mimes:jpg,jpeg,png,webp,gif',
+            'max:5120',
+        ],
+
+        'password' => [
+            'nullable',
+            Password::min(8)
                 ->letters()
                 ->mixedCase()
                 ->numbers()
                 ->symbols()
-                ->uncompromised()],
-            'rol' => 'required|string|exists:roles,name',
+                ->uncompromised(),
+        ],
 
-
-        ];
-    }
+        'rol' => [
+            'required',
+            'string',
+            'exists:roles,name',
+        ],
+    ];
+}
 
     public function messages(): array
     {
