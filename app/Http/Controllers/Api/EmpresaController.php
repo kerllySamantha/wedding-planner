@@ -274,6 +274,76 @@ class EmpresaController extends Controller
         ], 200);
     }
 
+    public function estadisticas(string $id)
+    {
+        Empresa::findOrFail($id);
+        $year = now()->year;
+
+        // Reservas por estado (global)
+        $reservasPorEstado = DB::table('reservas')
+            ->where('empresa_id', $id)
+            ->select('estado', DB::raw('COUNT(*) as total'))
+            ->groupBy('estado')
+            ->get();
+
+        // Reservas por mes del año actual (12 meses completos)
+        $rawPorMes = DB::table('reservas')
+            ->where('empresa_id', $id)
+            ->whereYear('fecha_inicio', $year)
+            ->select(DB::raw("DATE_FORMAT(fecha_inicio, '%m') as mes"), DB::raw('COUNT(*) as total'))
+            ->groupBy('mes')
+            ->orderBy('mes')
+            ->get()
+            ->keyBy('mes');
+
+        $reservasPorMes = collect(range(1, 12))->map(function ($m) use ($rawPorMes) {
+            $key = str_pad($m, 2, '0', STR_PAD_LEFT);
+            return ['mes' => $key, 'total' => $rawPorMes->get($key)?->total ?? 0];
+        });
+
+        // Top 5 productos con más reservas
+        $topProductos = DB::table('productos')
+            ->leftJoin('reservas', 'reservas.producto_id', '=', 'productos.id')
+            ->where('productos.empresa_id', $id)
+            ->select('productos.nombre', DB::raw('COUNT(reservas.id) as total'))
+            ->groupBy('productos.id', 'productos.nombre')
+            ->orderByDesc('total')
+            ->limit(5)
+            ->get();
+
+        // Distribución de valoraciones 1–5 estrellas
+        $rawValoraciones = DB::table('resenias')
+            ->where('empresa_id', $id)
+            ->whereNotNull('puntuacion')
+            ->select(DB::raw('ROUND(puntuacion) as estrella'), DB::raw('COUNT(*) as total'))
+            ->groupBy('estrella')
+            ->get()
+            ->keyBy('estrella');
+
+        $distribucionValoraciones = collect(range(1, 5))->map(fn ($i) => [
+            'estrella' => $i,
+            'total'    => $rawValoraciones->get($i)?->total ?? 0,
+        ]);
+
+        $mediaValoracion = DB::table('resenias')
+            ->where('empresa_id', $id)
+            ->avg('puntuacion');
+
+        return response()->json([
+            'status' => 'success',
+            'data' => [
+                'reservasPorEstado'       => $reservasPorEstado,
+                'reservasPorMes'          => $reservasPorMes,
+                'topProductos'            => $topProductos,
+                'distribucionValoraciones'=> $distribucionValoraciones,
+                'mediaValoracion'         => round($mediaValoracion ?? 0, 1),
+                'totalReservas'           => DB::table('reservas')->where('empresa_id', $id)->count(),
+                'totalResenias'           => DB::table('resenias')->where('empresa_id', $id)->count(),
+                'totalProductos'          => DB::table('productos')->where('empresa_id', $id)->count(),
+            ],
+        ]);
+    }
+
     public function getEmpresaPorUsuario(User $user)
     {
         $empresa = Empresa::where('user_id', $user->id)

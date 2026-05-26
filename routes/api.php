@@ -48,6 +48,7 @@ Route::prefix('reservas')->group(function () {
     Route::get('empresa/{id}/estado/{estado}', [ReservaController::class, 'getRersevaPorConfirmar']);
 });
 Route::get('/empresa/usuario/{user}', [EmpresaController::class, 'getEmpresaPorUsuario']);
+Route::get('/empresa/{id}/estadisticas', [EmpresaController::class, 'estadisticas']);
 Route::get('empresas/{empresa}/productos', [EmpresaController::class, 'productos']);
 
 
