@@ -36,6 +36,7 @@ class DatabaseSeeder extends Seeder
             ProductoSeeder::class,
             BodaSeeder::class,
             ReservaSeeder::class,
+            ReservaFotografiaSeeder::class,
             PresupuestoSeeder::class,
             ReseniaSeeder::class,
             InvitadoSeeder::class,
