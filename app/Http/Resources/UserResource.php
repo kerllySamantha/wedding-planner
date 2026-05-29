@@ -20,7 +20,9 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'rol' => $this->getRoleNames()->first(),
             'fotoPerfil' => $this->fotoPerfil
-                ? asset('storage/' . $this->fotoPerfil)
+                ? (str_starts_with($this->fotoPerfil, 'http') || str_starts_with($this->fotoPerfil, '/')
+                    ? $this->fotoPerfil
+                    : asset('storage/' . $this->fotoPerfil))
                 : null,
         ];
     }

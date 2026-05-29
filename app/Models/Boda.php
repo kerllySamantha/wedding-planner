@@ -17,6 +17,10 @@ class Boda extends Model
         'fotos',
     ];
 
+    protected $casts = [
+        'fotos' => 'array',
+    ];
+
     public function usuario()
     {
         return $this->belongsTo(User::class, 'usuario_id');

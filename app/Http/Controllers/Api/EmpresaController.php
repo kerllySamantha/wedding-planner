@@ -45,34 +45,13 @@ class EmpresaController extends Controller
 
                 $user->assignRole($validated['rol']);
 
-                if ($request->hasFile('logo')) {
-                    $validated['logo'] = $request->file('logo')
-                        ->store('logos', 'public');
+                if (!empty($validated['fotoPerfil'])) {
+                    $user->update(['fotoPerfil' => $validated['fotoPerfil']]);
                 }
 
-                if ($request->hasFile('fotos')) {
-                    $validated['fotos'] = collect($request->file('fotos'))
-                        ->values()
-                        ->map(function ($foto, $index) use ($user) {
-                            $numero = $index + 1;
-                            $extension = $foto->getClientOriginalExtension();
-
-                            $path = $foto->storeAs(
-                                "imagenes/empresa_{$user->id}",
-                                "imagen_{$numero}.{$extension}",
-                                'public'
-                            );
-
-                            return [
-                                'path' => $path,
-                                'url' => asset("storage/{$path}"),
-                            ];
-                        })
-                        ->toArray();
-                }
-
+                // logo and fotos arrive as strings/arrays pre-uploaded via SubirImagenController
                 $empresa = $user->empresa()->create(
-                    Arr::except($validated, ['name', 'email', 'password', 'rol'])
+                    Arr::except($validated, ['name', 'email', 'password', 'rol', 'fotoPerfil'])
                 );
 
                 return response()->json([
@@ -109,14 +88,16 @@ class EmpresaController extends Controller
         try {
             return DB::transaction(function () use ($validated, $request, $empresa) {
 
-                // 1. Usuario
+                // 2. Usuario
                 $this->updateUser($empresa->usuario, $validated);
 
-                // 2. Logo e Información de Empresa
-                $this->updateEmpresaData($empresa, $request, $validated);
+                // 3. Logo e Información de Empresa
+                $this->updateEmpresaData($empresa, $validated);
 
-                // 3. Productos
-                $this->handleProductos($empresa, $validated);
+                // 4. Productos (solo si se envían en el request)
+                if (array_key_exists('productos', $validated) || array_key_exists('productos_eliminados', $validated)) {
+                    $this->handleProductos($empresa, $validated);
+                }
 
                 return response()->json([
                     'status' => 'success',
@@ -139,9 +120,9 @@ class EmpresaController extends Controller
         }
     }
 
-    private function updateUser(User $user , array $validated): void
+    private function updateUser(User $user, array $validated): void
     {
-        $userData = Arr::only($validated, ['name', 'email']);
+        $userData = Arr::only($validated, ['name', 'email', 'fotoPerfil']);
 
         if (!empty($validated['password'])) {
             $userData['password'] = bcrypt($validated['password']);
@@ -157,15 +138,8 @@ class EmpresaController extends Controller
     }
 
 
-    private function updateEmpresaData(Empresa $empresa, UpdateEmpresaRequest $request, array $validated): void
+    private function updateEmpresaData(Empresa $empresa, array $validated): void
     {
-        if ($request->hasFile('logo')) {
-            if ($empresa->logo) {
-                Storage::disk('public')->delete($empresa->logo);
-            }
-            $validated['logo'] = $request->file('logo')->store('logos', 'public');
-        }
-
         $empresaData = Arr::only($validated, [
             'nombre_empresa',
             'direccion',
@@ -189,6 +163,13 @@ class EmpresaController extends Controller
         $productosEliminados = collect($validated['productos_eliminados'] ?? [])
             ->map(fn ($id) => (int) $id)
             ->all();
+
+        if (empty($validated['productos'])) {
+            if (!empty($productosEliminados)) {
+                $empresa->productos()->whereIn('id', $productosEliminados)->delete();
+            }
+            return;
+        }
 
         foreach ($validated['productos'] as $productoData) {
             $productoId = !empty($productoData['id']) ? (int) $productoData['id'] : null;

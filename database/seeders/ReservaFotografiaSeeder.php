@@ -7,6 +7,7 @@ use App\Models\Empresa;
 use Carbon\Carbon;
 use DB;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB as FacadesDB;
 
 class ReservaFotografiaSeeder extends Seeder
 {
@@ -104,7 +105,7 @@ class ReservaFotografiaSeeder extends Seeder
             }
         }
 
-        DB::table('reservas')->insert($reservas);
+        FacadesDB::table('reservas')->insert($reservas);
         $this->command->info("Creadas {$count} reservas para Fotografía Segovia (2025–2026).");
     }
 
