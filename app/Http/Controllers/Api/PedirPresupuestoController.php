@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\PedirPresupuestoRequest;
+use App\Http\Requests\StorePedirPresupuestoRequest;
+use App\Http\Requests\UpdatePedirPresupuestoRequest;
 use App\Http\Requests\ResponderPedirPresupuestoRequest;
 use App\Models\PedirPresupuesto;
 use App\Models\Producto;
@@ -34,7 +35,7 @@ class PedirPresupuestoController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(PedirPresupuestoRequest $request)
+    public function store(StorePedirPresupuestoRequest $request)
     {
         $pedirPresupuesto = PedirPresupuesto::create([
             ...$request->validated(),
@@ -76,7 +77,7 @@ class PedirPresupuestoController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(PedirPresupuestoRequest $request, PedirPresupuesto $pedirPresupuesto)
+    public function update(UpdatePedirPresupuestoRequest $request, PedirPresupuesto $pedirPresupuesto)
     {
         $pedirPresupuesto->update($request->validated());
 

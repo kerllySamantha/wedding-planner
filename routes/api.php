@@ -50,6 +50,8 @@ Route::prefix('reservas')->group(function () {
 Route::get('/empresa/usuario/{user}', [EmpresaController::class, 'getEmpresaPorUsuario']);
 Route::get('/empresa/{id}/estadisticas', [EmpresaController::class, 'estadisticas']);
 Route::get('empresas/{empresa}/productos', [EmpresaController::class, 'productos']);
+Route::get('/poblaciones/{poblacion}', [PoblacionController::class, 'show'])
+    ->name('poblaciones.show');
 
 
 Route::apiResource('bodas', BodaController::class);
@@ -61,7 +63,7 @@ Route::apiResource('perfiles', PerfilUsuarioController::class);
 Route::apiResource('usuarios', UserController::class);
 Route::apiResource('mensajes', MensajeController::class);
 Route::apiResource('provincias', ProvinciaController::class)->only(['index', 'show']);
-Route::apiResource('poblaciones', PoblacionController::class)->only('index');
+Route::apiResource('poblaciones', PoblacionController::class)->only(['index']);
 Route::apiResource('tipos', TipoProductoController::class);
 Route::apiResource('productos', ProductoController::class)->
 parameters(['productos' => 'producto'])->only('index');

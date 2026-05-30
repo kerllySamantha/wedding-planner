@@ -60,10 +60,10 @@ Route::get('/test-webp', function () {
 */
 
 Route::middleware('guest')->group(function () {
-    Route::get('/login', [AuthenticationController::class, 'showLogin'])
+    Route::get('/admin-login', [AuthenticationController::class, 'showLogin'])
         ->name('login');
 
-    Route::post('/login', [AuthenticationController::class, 'login'])
+    Route::post('/admin-login', [AuthenticationController::class, 'login'])
         ->name('login.post');
 });
 
@@ -74,10 +74,10 @@ Route::middleware('guest')->group(function () {
 */
 
 Route::middleware('auth')->group(function () {
-    Route::post('/logout', [AuthenticationController::class, 'logout'])
+    Route::post('/admin-logout', [AuthenticationController::class, 'logout'])
         ->name('logout');
 
-    Route::get('/dashboard', function () {
+    Route::get('/admin-dashboard', function () {
         return redirect()->route('admin.dashboard');
     })->name('dashboard');
 
@@ -96,7 +96,7 @@ Route::prefix('admin')
     ->middleware(['auth', 'role:admin'])
     ->name('admin.')
     ->group(function () {
-        Route::get('/dashboard', [AdminDashboardController::class, 'index'])
+        Route::get('/admin-dashboard', [AdminDashboardController::class, 'index'])
             ->name('dashboard');
 
         Route::middleware('permission:gestionar usuarios')->group(function () {

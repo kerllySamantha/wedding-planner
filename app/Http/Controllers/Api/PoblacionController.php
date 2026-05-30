@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Resources\PoblacionCollection;
 use App\Models\Poblacion;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\PoblacionResourse;
 use Illuminate\Http\Request;
 
 class PoblacionController extends Controller
@@ -46,7 +47,9 @@ class PoblacionController extends Controller
      */
     public function show(Poblacion $poblacion)
     {
-        //
+        $poblacion->load('provincia');
+
+        return new PoblacionResourse($poblacion);
     }
 
     /**

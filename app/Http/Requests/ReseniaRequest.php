@@ -26,7 +26,7 @@ class ReseniaRequest extends FormRequest
             'empresa_id' => 'required',
             'puntuacion' => 'integer',
             'comentario' => 'string',
-            'fotos' => 'required|array',
+            'fotos' => 'nullable|array',
             'fotos.*' => 'string',
         ];
     }

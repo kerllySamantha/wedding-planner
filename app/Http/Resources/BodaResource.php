@@ -64,6 +64,25 @@ class BodaResource extends JsonResource
             ->unique('empresa_id')
             ->values();
 
+        $empresaIds = $this->reservas->pluck('empresa_id')->filter()->unique();
+        $resenias = $this->usuario->resenias
+            ->filter(fn($r) => $empresaIds->contains($r->empresa_id))
+            ->map(fn($r) => [
+                'id'         => $r->id,
+                'puntuacion' => $r->puntuacion,
+                'comentario' => $r->comentario,
+                'fotos'      => is_array($r->fotos) ? $r->fotos : (json_decode($r->fotos, true) ?? []),
+                'usuario'    => [
+                    'id'         => $this->usuario->id,
+                    'name'       => $this->usuario->name,
+                    'fotoPerfil' => null,
+                ],
+                'empresa' => $r->empresa ? [
+                    'id'     => $r->empresa->id,
+                    'nombre' => $r->empresa->nombre_empresa,
+                ] : null,
+            ])->values();
+
         return [
             'id' => $this->id,
             'nombre_pareja' => $this->nombre_pareja,
@@ -90,11 +109,23 @@ class BodaResource extends JsonResource
                 'fotos' => $fotosConUrl->values(),
             ],
 
+            // Reservas completas para lógica de reseñas/fotos en el frontend.
+            'reservas' => $this->reservas->map(fn($r) => [
+                'id'         => $r->id,
+                'empresa_id' => $r->empresa_id,
+                'estado'     => $r->estado,
+                'empresa'    => $r->empresa ? [
+                    'id'             => $r->empresa->id,
+                    'nombre_empresa' => $r->empresa->nombre_empresa,
+                ] : null,
+            ])->values(),
+
             // Compatibilidad temporal con frontend existente.
             'presupuestos' => $presupuestos,
             'resumen_presupuesto' => $resumenPresupuesto,
             'proveedores' => $proveedores,
             'fotos' => $fotos,
+            'resenias' => $resenias,
         ];
     }
 }

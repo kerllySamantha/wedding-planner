@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\UserRequest;
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserCollection;
 use App\Http\Resources\UserResource;
 use App\Models\User;
@@ -32,7 +33,7 @@ public function index()
     /**
      * Store a newly created resource in storage.
      */
-    public function store(UserRequest $request)
+    public function store(StoreUserRequest $request)
     {
 
         $validated = $request->validated();
@@ -83,7 +84,7 @@ public function index()
     /**
      * Update the specified resource in storage.
      */
-   public function update(UserRequest $request, string $id)
+   public function update(UpdateUserRequest $request, string $id)
 {
     $user = User::findOrFail($id);
 

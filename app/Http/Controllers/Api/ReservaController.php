@@ -4,7 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ReservaRequest;
+use App\Http\Requests\StoreReservaRequest;
+use App\Http\Requests\UpdateReservaRequest;
 use App\Http\Resources\ReservaCollection;
 use App\Http\Resources\ReservaResource;
 use App\Models\Boda;
@@ -48,7 +49,7 @@ class ReservaController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(ReservaRequest $request)
+    public function store(StoreReservaRequest $request)
     {
         $reserva = Reserva::create([
             'user_id' => $request->user_id,
@@ -99,7 +100,7 @@ class ReservaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(ReservaRequest $request, string $id)
+    public function update(UpdateReservaRequest $request, string $id)
     {
         $reserva = Reserva::findOrFail($id);
         $reserva->update([

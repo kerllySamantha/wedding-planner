@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ReseniaRequest;
+use App\Http\Requests\StoreReseniaRequest;
+use App\Http\Requests\UpdateReseniaRequest;
 use App\Http\Resources\ReseniaCollection;
 use App\Http\Resources\ReseniaEmpresaCollection;
 use App\Http\Resources\ReseniaResource;
+use App\Models\Boda;
 use App\Models\Resenia;
 use Illuminate\Http\Request;
 
@@ -24,18 +26,40 @@ class ReseniaController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(ReseniaRequest $request)
+    public function store(StoreReseniaRequest $request)
     {
+        $validated = $request->validated();
+        $userId    = $validated['user_id'];
+        $empresaId = $validated['empresa_id'];
+
+        // Solo se puede reseñar a un proveedor de la boda, y solo cuando la fecha ha pasado
+        $bodaConReserva = Boda::where('usuario_id', $userId)
+            ->whereDate('fecha_boda', '<=', today())
+            ->whereHas('reservas', fn ($q) => $q->where('empresa_id', $empresaId))
+            ->exists();
+
+        if (!$bodaConReserva) {
+            return response()->json([
+                'message' => 'Solo puedes reseñar a proveedores de tu boda y una vez que haya pasado la fecha del evento.',
+                'status'  => 'error',
+            ], 403);
+        }
+
+        // Evitar reseñas duplicadas
+        if (Resenia::where('user_id', $userId)->where('empresa_id', $empresaId)->exists()) {
+            return response()->json([
+                'message' => 'Ya has escrito una reseña para este proveedor.',
+                'status'  => 'error',
+            ], 409);
+        }
+
         $resenia = new Resenia();
 
-        $resenia->user_id = $request->validated()['user_id'];
-        $resenia->empresa_id = $request->validated()['empresa_id'];
-        $resenia->puntuacion = $request->validated()['puntuacion'];
-        $resenia->comentario = $request->validated()['comentario'];
-        $resenia->fotos = $request->validated()['fotos'];
-        // if ($request->hasFile('imagen')) {
-        //     $rese->imagen = $request->file('imagen')->store('imagenes', 'public');
-        // }
+        $resenia->user_id    = $userId;
+        $resenia->empresa_id = $empresaId;
+        $resenia->puntuacion = $validated['puntuacion'];
+        $resenia->comentario = $validated['comentario'];
+        $resenia->fotos      = $validated['fotos'] ?? [];
 
         if (!$resenia->save()) {
             return response()->json([
@@ -70,14 +94,14 @@ class ReseniaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(ReseniaRequest $request, string $id)
+    public function update(UpdateReseniaRequest $request, string $id)
     {
-        $resenia = Resenia::findOrFail($id);
-        $resenia->user_id = $request->validated()['user_id'];
-        $resenia->empresa_id = $request->validated()['empresa_id'];
-        $resenia->puntuacion = $request->validated()['puntuacion'];
-        $resenia->comentario = $request->validated()['comentario'];
-        $resenia->fotos = $request->validated()['fotos'];
+        $resenia   = Resenia::findOrFail($id);
+        $validated = $request->validated();
+
+        if (isset($validated['puntuacion'])) $resenia->puntuacion = $validated['puntuacion'];
+        if (isset($validated['comentario'])) $resenia->comentario = $validated['comentario'];
+        if (array_key_exists('fotos', $validated)) $resenia->fotos = $validated['fotos'] ?? [];
         if (!$resenia->save()) {
             return response()->json([
                 'message' => 'No se ha podido actualizar la resenia',

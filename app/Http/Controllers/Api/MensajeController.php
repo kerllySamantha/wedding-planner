@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\MensajeRequest;
+use App\Http\Requests\StoreMensajeRequest;
+use App\Http\Requests\UpdateMensajeRequest;
 use App\Http\Resources\MensajeCollection;
 use App\Http\Resources\MensajeResource;
 use App\Models\Mensaje;
@@ -23,7 +24,7 @@ class MensajeController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(MensajeRequest $request)
+    public function store(StoreMensajeRequest $request)
     {
         $validated = $request->validated();
 
@@ -79,7 +80,7 @@ class MensajeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(MensajeRequest $request, string $id)
+    public function update(UpdateMensajeRequest $request, string $id)
     {
         $mensaje = Mensaje::findOrFail($id);
         $mensaje->emisor_id = $request->emisor_id;
