@@ -7,7 +7,6 @@ use App\Http\Requests\BodaRequest;
 use App\Http\Resources\BodaCollection;
 use App\Http\Resources\BodaResource;
 use App\Models\Boda;
-use GrahamCampbell\ResultType\Success;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -79,8 +78,13 @@ class BodaController extends Controller
         $boda->nombre_pareja = $request->nombre_pareja;
         $boda->fecha_boda = $request->fecha_boda;
         $boda->ubicacion = $request->ubicacion;
-        $boda->presupuesto = $request->presupuesto;
         $boda->notas = $request->notas;
+        if ((int)$request->poblacion_id > 0) {
+            $boda->poblacion_id = (int)$request->poblacion_id;
+        }
+        if ($request->has('fotos')) {
+            $boda->fotos = $request->fotos;
+        }
         $boda->save();
 
         return response()->json([

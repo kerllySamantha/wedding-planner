@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\NotificacionController;
 use App\Http\Controllers\Api\PoblacionController;
 use App\Http\Controllers\Api\PresupuestoController;
+use App\Http\Controllers\Api\PresupuestoPdfController;
 use App\Http\Controllers\Api\ProvinciaController;
 use App\Http\Controllers\Api\ReseniaController;
 use App\Http\Controllers\Api\BodaController;
@@ -20,6 +21,8 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\SubirImagenController;
 use App\Http\Controllers\Api\TipoProductoController;
 use App\Http\Controllers\Api\ItemPresupuestoController;
+use App\Http\Controllers\Api\StripeController;
+use App\Http\Controllers\Api\WebhookController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Broadcast;
@@ -38,12 +41,14 @@ Route::get('provincias/poblacion/{id}', [ProvinciaController::class, 'getByProvi
 Route::get('categorias/tipo/{id}', [CategoriaController::class, 'getByCategoria']);
 Route::get('/detalles/presupuesto/{id}', [ItemPresupuestoController::class, 'getByPresupuesto']);
 Route::get('/presupuestos/boda/{id}', [PresupuestoController::class, 'getPresupuestoByBoda']);
+Route::get('/presupuestos/boda/{id}/pdf', [PresupuestoPdfController::class, 'generarPorBoda']);
 Route::prefix('reservas')->group(function () {
     Route::get('calendario/empresa/{id}', [ReservaController::class, 'getCalendario']);
     Route::get('empresa/{id}', [ReservaController::class, 'getReservaEmpresa']);
     Route::get('empresa/{id}/estado/{estado}', [ReservaController::class, 'getRersevaPorConfirmar']);
 });
 Route::get('/empresa/usuario/{user}', [EmpresaController::class, 'getEmpresaPorUsuario']);
+Route::get('/empresa/{id}/estadisticas', [EmpresaController::class, 'estadisticas']);
 Route::get('empresas/{empresa}/productos', [EmpresaController::class, 'productos']);
 
 
@@ -95,6 +100,10 @@ Route::get('/test-reverb', function () {
     broadcast(new \App\Events\TestEvent("Hola Angular"));
     return "OK";
 });
+
+Route::post('stripe/webhook', [WebhookController::class, 'handle']);
+Route::post('stripe/create-payment-intent', [StripeController::class, 'createPaymentIntent'])
+    ->middleware('auth:sanctum');
 
 
 // Route::apiResource('servicios', ServicioController::class)->only('index');

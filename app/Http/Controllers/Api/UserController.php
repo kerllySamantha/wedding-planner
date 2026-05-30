@@ -8,6 +8,8 @@ use App\Http\Resources\UserCollection;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -81,26 +83,41 @@ public function index()
     /**
      * Update the specified resource in storage.
      */
-    public function update(UserRequest $request, string $id)
-    {
-        $user = User::findOrFail($id);
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->password = $request->password;
+   public function update(UserRequest $request, string $id)
+{
+    $user = User::findOrFail($id);
 
-        if (!$user->save()) { {
-                return response()->json([
-                    'message' => 'No se ha podido modificar un usuario',
-                    'status' => 'error'
-                ], 400);
-            }
-            return response()->json([
-                'status' => 'success',
-                'data' => $user,
-                'message' => 'Se ha modificado el usuario correctamente'
-            ], 200);
-        }
+    $user->name = $request->name;
+    $user->email = $request->email;
+
+    if ($request->filled('password')) {
+        $user->password = Hash::make($request->password);
     }
+
+    if ($request->hasFile('fotoPerfil')) {
+        if ($user->fotoPerfil) {
+            Storage::disk('public')->delete($user->fotoPerfil);
+        }
+
+        $user->fotoPerfil = $request->file('fotoPerfil')
+            ->store('imagenes/usuarios', 'public');
+    }
+
+    $user->syncRoles([$request->rol]);
+
+    if (!$user->save()) {
+        return response()->json([
+            'message' => 'No se ha podido modificar el usuario',
+            'status' => 'error'
+        ], 400);
+    }
+
+    return response()->json([
+        'status' => 'success',
+        'data' => $user,
+        'message' => 'Se ha modificado el usuario correctamente'
+    ], 200);
+}
 
     /**
      * Remove the specified resource from storage.

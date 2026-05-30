@@ -35,7 +35,7 @@
                             <th>Nombre</th>
                             <th>Categoria</th>
                             <th>Modalidad</th>
-                            <th>Productos</th>
+                            <!-- <th>Productos</th> -->
                             <th class="text-end">Acciones</th>
                         </tr>
                     </thead>
@@ -50,7 +50,7 @@
                                 <td>
                                     <span class="badge text-bg-light border">{{ ucfirst($tipoProducto->modalidad) }}</span>
                                 </td>
-                                <td>{{ $tipoProducto->productos_count }}</td>
+                                <!-- <td>{{ $tipoProducto->productos_count }}</td> -->
                                 <td class="text-end">
                                     <div class="table-actions">
                                         <a href="{{ route('admin.tipos-producto.show', $tipoProducto) }}"

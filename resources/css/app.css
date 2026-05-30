@@ -1,3 +1,11 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@font-face {
+    font-family: 'ElmsSans';
+    /* src: url('../fonts/ElmsSans-bold.ttf') format('truetype'); */
+    src: url('../fonts/LibreFranklin-VariableFont_wght.ttf');
+    font-weight: 700 ;
+    font-style: normal;
+}
+
+*, body {
+    font-family: 'ElmsSans' !important;
+}

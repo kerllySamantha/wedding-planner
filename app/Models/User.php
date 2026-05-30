@@ -24,6 +24,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'fotoPerfil',
     ];
 
     /**
@@ -82,7 +83,7 @@ class User extends Authenticatable
     }
 
     public function perfil(){
-        return $this->hasOne(PerfilUsuario::class);
+        return $this->hasOne(PerfilUsuario::class, 'usuario_id');
     }
 
     public function invitado()

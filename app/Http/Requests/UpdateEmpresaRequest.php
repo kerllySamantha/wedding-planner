@@ -4,91 +4,250 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
 
 class UpdateEmpresaRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
-        // Obtenemos el user_id de la empresa que viene en la ruta
         $empresa = $this->route('empresa');
         $userId = $empresa->user_id;
 
         return [
-            // --- Datos del usuario ---
-            'name' => 'required|string|max:255',
-            'email' => [
-                'sometimes',
-                'email',
-                Rule::unique('users', 'email')->ignore($userId), // ← ignora el usuario actual
-            ],
-            'password' => 'sometimes|nullable|string|min:8',
-            'rol' => 'sometimes|string|exists:roles,name',
 
-            // --- Datos de la empresa ---
-            'nombre_empresa' => 'required|string|max:255',
-            'direccion' => 'required|string',
-            'telefono' => 'sometimes|nullable|string|max:20',
-            'descripcion' => 'sometimes|nullable|string',
-            'tipo_servicio' => 'sometimes|nullable|string',
-            'poblacion_id' => 'required|exists:poblaciones,id',
-            'logo' => 'sometimes|nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            'fotos' => 'sometimes|nullable|array',
-            'fotos.*.path' => 'required|string',
-            'fotos.*.url' => 'required|string',
-            'productos' => 'required|array|min:1',
+            /*
+            |--------------------------------------------------------------------------
+            | DATOS USUARIO
+            |--------------------------------------------------------------------------
+            */
+
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+
+            'email' => [
+                'required',
+                'email',
+                'max:255',
+                Rule::unique('users', 'email')->ignore($userId),
+            ],
+
+            'fotoPerfil' => [
+                'sometimes',
+                'nullable',
+                'string',
+            ],
+
+            'password' => [
+                'nullable',
+                Password::min(8)
+                    ->letters()
+                    ->mixedCase()
+                    ->numbers()
+                    ->symbols()
+                    ->uncompromised(),
+            ],
+
+            'rol' => [
+                'sometimes',
+                'string',
+                'exists:roles,name',
+            ],
+
+            /*
+            |--------------------------------------------------------------------------
+            | DATOS EMPRESA
+            |--------------------------------------------------------------------------
+            */
+
+            'nombre_empresa' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+
+            'direccion' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+
+            'telefono' => [
+                'required',
+                'string',
+                'max:20',
+            ],
+
+            'descripcion' => [
+                'nullable',
+                'string',
+            ],
+
+            'tipo_servicio' => [
+                'required',
+                'string',
+            ],
+
+            'poblacion_id' => [
+                'required',
+                'exists:poblaciones,id',
+            ],
+
+            'logo' => [
+                'sometimes',
+                'nullable',
+                'string',
+            ],
+
+            /*
+            |--------------------------------------------------------------------------
+            | GALERIA
+            |--------------------------------------------------------------------------
+            */
+
+            'fotos' => [
+                'nullable',
+                'array',
+            ],
+
+            'fotos.*.path' => [
+                'required_with:fotos',
+                'string',
+            ],
+
+            'fotos.*.url' => [
+                'required_with:fotos',
+                'string',
+            ],
+
+            /*
+            |--------------------------------------------------------------------------
+            | PRODUCTOS
+            |--------------------------------------------------------------------------
+            */
+
+            'productos' => [
+                'sometimes',
+                'array',
+            ],
+
             'productos.*.id' => [
                 'nullable',
                 'integer',
                 Rule::exists('productos', 'id')->where(function ($query) use ($empresa) {
+
                     $query->where(function ($subQuery) use ($empresa) {
-                        $subQuery->where('empresa_id', $empresa->id)
+
+                        $subQuery
+                            ->where('empresa_id', $empresa->id)
                             ->orWhereNull('empresa_id');
+
                     });
+
                 }),
             ],
-            'productos.*.nombre' => 'required_with:productos|string|max:255',
-            'productos.*.descripcion' => 'nullable|string',
-            'productos.*.precio_min' => 'nullable|numeric|min:0', // ← corregido
-            'productos.*.precio_max' => 'nullable|numeric|min:0|gte:productos.*.precio_min',
-            'productos_eliminados.*' => 'integer',
-            'productos_eliminados' => 'sometimes|array',
 
+            'productos.*.nombre' => [
+                'required_with:productos',
+                'string',
+                'max:255',
+            ],
 
-            // TipoProducto
-            'productos.*.tipo_producto_id' => 'nullable|integer|exists:tipo_productos,id',
-            'productos.*.tipo_producto_nombre' => 'required_without:productos.*.tipo_producto_id|string|max:255',
-            'productos.*.tipo_producto_descripcion' => 'nullable|string',
-            // 'productos.*.modalidad' => 'nullable|string',
+            'productos.*.descripcion' => [
+                'nullable',
+                'string',
+            ],
 
-            // Categoria
-            'productos.*.categoria_nombre' => 'required_without:productos.*.tipo_producto_id|string|max:255',
+            'productos.*.precio_min' => [
+                'nullable',
+                'numeric',
+                'min:0',
+            ],
+
+            'productos.*.precio_max' => [
+                'nullable',
+                'numeric',
+                'min:0',
+            ],
+
+            /*
+            |--------------------------------------------------------------------------
+            | ELIMINADOS
+            |--------------------------------------------------------------------------
+            */
+
+            'productos_eliminados' => [
+                'sometimes',
+                'array',
+            ],
+
+            'productos_eliminados.*' => [
+                'integer',
+            ],
+
+            /*
+            |--------------------------------------------------------------------------
+            | TIPO PRODUCTO
+            |--------------------------------------------------------------------------
+            */
+
+            'productos.*.tipo_producto_id' => [
+                'nullable',
+                'integer',
+                'exists:tipo_productos,id',
+            ],
+
+            'productos.*.tipo_producto_nombre' => [
+                'required_without:productos.*.tipo_producto_id',
+                'string',
+                'max:255',
+            ],
+
+            'productos.*.tipo_producto_descripcion' => [
+                'nullable',
+                'string',
+            ],
+
+            /*
+            |--------------------------------------------------------------------------
+            | CATEGORIA
+            |--------------------------------------------------------------------------
+            */
+
+            'productos.*.categoria_nombre' => [
+                'required_without:productos.*.tipo_producto_id',
+                'string',
+                'max:255',
+            ],
         ];
     }
 
     public function messages(): array
     {
         return [
+
             'email.unique' => 'Este email ya está en uso por otro usuario.',
             'email.email' => 'El formato del email no es válido.',
+
             'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
+
             'logo.image' => 'El logo debe ser una imagen.',
-            'logo.max' => 'El logo no puede superar los 2MB.',
-            'fotos.*.path.required' => 'La ruta de la imagen es obligatoria.',
-            'fotos.*.url.required' => 'La URL de la imagen es obligatoria.',
-            'productos.*.id.exists' => 'Uno o más productos no pertenecen a esta empresa ni al catálogo general.',
+            'logo.max' => 'El logo no puede superar los 5MB.',
+
+            'fotos.*.path.required_with' => 'La ruta de la imagen es obligatoria.',
+            'fotos.*.url.required_with' => 'La URL de la imagen es obligatoria.',
+
+            'productos.required' => 'Debes añadir al menos un producto.',
+
+            'productos.*.id.exists' =>
+                'Uno o más productos no pertenecen a esta empresa ni al catálogo general.',
         ];
     }
 }

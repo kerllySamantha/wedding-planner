@@ -19,12 +19,12 @@ class TipoProductoController extends Controller
             ->orderBy('nombre')
             ->paginate(15);
 
-        return view('admin.TipoProducto.index', compact('tiposProducto'));
+        return view('admin.tipoProducto.index', compact('tiposProducto'));
     }
 
     public function create(): View
     {
-        return view('admin.TipoProducto.form', [
+        return view('admin.tipoProducto.form', [
             'tipoProducto' => new TipoProducto(),
             'categorias' => $this->getCategorias(),
             'isEdit' => false,
@@ -47,14 +47,14 @@ class TipoProductoController extends Controller
         $tipoProducto->load('categoria')
             ->loadCount(['productos', 'presupuestos']);
 
-        return view('admin.TipoProducto.show', compact('tipoProducto'));
+        return view('admin.tipoProducto.show', compact('tipoProducto'));
     }
 
     public function edit(TipoProducto $tipoProducto): View
     {
         $tipoProducto->load('categoria');
 
-        return view('admin.TipoProducto.form', [
+        return view('admin.tipoProducto.form', [
             'tipoProducto' => $tipoProducto,
             'categorias' => $this->getCategorias(),
             'isEdit' => true,

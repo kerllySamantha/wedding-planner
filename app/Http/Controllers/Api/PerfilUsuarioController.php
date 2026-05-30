@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PerfilUserUpdateRequest;
 use App\Http\Requests\PerfilUsuarioRequest;
 use App\Http\Requests\UserRequest;
 use App\Http\Resources\PerfilUsuarioResource;
@@ -90,25 +91,37 @@ class PerfilUsuarioController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(PerfilUsuarioRequest $request, string $id)
+    public function update(PerfilUserUpdateRequest $request, string $id)
     {
         $perfil = PerfilUsuario::findOrFail($id);
 
-        $perfil->usuario_id = $request->usuario_id;
-        $perfil->direccion = $request->direccion;
-        $perfil->telefono = $request->telefono;
+        DB::transaction(function () use ($request, $perfil) {
+            $user = User::findOrFail($perfil->usuario_id);
 
-        if (!$perfil->save()) {
-            return response()->json([
-                'message' => 'No se ha podido actualizar el perfil',
-                'status' => 'error',
-            ], 400);
-        }
+            $user->name  = $request->name;
+            $user->email = $request->email;
+
+            if ($request->filled('password')) {
+                $user->password = bcrypt($request->password);
+            }
+
+            if ($request->filled('foto_perfil')) {
+                $user->fotoPerfil = $request->input('foto_perfil');
+            }
+
+            $user->syncRoles([$request->rol]);
+            $user->save();
+
+            $perfil->direccion    = $request->direccion;
+            $perfil->telefono     = $request->telefono;
+            $perfil->poblacion_id = $request->poblacion_id;
+            $perfil->save();
+        });
 
         return response()->json([
             'message' => 'Perfil actualizado correctamente',
             'status' => 'success',
-            'data' => $perfil
+            'data' => new PerfilUsuarioResource($perfil->fresh()),
         ], 200);
     }
 

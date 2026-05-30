@@ -250,8 +250,15 @@
                         <input type="file" id="logo" name="logo" accept=".jpg,.jpeg,.png,.webp">
                         <i class="bi bi-cloud-plus" aria-hidden="true"></i>
                         <span>Haz clic para subir el logo</span>
-                        <small>.jpg, .jpeg, .png, .webp</small>
+                        <small>.jpg, .jpeg, .png, .webp · máx. 2 MB</small>
                     </label>
+
+                    @error('logo')
+                        <p class="text-danger small mt-1 mb-0">
+                            <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+                            {{ $message }}
+                        </p>
+                    @enderror
 
                     @if ($empresa->logo)
                         <div class="ec-thumbs mt-2">
@@ -271,6 +278,22 @@
                         <span>Haz clic para subir fotos</span>
                         <small>Múltiples archivos · máx. 3 MB por foto</small>
                     </label>
+
+                    @php
+                        $fotosErrors = collect($errors->messages())
+                            ->filter(fn ($msgs, $field) => str_starts_with($field, 'fotos.'))
+                            ->flatten()->unique()->values();
+                    @endphp
+                    @if ($fotosErrors->isNotEmpty())
+                        <div class="mt-1">
+                            @foreach ($fotosErrors as $err)
+                                <p class="text-danger small mb-0">
+                                    <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+                                    {{ $err }}
+                                </p>
+                            @endforeach
+                        </div>
+                    @endif
 
                     <p class="ec-hint mt-2">
                         <i class="bi bi-info-circle" aria-hidden="true"></i>

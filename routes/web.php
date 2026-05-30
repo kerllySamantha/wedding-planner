@@ -1,7 +1,9 @@
 <?php
 
 use App\Helpers\Helper;
+use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\AuthenticationController;
+use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\PerfilUsuarioController;
 use App\Http\Controllers\ProfileController;
@@ -79,14 +81,9 @@ Route::middleware('auth')->group(function () {
         return redirect()->route('admin.dashboard');
     })->name('dashboard');
 
-    Route::get('/profile', [ProfileController::class, 'edit'])
-        ->name('profile.edit');
-
-    Route::patch('/profile', [ProfileController::class, 'update'])
-        ->name('profile.update');
-
-    Route::delete('/profile', [ProfileController::class, 'destroy'])
-        ->name('profile.destroy');
+    Route::get('/profile/edit', [ProfileController::class, 'editBreeze'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'updateBreeze'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 /*
@@ -99,23 +96,8 @@ Route::prefix('admin')
     ->middleware(['auth', 'role:admin'])
     ->name('admin.')
     ->group(function () {
-        Route::get('/dashboard', function () {
-            return view('admin.dashboard', [
-                'stats' => [
-                    'empresas' => EmpresaModel::count(),
-                    'tiposProducto' => TipoProductoModel::count(),
-                    'perfilesUsuario' => PerfilUsuarioModel::count(),
-                ],
-                'ultimasEmpresas' => EmpresaModel::with('usuario')
-                    ->latest()
-                    ->take(5)
-                    ->get(),
-                'ultimosPerfiles' => PerfilUsuarioModel::with('user')
-                    ->latest()
-                    ->take(5)
-                    ->get(),
-            ]);
-        })->name('dashboard');
+        Route::get('/dashboard', [AdminDashboardController::class, 'index'])
+            ->name('dashboard');
 
         Route::middleware('permission:gestionar usuarios')->group(function () {
             Route::resource('perfiles-usuario', PerfilUsuarioController::class)
@@ -124,12 +106,17 @@ Route::prefix('admin')
 
         Route::middleware('permission:gestionar empresas')->group(function () {
             Route::resource('empresas', EmpresaController::class);
+            Route::resource('categorias', CategoriaController::class);
 
             Route::delete('empresas/{empresa}/fotos/{fotoIndex}', [EmpresaController::class, 'destroyFoto'])
                 ->name('empresas.fotos.destroy');
 
             Route::resource('tipos-producto', TipoProductoController::class)
                 ->parameters(['tipos-producto' => 'tipoProducto']);
+
+            Route::get('mi-perfil', [ProfileController::class, 'show'])->name('profile.show');
+            Route::get('mi-perfil/editar', [ProfileController::class, 'edit'])->name('profile.edit');
+            Route::put('mi-perfil', [ProfileController::class, 'update'])->name('profile.update');
         });
     });
 

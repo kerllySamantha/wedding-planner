@@ -5,10 +5,10 @@ namespace Database\Seeders;
 use App\Models\Boda;
 use App\Models\Empresa;
 use App\Models\User;
-use App\Models\Producto;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
-use DB;
 use Illuminate\Database\Seeder;
+
 
 class ReservaSeeder extends Seeder
 {
@@ -51,7 +51,8 @@ class ReservaSeeder extends Seeder
                 $user = $usuariosEmpresa->random();
                 $empresa = $user->empresa;
 
-                if (!$empresa) continue; // saltar si no tiene empresa
+                if (!$empresa)
+                    continue; // saltar si no tiene empresa
                 if (!$bodas->isEmpty()) {
                     $bodaId = $bodas->random()->id;
                 }
@@ -69,7 +70,8 @@ class ReservaSeeder extends Seeder
                         })
                         ->get();
 
-                    if ($productosEmpresa->isEmpty()) continue; // saltar si no hay productos
+                    if ($productosEmpresa->isEmpty())
+                        continue; // saltar si no hay productos
                     $productoId = $productosEmpresa->random()->id;
                 }
 
@@ -85,7 +87,8 @@ class ReservaSeeder extends Seeder
                         })
                         ->get();
 
-                    if ($productosEmpresa->isEmpty()) continue; // saltar si no hay productos
+                    if ($productosEmpresa->isEmpty())
+                        continue; // saltar si no hay productos
                     $productoId = $productosEmpresa->random()->id;
                 }
             }
@@ -109,5 +112,6 @@ class ReservaSeeder extends Seeder
 
         DB::table('reservas')->insert($reservas);
         $this->command->info("Se han creado " . count($reservas) . " reservas coherentes por empresa.");
+
     }
 }

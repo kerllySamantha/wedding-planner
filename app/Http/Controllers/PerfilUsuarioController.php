@@ -10,6 +10,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
@@ -37,12 +38,18 @@ class PerfilUsuarioController extends Controller
     {
         $validated = $request->validate($this->rules());
 
-        DB::transaction(function () use ($validated): void {
+        DB::transaction(function () use ($request, $validated): void {
             $user = User::create([
                 'name' => $validated['name'],
                 'email' => $validated['email'],
                 'password' => Hash::make($validated['password']),
             ]);
+
+            if ($request->hasFile('fotoPerfil')) {
+                $path = $request->file('fotoPerfil')->store('perfiles', 'public');
+                $user->fotoPerfil = $path;
+                $user->save();
+            }
 
             $user->assignRole('usuario');
 
@@ -88,7 +95,7 @@ class PerfilUsuarioController extends Controller
             $this->rules($perfilUsuario->id, $perfilUsuario->usuario_id)
         );
 
-        DB::transaction(function () use ($perfilUsuario, $validated): void {
+        DB::transaction(function () use ($request, $perfilUsuario, $validated): void {
             $perfilUsuario->user?->update([
                 'name' => $validated['name'],
                 'email' => $validated['email'],
@@ -98,6 +105,14 @@ class PerfilUsuarioController extends Controller
                 $perfilUsuario->user?->update([
                     'password' => Hash::make($validated['password']),
                 ]);
+            }
+
+            if ($request->hasFile('fotoPerfil')) {
+                if ($perfilUsuario->user?->fotoPerfil) {
+                    Storage::disk('public')->delete($perfilUsuario->user->fotoPerfil);
+                }
+                $path = $request->file('fotoPerfil')->store('perfiles', 'public');
+                $perfilUsuario->user?->update(['fotoPerfil' => $path]);
             }
 
             $perfilUsuario->user?->syncRoles(['usuario']);
@@ -145,6 +160,7 @@ class PerfilUsuarioController extends Controller
 
         return [
             'name' => ['required', 'string', 'max:255'],
+            'fotoPerfil' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:5120'],
             'email' => [
                 'required',
                 'email',

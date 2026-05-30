@@ -7,7 +7,7 @@
             </button>
 
             <a href="{{ route('admin.dashboard') }}" class="admin-brand-link" aria-label="Pagina principal del panel">
-                <img src="{{ Vite::asset('resources/images/logo-sinfondo.png') }}"class="admin-brand-logo" height="38"
+                <img src="{{ Vite::asset('resources/images/logo-sinfondo.png') }}" class="admin-brand-logo" height="38"
                     width="auto" alt="Suenos de Boda">
             </a>
         </div>
@@ -41,8 +41,8 @@
             </form>
 
             <div class="sidebar-user-avatar" aria-hidden="true" style="overflow:hidden;padding:0;">
-                @if (auth()->user()->avatar)
-                    <img src="{{ asset('storage/' . auth()->user()->avatar) }}" alt="Avatar"
+                @if (auth()->user()->fotoPerfil)
+                    <img src="{{ asset('storage/' . auth()->user()->fotoPerfil) }}" alt="Avatar"
                         style="width:100%;height:100%;object-fit:cover;">
                 @else
                     {{ strtoupper(substr(auth()->user()->name ?? 'A', 0, 1)) }}
