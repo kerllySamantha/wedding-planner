@@ -1,0 +1,226 @@
+// ============================================================
+// Variables — paleta azul marina
+// ============================================================
+
+$azul-50:  #E6F1FB;
+$azul-100: #B5D4F4;
+$azul-200: #85B7EB;
+$azul-400: #378ADD;   // color principal
+$azul-600: #185FA5;
+$azul-800: #0C447C;
+$azul-900: #042C53;
+
+// Glass
+$glass-bg:         rgba(4, 44, 83, 0.45);
+$glass-border:     rgba(181, 212, 244, 0.18);
+$glass-border-top: rgba(181, 212, 244, 0.42);
+
+// Barras
+$bar-active-bg:       rgba(55, 138, 221, 0.65);
+$bar-active-border:   rgba(133, 183, 235, 0.55);
+$bar-inactive-bg:     rgba(133, 183, 235, 0.12);
+$bar-inactive-border: rgba(133, 183, 235, 0.2);
+
+// Círculos
+$circle-border: rgba(55, 138, 221, 0.15);
+
+
+// ============================================================
+// Reset
+// ============================================================
+
+body {
+  margin: 0;
+}
+
+
+// ============================================================
+// Wrapper — fondo y centrado
+// ============================================================
+
+.page-wrapper {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  background: linear-gradient(135deg, $azul-800, $azul-900);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+// ============================================================
+// Círculos decorativos de fondo
+// ============================================================
+
+.bg-circle {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid $circle-border;
+  pointer-events: none;
+  z-index: 1;
+
+  &-1 {
+    width: 220px;
+    height: 220px;
+    top: -80px;
+    right: -60px;
+  }
+
+  &-2 {
+    width: 320px;
+    height: 320px;
+    bottom: -180px;
+    left: -120px;
+  }
+
+  &-3 {
+    width: 120px;
+    height: 120px;
+    top: 45%;
+    right: 15%;
+  }
+}
+
+
+// ============================================================
+// Logo — esquina superior izquierda
+// ============================================================
+
+.logo-img {
+  position: absolute;
+  top: 24px;
+  left: 28px;
+  z-index: 3;
+
+  // glass
+  background: $glass-bg;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid $glass-border;
+  border-top: 1px solid $glass-border-top;
+
+  // forma
+  border-radius: 12px;
+  padding: 8px 14px;
+
+  // layout
+  display: inline-flex;
+  align-items: center;
+  line-height: 0;
+  opacity: 0.9;
+
+  img {
+    width: 110px; // ajusta según tu logo
+    height: auto;
+    display: block;
+    // sin filter — el logo ya es blanco sobre transparente
+  }
+}
+
+
+// ============================================================
+// Panel principal glass
+// ============================================================
+
+.panel-glass {
+  background: $glass-bg;
+  position: relative;
+  z-index: 2;
+  border: 1px solid $glass-border;
+  border-top: 1px solid $glass-border-top;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 2em;
+  padding: 3rem 2.5rem;
+  width: 25em;
+}
+
+
+// ============================================================
+// Barras de señal
+// ============================================================
+
+.signal-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.signal-bar {
+  width: 20px;
+  border-radius: 3px;
+  flex-shrink: 0;
+
+  &--active {
+    background: $bar-active-bg;
+    border: 1px solid $bar-active-border;
+  }
+
+  &--inactive {
+    background: $bar-inactive-bg;
+    border: 1px solid $bar-inactive-border;
+  }
+}
+
+// Alturas — prefijo bar- para evitar conflicto con Bootstrap
+.bar-h-1 { height: 1.5em; }
+.bar-h-2 { height: 2.5em; }
+.bar-h-3 { height: 3.5em; }
+.bar-h-4 { height: 4.5em; }
+
+
+// ============================================================
+// Número 404
+// ============================================================
+
+.number-404 {
+  font-size: 4rem;
+  font-weight: 700;
+  color: $azul-50;
+  line-height: 1;
+  letter-spacing: -2px;
+}
+
+.number-0 {
+  color: rgba(133, 183, 235, 0.3);
+}
+
+
+// ============================================================
+// Texto subtítulo
+// ============================================================
+
+.texto-404 {
+  color: $azul-200;
+  font-size: 0.95rem;   
+}
+
+
+// ============================================================
+// Botón volver
+// ============================================================
+
+.btn-404 {
+  background: rgba(55, 138, 221, 0.2);
+  border: 1px solid rgba(133, 183, 235, 0.45);
+  color: $azul-100;
+  border-radius: 30px;
+  padding: 8px 22px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  transition: background 0.2s ease, border-color 0.2s ease;
+
+  &:hover {
+    background: rgba(55, 138, 221, 0.35);
+    border-color: rgba(133, 183, 235, 0.65);
+    color: $azul-50;
+  }
+
+  svg {
+    flex-shrink: 0;
+  }
+}

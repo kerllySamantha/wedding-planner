@@ -50,4 +50,9 @@ class Boda extends Model
     {
         return  $this->hasMany(Presupuesto::class);
     }
+
+    public function notas()
+    {
+        return $this->hasMany(NotaBoda::class);
+    }
 }
