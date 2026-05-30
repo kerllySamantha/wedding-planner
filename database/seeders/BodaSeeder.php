@@ -22,7 +22,7 @@ class BodaSeeder extends Seeder
         $bodas = [
             [
                 'nombre_pareja' => 'Maria & Tomas',
-                'fecha_boda' => '2030-6-20',
+                'fecha_boda' => '2025-03-15',
                 'ubicacion' => 'Sevilla, España',
                 // // 'presupuesto_total' => 12000.50,
                 'usuario_id' => 2,
@@ -51,7 +51,7 @@ class BodaSeeder extends Seeder
             ],
             [
                 'nombre_pareja' => 'Juana & Javier',
-                'fecha_boda' => '2035-09-15',
+                'fecha_boda' => '2024-09-15',
                 'ubicacion' => 'Madrid, España',
                 // 'presupuesto_total' => 15000,
                 'usuario_id' => 3,

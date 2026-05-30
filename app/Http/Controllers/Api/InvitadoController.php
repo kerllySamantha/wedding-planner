@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\InvitadoRequest;
+use App\Http\Requests\StoreInvitadoRequest;
+use App\Http\Requests\UpdateInvitadoRequest;
 use App\Http\Resources\InvitadoCollection;
 use App\Http\Resources\InvitadoResource;
 use App\Models\Invitado;
@@ -22,7 +23,7 @@ class InvitadoController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(InvitadoRequest $request)
+    public function store(StoreInvitadoRequest $request)
     {
         $invitado  = new Invitado();
         $validated = $request->validated();
@@ -64,7 +65,7 @@ class InvitadoController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(InvitadoRequest $request, string $id)
+    public function update(UpdateInvitadoRequest $request, string $id)
     {
         $invitado  = Invitado::findOrFail($id);
         $validated = $request->validated();

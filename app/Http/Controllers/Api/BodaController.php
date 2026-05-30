@@ -52,7 +52,7 @@ class BodaController extends Controller
      */
     public function show(Boda $boda)
     {
-        $boda->load(['usuario', 'poblacion.provincia', 'presupuesto.tipoProducto', 'reservas.empresa']);
+        $boda->load(['usuario', 'poblacion.provincia', 'presupuesto.tipoProducto', 'reservas.empresa', 'usuario.resenias.empresa']);
 
         if (!$boda) {
             return response()->json([
@@ -104,7 +104,7 @@ class BodaController extends Controller
 
     public function getBodaByUserId($usuarioId)
     {
-        $boda = Boda::with(['usuario', 'poblacion.provincia', 'presupuesto.tipoProducto', 'reservas.empresa'])
+        $boda = Boda::with(['usuario', 'poblacion.provincia', 'presupuesto.tipoProducto', 'reservas.empresa', 'usuario.resenias.empresa'])
             ->where('usuario_id', $usuarioId)
             ->first();
 

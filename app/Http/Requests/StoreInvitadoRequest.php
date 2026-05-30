@@ -1,0 +1,31 @@
+<?php
+
+namespace App\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class StoreInvitadoRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    public function rules(): array
+    {
+        return [
+            'boda_id' => 'required|exists:bodas,id',
+            'user_id' => 'required|exists:users,id',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'boda_id.required' => 'La boda es obligatoria.',
+            'boda_id.exists'   => 'La boda indicada no existe.',
+            'user_id.required' => 'El usuario es obligatorio.',
+            'user_id.exists'   => 'El usuario indicado no existe.',
+        ];
+    }
+}

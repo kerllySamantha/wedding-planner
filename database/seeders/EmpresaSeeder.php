@@ -317,8 +317,8 @@ class EmpresaSeeder extends Seeder
                         ],
 
                         [
-                            'path' => 'imagenes/empresa_9/imagen_4.webp',
-                            'url' => "$url_servidor/storage/imagenes/empresa_9/imagen_4.webp",
+                            'path' => 'imagenes/empresa_9/imagen_5.webp',
+                            'url' => "$url_servidor/storage/imagenes/empresa_9/imagen_5.webp",
                         ],
 
 

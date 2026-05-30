@@ -13,47 +13,48 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+        $password = 'Jglpdj*2125';
         $usuarios = [
-            ['name' => 'Pedro Admin', 'email' => 'admin@example.com', 'password' => bcrypt('password'), 'role' => 'admin'],
-            ['name' => 'María López', 'email' => 'maria@example.com', 'password' => bcrypt('password'), 'role' => 'usuario'],
-            ['name' => 'Javier Martínez', 'email' => 'javier@example.com', 'password' => bcrypt('password'), 'role' => 'usuario'],
-            ['name' => 'Lucía Fernández', 'email' => 'lucia@example.com', 'password' => bcrypt('password'), 'role' => 'empresa'],
-            ['name' => 'Carlos García', 'email' => 'carlos@example.com', 'password' => bcrypt('password'), 'role' => 'empresa'],
-            ['name' => 'Invitado Prueba', 'email' => 'invitado@example.com', 'password' => bcrypt('password'), 'role' => 'invitado'],
+            ['name' => 'Pedro Admin', 'email' => 'admin@example.com', 'password' => bcrypt($password), 'role' => 'admin'],
+            ['name' => 'María López', 'email' => 'maria@example.com', 'password' => bcrypt($password), 'role' => 'usuario'],
+            ['name' => 'Javier Martínez', 'email' => 'javier@example.com', 'password' => bcrypt($password), 'role' => 'usuario'],
+            ['name' => 'Lucía Fernández', 'email' => 'lucia@example.com', 'password' => bcrypt($password), 'role' => 'empresa'],
+            ['name' => 'Carlos García', 'email' => 'carlos@example.com', 'password' => bcrypt($password), 'role' => 'empresa'],
+            ['name' => 'Invitado Prueba', 'email' => 'invitado@example.com', 'password' => bcrypt($password), 'role' => 'invitado'],
             [
                 'name' => 'Jose Fernández',
                 'email' => 'jose@example.com',
-                'password' => bcrypt('password'),
+                'password' => bcrypt($password),
                 'role' => 'empresa',
             ],
             [
                 'name' => 'Luis García',
                 'email' => 'luis@example.com',
-                'password' => bcrypt('password'),
+                'password' => bcrypt($password),
                 'role' => 'empresa',
             ],
             [
                 'name' => 'Ana Martínez',
                 'email' => 'ana@example.com',
-                'password' => bcrypt('password'),
+                'password' => bcrypt($password),
                 'role' => 'empresa',
             ],
             [
                 'name' => 'Nuria López',
                 'email' => 'nuria@example.com',
-                'password' => bcrypt('password'),
+                'password' => bcrypt($password),
                 'role' => 'empresa',
             ],
             [
                 'name' => 'Ester Sánchez',
                 'email' => 'ester@example.com',
-                'password' => bcrypt('password'),
+                'password' => bcrypt($password),
                 'role' => 'empresa',
             ],
             [
                 'name' => 'Angela Ruiz',
                 'email' => 'angela@example.com',
-                'password' => bcrypt('password'),
+                'password' => bcrypt($password),
                 'role' => 'empresa',
             ],
         ];
@@ -68,7 +69,7 @@ class UserSeeder extends Seeder
             $user->assignRole($data['role']);
         }
 
-       $user2 = User::create(['email' => 'admin2@example.com', 'name' => 'admin', 'password' =>  bcrypt('password')]);
+       $user2 = User::create(['email' => 'admin2@example.com', 'name' => 'admin', 'password' =>  bcrypt($password)]);
        $user2->assignRole('admin');
     }
 

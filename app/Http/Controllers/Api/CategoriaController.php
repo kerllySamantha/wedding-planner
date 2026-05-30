@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\CategoriaRequest;
+use App\Http\Requests\StoreCategoriaRequest;
+use App\Http\Requests\UpdateCategoriaRequest;
 use App\Http\Resources\CategoriaResource;
 use App\Http\Resources\CategoriaTipoCollection;
 use App\Models\Categoria;
@@ -26,7 +27,7 @@ class CategoriaController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(CategoriaRequest $request)
+    public function store(StoreCategoriaRequest $request)
     {
         $categoria = new Categoria();
         $categoria->nombre = $request->validated()['nombre'];
@@ -51,7 +52,7 @@ class CategoriaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(CategoriaRequest $request, string $id)
+    public function update(UpdateCategoriaRequest $request, string $id)
     {
         $categoria = Categoria::findOrFail($id);
         $categoria->update($request->validated());
