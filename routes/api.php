@@ -19,6 +19,7 @@ use App\Http\Controllers\Api\ProductoController;
 
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\SubirImagenController;
+use App\Http\Controllers\Api\NotaBodaController;
 use App\Http\Controllers\Api\TipoProductoController;
 use App\Http\Controllers\Api\ItemPresupuestoController;
 use App\Http\Controllers\Api\StripeController;
@@ -36,6 +37,7 @@ Route::get('/empresas/{id}/resenias-filtradas', [ReseniaController::class, 'getR
 Route::get('pedirPresupuestos/empresas/{empresa}', [PedirPresupuestoController::class, 'getPedirPresupuestosEmpresa']);
 
 Route::get('/bodas/usuario/{id}', [BodaController::class, 'getBodaByUserId']);
+Route::get('/notas-boda/boda/{boda}', [NotaBodaController::class, 'getByBoda']);
 Route::get('/perfiles/usuario/{id}', [PerfilUsuarioController::class, 'getPerfilByUserId']);
 Route::get('provincias/poblacion/{id}', [ProvinciaController::class, 'getByProvincia']);
 Route::get('categorias/tipo/{id}', [CategoriaController::class, 'getByCategoria']);
@@ -71,6 +73,7 @@ Route::apiResource('presupuestos', PresupuestoController::class);
 Route::apiResource('detalles', ItemPresupuestoController::class);
 Route::apiResource('reservas', ReservaController::class);
 Route::apiResource('pedirPresupuestos', PedirPresupuestoController::class);
+Route::apiResource('notas-boda', NotaBodaController::class);
 Route::apiResource('notificaciones', NotificacionController::class)
     ->parameters(['notificaciones' => 'notificacion']);
 
