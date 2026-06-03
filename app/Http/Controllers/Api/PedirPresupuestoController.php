@@ -592,4 +592,18 @@ class PedirPresupuestoController extends Controller
 
         return response()->json($pedirPresupuesto, 200);
     }
+
+    public function getPedirPresupuestosUsuario(string $idUsuario)
+    {
+        $solicitudes = PedirPresupuesto::with([
+            'empresa',
+            'tipoProducto',
+            'reserva'
+        ])
+            ->where('user_id', $idUsuario)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json($solicitudes, 200);
+    }
 }

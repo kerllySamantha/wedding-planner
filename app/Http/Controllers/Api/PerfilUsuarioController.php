@@ -9,6 +9,8 @@ use App\Http\Requests\UserRequest;
 use App\Http\Resources\PerfilUsuarioResource;
 use App\Models\Boda;
 use App\Models\PerfilUsuario;
+use App\Models\Tarea;
+use App\Models\TareaPlantilla;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -45,13 +47,23 @@ class PerfilUsuarioController extends Controller
                 ['usuario_id' => $user->id] + $request->only(['direccion', 'telefono', 'poblacion_id', 'fecha_boda'])
             );
 
-            Boda::create([
-                'usuario_id' => $user->id,
+            $boda = Boda::create([
+                'usuario_id'    => $user->id,
                 'nombre_pareja' => $validated['name'],
-                'fecha_boda' => $validated['fecha_boda'],
-                'ubicacion' => $validated['direccion'],
-                'poblacion_id' => $validated['poblacion_id'],
+                'fecha_boda'    => $validated['fecha_boda'],
+                'ubicacion'     => $validated['direccion'],
+                'poblacion_id'  => $validated['poblacion_id'],
             ]);
+
+            $plantillas = TareaPlantilla::orderBy('orden')->get();
+            foreach ($plantillas as $p) {
+                Tarea::create([
+                    'boda_id'     => $boda->id,
+                    'titulo'      => $p->titulo,
+                    'descripcion' => $p->descripcion,
+                    'completada'  => false,
+                ]);
+            }
 
             return $perfil;
         });
