@@ -86,9 +86,7 @@ class PedirPresupuestoController extends Controller
 
     public function responder(ResponderPedirPresupuestoRequest $request, PedirPresupuesto $pedirPresupuesto)
     {
-        /** @var \Illuminate\Contracts\Auth\Guard $guard */
-        $guard = auth();
-        $userId = $guard->id();
+        $userId = $request->user()?->id;
 
         if (!$userId) {
             return response()->json([
@@ -256,9 +254,7 @@ class PedirPresupuestoController extends Controller
 
     public function aceptarPorUsuario(Request $request, PedirPresupuesto $pedirPresupuesto)
     {
-        /** @var \Illuminate\Contracts\Auth\Guard $guard */
-        $guard = auth();
-        $userId = $guard->id();
+        $userId = $request->user()?->id;
 
         if (!$userId) {
             return response()->json([
@@ -522,11 +518,9 @@ class PedirPresupuestoController extends Controller
 
 
 
-    public function rechazarPorUsuario(PedirPresupuesto $pedirPresupuesto)
+    public function rechazarPorUsuario(Request $request, PedirPresupuesto $pedirPresupuesto)
     {
-        /** @var \Illuminate\Contracts\Auth\Guard $guard */
-        $guard = auth();
-        $userId = $guard->id();
+        $userId = $request->user()?->id;
 
         if (!$userId) {
             return response()->json([

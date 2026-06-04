@@ -14,7 +14,8 @@ class Producto extends Model
         'precio_min',
         'nombre',
         'descripcion',
-        'empresa_id'
+        'empresa_id',
+        'modalidad',
     ];
 
 

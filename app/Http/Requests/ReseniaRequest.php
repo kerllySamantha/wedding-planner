@@ -22,12 +22,12 @@ class ReseniaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => 'required',
-            'empresa_id' => 'required',
-            'puntuacion' => 'integer',
-            'comentario' => 'string',
-            'fotos' => 'nullable|array',
-            'fotos.*' => 'string',
+            'user_id'    => 'required|integer|exists:users,id',
+            'empresa_id' => 'required|integer|exists:empresas,id',
+            'puntuacion' => 'required|integer|min:1|max:5',
+            'comentario' => 'required|string|min:20',
+            'fotos'      => 'nullable|array',
+            'fotos.*'    => 'string',
         ];
     }
 

@@ -14,9 +14,11 @@ class UpdateMensajeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'contenido' => 'sometimes|required|string',
-            'archivo'   => 'nullable|string|max:255',
-            'leido'     => 'sometimes|boolean',
+            'emisor_id'   => 'sometimes|required|integer|exists:users,id',
+            'receptor_id' => 'sometimes|required|integer|exists:users,id',
+            'contenido'   => 'sometimes|required|string',
+            'archivo'     => 'nullable|string|max:255',
+            'leido'       => 'sometimes|boolean',
         ];
     }
 

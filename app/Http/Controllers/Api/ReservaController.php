@@ -379,6 +379,11 @@ class ReservaController extends Controller
 
     public function verificarDisponibilidad(Request $request)
     {
+        $request->validate([
+            'producto_id'  => 'required|integer|exists:productos,id',
+            'fecha_inicio' => 'required|date',
+        ]);
+
         $producto = Producto::find($request->producto_id);
         if (!$producto) {
             return response()->json(['disponible' => false, 'msj' => 'Producto no encontrado'], 404);

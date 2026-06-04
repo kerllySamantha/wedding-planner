@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\BodaRequest;
+use App\Http\Requests\UpdateBodaRequest;
 use App\Http\Resources\BodaCollection;
 use App\Http\Resources\BodaResource;
 use App\Models\Boda;
@@ -111,24 +112,17 @@ class BodaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateBodaRequest $request, string $id)
     {
         $boda = Boda::findOrFail($id);
-        $boda->nombre_pareja = $request->nombre_pareja;
-        $boda->fecha_boda = $request->fecha_boda;
-        $boda->ubicacion = $request->ubicacion;
-        $boda->notas = $request->notas;
-        if ((int)$request->poblacion_id > 0) {
-            $boda->poblacion_id = (int)$request->poblacion_id;
-        }
-        if ($request->has('fotos')) {
-            $boda->fotos = $request->fotos;
-        }
+        $validated = $request->validated();
+
+        $boda->fill($validated);
         $boda->save();
 
         return response()->json([
-            'succes' => 'Datos modificados correctamente',
-            'data' => $boda
+            'success' => 'Datos modificados correctamente',
+            'data'    => $boda,
         ]);
     }
 
