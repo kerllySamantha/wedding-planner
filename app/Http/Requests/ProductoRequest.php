@@ -21,10 +21,12 @@ class ProductoRequest extends FormRequest
      */
     public function rules(): array
     {
+        $productoId = $this->route('producto')?->id ?? $this->route('producto');
+
         return [
-            'nombre' => 'required|string|unique:posts',
-            'descripcion' => 'required',
-            'precio_min' => 'required|float'
+            'nombre'      => 'required|string|max:255|unique:productos,nombre,' . $productoId,
+            'descripcion' => 'required|string',
+            'precio_min'  => 'required|numeric|min:0',
         ];
     }
 }

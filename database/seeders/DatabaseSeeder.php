@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             UserSeeder::class,
             // ServicioSeeder::class,
+            TareaPlantillaSeeder::class,
             CategoriaSeeder::class,
             ProvinciaSeeder::class,
             PoblacionSeeder::class,

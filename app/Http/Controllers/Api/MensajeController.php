@@ -82,11 +82,9 @@ class MensajeController extends Controller
      */
     public function update(UpdateMensajeRequest $request, string $id)
     {
+        $validated = $request->validated();
         $mensaje = Mensaje::findOrFail($id);
-        $mensaje->emisor_id = $request->emisor_id;
-        $mensaje->receptor_id = $request->receptor_id;
-        $mensaje->contenido = $request->contenido;
-        $mensaje->archivo = $request->archivo;
+        $mensaje->fill($validated);
 
         if (!$mensaje->save()) {
             return response()->json([

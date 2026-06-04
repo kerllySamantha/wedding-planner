@@ -28,7 +28,7 @@ class BodaRequest extends FormRequest
             'user_id' => 'nullable',
             'presupuesto_total' => 'nullable|numeric',
             'notas' => 'nullable|string',
-            'fotos' => 'required|array',
+            'fotos' => 'nullable|array',
             'fotos.*' => 'string',
         ];
     }

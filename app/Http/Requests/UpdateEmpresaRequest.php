@@ -177,6 +177,11 @@ class UpdateEmpresaRequest extends FormRequest
                 'min:0',
             ],
 
+            'productos.*.modalidad' => [
+                'nullable',
+                Rule::in(['producto', 'servicio', 'dia']),
+            ],
+
             /*
             |--------------------------------------------------------------------------
             | ELIMINADOS

@@ -20,6 +20,8 @@ use App\Http\Controllers\Api\ProductoController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\SubirImagenController;
 use App\Http\Controllers\Api\NotaBodaController;
+use App\Http\Controllers\Api\TareaController;
+use App\Http\Controllers\Api\TareaPlantillaController;
 use App\Http\Controllers\Api\TipoProductoController;
 use App\Http\Controllers\Api\ItemPresupuestoController;
 use App\Http\Controllers\Api\StripeController;
@@ -35,9 +37,16 @@ Route::get('/user', function (Request $request) {
 Route::get('/empresas/{id}/resenias', [ReseniaController::class, 'getReseniaEmpresa']);
 Route::get('/empresas/{id}/resenias-filtradas', [ReseniaController::class, 'getReseniasValoradas']);
 Route::get('pedirPresupuestos/empresas/{empresa}', [PedirPresupuestoController::class, 'getPedirPresupuestosEmpresa']);
+Route::get('pedirPresupuestos/usuario/{usuario}', [PedirPresupuestoController::class, 'getPedirPresupuestosUsuario']);
 
 Route::get('/bodas/usuario/{id}', [BodaController::class, 'getBodaByUserId']);
 Route::get('/notas-boda/boda/{boda}', [NotaBodaController::class, 'getByBoda']);
+Route::get('/tareas/boda/{boda}', [TareaController::class, 'getByBoda']);
+Route::patch('/tareas/{tarea}/toggle', [TareaController::class, 'toggleCompletada']);
+Route::post('/tareas-plantilla/aplicar/{bodaId}', [TareaPlantillaController::class, 'aplicarABoda']);
+Route::apiResource('tareas-plantilla', TareaPlantillaController::class)
+    ->except(['show'])
+    ->parameters(['tareas-plantilla' => 'tareaPlantilla']);
 Route::get('/perfiles/usuario/{id}', [PerfilUsuarioController::class, 'getPerfilByUserId']);
 Route::get('provincias/poblacion/{id}', [ProvinciaController::class, 'getByProvincia']);
 Route::get('categorias/tipo/{id}', [CategoriaController::class, 'getByCategoria']);
@@ -74,6 +83,7 @@ Route::apiResource('detalles', ItemPresupuestoController::class);
 Route::apiResource('reservas', ReservaController::class);
 Route::apiResource('pedirPresupuestos', PedirPresupuestoController::class);
 Route::apiResource('notas-boda', NotaBodaController::class);
+Route::apiResource('tareas', TareaController::class);
 Route::apiResource('notificaciones', NotificacionController::class)
     ->parameters(['notificaciones' => 'notificacion']);
 

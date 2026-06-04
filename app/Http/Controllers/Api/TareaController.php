@@ -3,64 +3,61 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreTareaRequest;
+use App\Http\Requests\UpdateTareaRequest;
 use App\Models\Tarea;
-use Illuminate\Http\Request;
 
 class TareaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        return response()->json(Tarea::with('boda')->orderBy('created_at', 'desc')->get());
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function getByBoda(string $bodaId)
     {
-        //
+        $tareas = Tarea::where('boda_id', $bodaId)
+            ->orderByRaw('completada ASC')
+            ->orderBy('fecha_limite', 'asc')
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        return response()->json($tareas);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(StoreTareaRequest $request)
     {
-        //
+        $tarea = Tarea::create(array_merge(
+            $request->validated(),
+            ['completada' => false]
+        ));
+
+        return response()->json($tarea, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Tarea $tarea)
     {
-        //
+        return response()->json($tarea);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Tarea $tarea)
+    public function update(UpdateTareaRequest $request, Tarea $tarea)
     {
-        //
+        $tarea->update($request->validated());
+
+        return response()->json($tarea);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Tarea $tarea)
+    public function toggleCompletada(Tarea $tarea)
     {
-        //
+        $tarea->update(['completada' => !$tarea->completada]);
+
+        return response()->json($tarea);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Tarea $tarea)
     {
-        //
+        $tarea->delete();
+
+        return response()->json(['message' => 'Tarea eliminada correctamente']);
     }
 }

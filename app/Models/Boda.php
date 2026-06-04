@@ -43,7 +43,7 @@ class Boda extends Model
 
     public function tareas()
     {
-        return   $this->hasMany(Tarea::class, 'id', 'boda_id');
+        return $this->hasMany(Tarea::class, 'boda_id', 'id');
     }
 
     public function presupuesto()
